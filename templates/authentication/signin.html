@@ -1,45 +1,63 @@
 <!DOCTYPE html>
-<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
-<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
-<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
-<!--[if gt IE 8]>      <html class="no-js"> <!--<![endif]-->
-<html>
+{% load static %}
+<html lang="en">
   <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <title></title>
+    <title>Authentication</title>
     <meta name="description" content="" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="stylesheet" href="" />
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jua&display=swap">
   </head>
-  <body>
-    <h3>Sign In</h3>
+  <body style="background-color: #FCF0C1; margin: 0; display: flex; align-items: center; justify-content: center; height: 100vh; font-family: 'Jua', sans-serif;">
+    <div style="background-color: rgba(231, 209, 168, 0.8); padding: 20px; border-radius: 10px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5), 0 0 40px rgba(0, 0, 0, 0.2); text-align: center;">
+      {% for message in messages %}
+        <div 
+          class="alert alert-{{ message.tags }} alert-dismissable fade show"
+          role="alert"
+          style="background-color: rgba(252, 240, 193, 0.8); color: #333; padding: 10px; margin-bottom: 10px; border: 1px solid #ddd; border-radius: 5px;"
+        >
+          <strong>Message:</strong> {{ message }}
+          <button
+            type="button"
+            class="close"
+            data-dismiss="alert"
+            aria-label="Close"
+          >
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+      {% endfor %}
 
-    <form action="/signin" method="post">
-      {% csrf_token %}
-      <label for="">Username: </label>
-      <input
-        type="text"
-        id="username"
-        name="username"
-        placeholder="Enter your Username"
-        required
-      />
-      <br />
+      <h3 style="color: #333;">Sign In</h3>
 
-      <label for="">Password: </label>
-      <input
-        type="password"
-        id="password1"
-        name="password1"
-        placeholder="Enter Your Password"
-        required
-      />
-      <br />
+      <form action="/signin" method="post" style="margin-top: 20px;">
+        {% csrf_token %}
+        <input
+          type="text"
+          id="username"
+          name="username"
+          placeholder="Username"
+          required
+          style="padding: 10px; border: 1px solid #ddd; border-radius: 5px; margin-bottom: 10px; font-family: 'Jua', sans-serif; box-shadow: inset 0 0 5px rgba(0,0,0,0.1);"
+        />
+        <br />
 
-      <button type="submit">Sign In</button>
-    </form>
+        <input
+          type="password"
+          id="password1"
+          name="password1"
+          placeholder="Password"
+          required
+          style="padding: 10px; border: 1px solid #ddd; border-radius: 5px; margin-bottom: 10px; font-family: 'Jua', sans-serif; box-shadow: inset 0 0 5px rgba(0,0,0,0.1);"
+        />
+        <br />
 
-    <script src="" async defer></script>
+        <button type="submit" style="background-color: #007bff; color: #fff; padding: 10px; border: none; cursor: pointer; border-radius: 5px; box-shadow: 0 0 30px rgba(255, 255, 255, 0.8);">Sign In</button>
+      </form>
+
+      <script src="" async defer></script>
+    </div>
   </body>
 </html>
