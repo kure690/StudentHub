@@ -11,12 +11,12 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jua&display=swap">
   </head>
   <body style="background-color: #FCF0C1; margin: 0; display: flex; align-items: center; justify-content: center; height: 100vh; font-family: 'Jua', sans-serif;">
-    <div style="background-color: rgba(231, 209, 168, 0.8); padding: 20px; border-radius: 10px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5), 0 0 40px rgba(0, 0, 0, 0.2); text-align: center;">
+    <div style="background-color: rgba(231, 209, 168, 0.8); padding: 15px; border-radius: 8px; box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5), 0 0 40px rgba(0, 0, 0, 0.2); text-align: center;">
       {% for message in messages %}
         <div 
           class="alert alert-{{ message.tags }} alert-dismissable fade show"
           role="alert"
-          style="background-color: rgba(252, 240, 193, 0.8); color: #333; padding: 10px; margin-bottom: 10px; border: 1px solid #ddd; border-radius: 5px;"
+          style="background-color: rgba(252, 240, 193, 0.8); color: #333; padding: 8px; margin-bottom: 8px; border: 1px solid #ddd; border-radius: 5px;"
         >
           <strong>Message:</strong> {{ message }}
           <button
@@ -29,18 +29,17 @@
           </button>
         </div>
       {% endfor %}
-
       <h3 style="color: #333;">Sign Up</h3>
 
-      <form action="/signup" method="post" style="margin-top: 20px;">
+      <form action="/signup" method="post" style="margin-top: 15px;">
         {% csrf_token %}
         <input
           type="text"
           id="username"
           name="username"
-          placeholder="Create a username (only letters and numbers)"
+          placeholder="Create a username"
           required
-          style="padding: 10px; border: 1px solid #ddd; border-radius: 5px; margin-bottom: 10px; font-family: 'Jua', sans-serif; box-shadow: inset 0 0 5px rgba(0,0,0,0.1);"
+          style="padding: 8px; border: 1px solid #ddd; border-radius: 5px; margin-bottom: 8px; font-family: 'Jua', sans-serif; box-shadow: inset 0 0 5px rgba(0,0,0,0.5);"
         />
         <br />
 
@@ -50,7 +49,7 @@
           name="fname"
           placeholder="First Name"
           required
-          style="padding: 10px; border: 1px solid #ddd; border-radius: 5px; margin-bottom: 10px; font-family: 'Jua', sans-serif; box-shadow: inset 0 0 5px rgba(0,0,0,0.1);"
+          style="padding: 8px; border: 1px solid #ddd; border-radius: 5px; margin-bottom: 8px; font-family: 'Jua', sans-serif; box-shadow: inset 0 0 5px rgba(0,0,0,0.5);"
         />
         <br />
 
@@ -60,7 +59,7 @@
           name="lname"
           placeholder="Last Name"
           required
-          style="padding: 10px; border: 1px solid #ddd; border-radius: 5px; margin-bottom: 10px; font-family: 'Jua', sans-serif; box-shadow: inset 0 0 5px rgba(0,0,0,0.1);"
+          style="padding: 8px; border: 1px solid #ddd; border-radius: 5px; margin-bottom: 8px; font-family: 'Jua', sans-serif; box-shadow: inset 0 0 5px rgba(0,0,0,0.5);"
         />
         <br />
 
@@ -70,7 +69,7 @@
           name="email"
           placeholder="Enter Your Email Address"
           required
-          style="padding: 10px; border: 1px solid #ddd; border-radius: 5px; margin-bottom: 10px; font-family: 'Jua', sans-serif; box-shadow: inset 0 0 5px rgba(0,0,0,0.1);"
+          style="padding: 8px; border: 1px solid #ddd; border-radius: 5px; margin-bottom: 8px; font-family: 'Jua', sans-serif; box-shadow: inset 0 0 5px rgba(0,0,0,0.5);"
         />
         <br />
 
@@ -80,7 +79,7 @@
           name="password1"
           placeholder="Create a Password"
           required
-          style="padding: 10px; border: 1px solid #ddd; border-radius: 5px; margin-bottom: 10px; font-family: 'Jua', sans-serif; box-shadow: inset 0 0 5px rgba(0,0,0,0.1);"
+          style="padding: 8px; border: 1px solid #ddd; border-radius: 5px; margin-bottom: 8px; font-family: 'Jua', sans-serif; box-shadow: inset 0 0 5px rgba(0,0,0,0.5);"
         />
         <br />
 
@@ -90,11 +89,11 @@
           name="password2"
           placeholder="Confirm Your Password"
           required
-          style="padding: 10px; border: 1px solid #ddd; border-radius: 5px; margin-bottom: 10px; font-family: 'Jua', sans-serif; box-shadow: inset 0 0 5px rgba(0,0,0,0.1);"
+          style="padding: 8px; border: 1px solid #ddd; border-radius: 5px; margin-bottom: 8px; font-family: 'Jua', sans-serif; box-shadow: inset 0 0 5px rgba(0,0,0,0.5);"
         />
         <br />
 
-        <button type="submit" style="background-color: #007bff; color: #fff; padding: 10px; border: none; cursor: pointer; border-radius: 5px; box-shadow: 0 0 30px rgba(255, 255, 255, 0.8);">Sign Up</button>
+        <button type="submit" style="background-color: #007bff; color: #fff; padding: 8px; border: none; cursor: pointer; border-radius: 5px; box-shadow: 0 0 30px rgba(255, 255, 255, 0.8);">Sign Up</button>
       </form>
     </div>
     <script src="" async defer></script>
