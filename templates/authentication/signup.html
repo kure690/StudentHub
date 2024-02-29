@@ -8,6 +8,7 @@
     <meta name="description" content="" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="stylesheet" href="{% static 'authentication/style.css' %}" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
   </head>
   <body
     style="
@@ -24,19 +25,22 @@
       class="home-button"
       onclick="window.location.href='{% url 'home' %}'"
       style="
-        background-color: #007bff;
-        color: #fff;
-        padding: 8px;
+        background-color: #fcf0c1;
+        color: #aeb5b0;
         border: none;
-        top: 100px;
-        left: 100px;
+        outline: none;
+        padding: 8px;
+        border-radius: 10px;
+        font-size: 20px;
+        position: absolute;
+        top: 0;
+        left: 0;
         cursor: pointer;
-        border-radius: 5px;
-        box-shadow: 0 0 30px rgba(255, 255, 255, 0.8);
       "
     >
-      &#8962; Home
+    <i class="fa-solid fa-house"></i>
     </button>
+
     <div
       style="
         background-color: rgba(231, 209, 168, 0.8);
