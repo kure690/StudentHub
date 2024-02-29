@@ -10,10 +10,8 @@ def home(request):
     return render(request, "authentication/index.html")
 
 def signup(request):
-    counter = 0
 
     if request.method == "POST":
-        counter = 0
         username = request.POST['username']
         fname = request.POST['fname']
         lname = request.POST['lname']
@@ -21,42 +19,18 @@ def signup(request):
         password1 = request.POST['password1']
         password2 = request.POST['password2']
 
-        
+        myuser = User.objects.create_user(username, email, password1)
+        myuser.first_name = fname
+        myuser.last_name =lname
 
-        if User.objects.filter(username=username):
-            messages.error(request, "Username already exist")
-            counter += 1
-            return redirect('signup')
-        if User.objects.filter(email=email):
-            messages.error(request, "Email already used by another user")
-            counter += 1
-            return redirect('signup')
-        if len(username)>10:
-            messages.error(request, "Username must be under 10 characters")
-            counter += 1
-            return redirect('signup')
-        if password1 != password2:
-            messages.error(request, "Passwords do not match")
-            counter += 1
-            return redirect('signup')
-        if not username.isalnum():
-            messages.error(request, "Username must be alphanumeric")
-            counter += 1
-            return redirect('signup')
-        
-        if counter == 0:
-        
-            myuser = User.objects.create_user(username, email, password1)
-            myuser.first_name = fname
-            myuser.last_name =lname
+        myuser.save()
 
-            myuser.save()
-            messages.success(request, "Your Account has been successfully created.")
+        messages.success(request, "Your Account has been successfully created.")
         
-            return redirect('signin')
-        else:
-            return redirect('signup')
+        return redirect('signin')
     
+
+
     return render(request, "authentication/signup.html")
 
 def signin(request):
@@ -78,7 +52,6 @@ def signin(request):
 
 
     return render(request, "authentication/signin.html")
-
 
 def signout(request):
     logout(request)
