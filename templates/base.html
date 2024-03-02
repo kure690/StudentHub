@@ -14,7 +14,21 @@
     {% include 'components/navbar.html' with user_name=user_name %}
 
     <!-- Content block for child templates -->
-    <div class="content">{% block content %}{% endblock %}</div>
+    <div class="content">
+      {% block content %}{% endblock %}
+
+      <!-- Display enrolled subjects -->
+      {% if enrolled_subjects %}
+      <div>
+        <strong>Enrolled Subjects:</strong>
+        <ul>
+          {% for subject in enrolled_subjects %}
+          <li>{{ subject }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+      {% endif %}
+    </div>
 
     <!-- Add your common JavaScript files or links here -->
   </body>
