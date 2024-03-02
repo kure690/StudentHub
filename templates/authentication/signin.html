@@ -121,6 +121,7 @@
 
           <button
             type="submit"
+            name="signin_button"
             style="
               background-color: #007bff;
               color: #fff;
@@ -133,9 +134,13 @@
           >
             Sign In
           </button>
+        </form>
+
+        <!-- New form for signup button -->
+        <form action="{% url 'signup' %}" method="get" style="margin-top: 15px">
           <button
             type="submit"
-            onclick="window.location.href='{% url 'signup' %}'"
+            name="signup_button"
             style="
               background-color: #007bff;
               color: #fff;
