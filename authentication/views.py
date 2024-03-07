@@ -44,7 +44,7 @@ def signin(request):
         if user is not None:
             login(request, user)
             fname = user.first_name
-            return render(request, "dashboard/dashboard.html", {'fname': fname})
+            return render(request, "dashboard/studentdashboard.html", {'fname': fname})
 
         else:
             messages.error(request, "Bad Credentials")
@@ -59,8 +59,8 @@ def signout(request):
     return redirect('home')
 
 
-def dashboard(request):
+def studentdashboard(request):
     user = request.user
     enrolled_subjects = ["Math", "English", "Science"]  # Replace with actual enrolled subjects data
 
-    return render(request, "dashboard/dashboard.html", {'user': user, 'enrolled_subjects': enrolled_subjects})
+    return render(request, "dashboard/studentdashboard.html", {'user': user, 'enrolled_subjects': enrolled_subjects})
