@@ -129,6 +129,11 @@
         <!-- Display user's name beside the profile logo -->
         <span style="margin-right: 10px; font-size: 14px">{{ user_name }}</span>
         <!-- Profile Logo moved a little more to the right -->
+        {% if user.is_teacher %}
+        <p style="padding: 10">Teacher</p>
+        {% endif %} {% if user.is_stduent %}
+        <p>Student</p>
+        {% endif %}
         <img
           src="{% static 'imgs/user.png' %}"
           alt="Profile Logo"
