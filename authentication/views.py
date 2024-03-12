@@ -42,7 +42,7 @@ def signup(request):
 
         #Welcome Email
         subject ="Welcome to StudentHub!!"
-        message ="Hello" + myuser.first_name + "!!"
+        message ="Hello " + myuser.first_name + " and Welcome to Student Hub!"
         from_email = settings.EMAIL_HOST_USER
         to_list = [myuser.email]
         send_mail(subject, message, from_email, to_list, fail_silently=False)
