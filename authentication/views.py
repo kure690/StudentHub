@@ -8,6 +8,8 @@ from django.core.mail import send_mail
 from django.contrib.auth.views import PasswordResetView
 from django.db import IntegrityError
 from django.contrib.auth.forms import PasswordResetForm
+from django.contrib.auth.forms import PasswordChangeForm
+from django.contrib.auth import update_session_auth_hash
 
 
 
@@ -101,7 +103,7 @@ def passreset_view(request):
         if 'email_submitted' in request.session:
             # Email has already been submitted, show a message or redirect
             messages.info(request, 'Password reset email has already been sent.')
-            return redirect('password_reset_done')
+            return redirect('changepass')
 
         form = PasswordResetForm(request.POST)
         if form.is_valid():
@@ -110,7 +112,7 @@ def passreset_view(request):
             send_password_reset_email(email)
             # Mark email as submitted in session to prevent re-submission
             request.session['email_submitted'] = True
-            return redirect('password_reset_done')
+            return redirect('changepass')
     else:
         form = PasswordResetForm()
     return render(request, 'authentication/forgetpass.html', {'form': form})
@@ -126,7 +128,21 @@ def send_password_reset_email(email):
 #def passresetdone(request):
     
 def changepass(request):
-    return render (request, '')
+    if request.method == "POST":
+        form = PasswordChangeForm(request.user, request.POST)
+        if form.is_valid():
+            user = form.save()
+            # Update the user's session to reflect the new password
+            update_session_auth_hash(request, user)
+            messages.success(request, "Your password has been successfully changed.")
+            return redirect('home')  # Redirect to the homepage or wherever you want
+        else:
+            # If the form is not valid, show the form with errors
+            messages.error(request, "Please correct the errors below.")
+    else:
+        # If it's a GET request, initialize an empty form
+        form = PasswordChangeForm(request.user)
+    return render(request, 'authentication/changepass.html', {'form': form})
 
 
     

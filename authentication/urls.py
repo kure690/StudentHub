@@ -10,14 +10,15 @@ urlpatterns = [
     path('signin', views.signin, name="signin"),
     path('signout', views.signout, name="signout"),
     path('passreset', views.passreset_view, name='passreset'),
+    path('changepass', views.changepass, name="changepass"),
     #path('passresetdone/', views.passreset_view, name='passreset'),
     # path('passreset/', auth_views.PasswordResetView.as_view(template_name='authentication/forgetpass.html'),name='passreset'),
     # path('passreset/', auth_views.PasswordResetView.as_view(),name='passreset'),
-    path('password_reset_done/', auth_views.PasswordResetDoneView.as_view(),name='password_reset_done'),
+    #path('password_reset_done/', auth_views.PasswordResetDoneView.as_view(),name='password_reset_done'),
     # path('passresetconfirm/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(), name='password_reset_confirm'),
-    path('passresetconfirm/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(),name='passresetconfirm'),
-    path('passresetcomplete', auth_views.PasswordResetCompleteView.as_view(),name='passresetcomplete'),
-    path('changepass', views.changepass, name='changepass')
+    #path('passresetconfirm/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(),name='passresetconfirm'),
+    #path('passresetcomplete', auth_views.PasswordResetCompleteView.as_view(),name='passresetcomplete'),
+    
 
 ]
  
