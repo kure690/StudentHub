@@ -23,7 +23,7 @@
   >
     <button
       class="home-button"
-      onclick="window.location.href='{% url 'home' %}'"
+      onclick="window.location.href='{% url 'home' %}';"
       style="
         background-color: #fcf0c1;
         color: #aeb5b0;
@@ -153,6 +153,11 @@
           >
             Sign Up
           </button>
+          <br />
+          <a href="{% url 'passreset' %}"
+          style = "padding: 10px;">
+          Forget Password?</a>
+          
         </form>
       </div>
     </div>

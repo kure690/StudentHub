@@ -3,6 +3,9 @@ from .models import CustomUser
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import redirect, render
+from StudentHub import settings
+from django.core.mail import send_mail
+
 
 
 # Create your views here.
@@ -36,6 +39,13 @@ def signup(request):
         myuser.save()
 
         messages.success(request, "Your Account has been successfully created.")
+
+        #Welcome Email
+        subject ="Welcome to StudentHub!!"
+        message ="Hello " + myuser.first_name + " and Welcome to Student Hub!"
+        from_email = settings.EMAIL_HOST_USER
+        to_list = [myuser.email]
+        send_mail(subject, message, from_email, to_list, fail_silently=False)
         
         return redirect('signin')
     
