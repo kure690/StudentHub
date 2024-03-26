@@ -10,7 +10,7 @@ from django.db import IntegrityError
 from django.contrib.auth.forms import PasswordResetForm
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth import update_session_auth_hash
-
+from django.shortcuts import get_object_or_404
 
 
 # Create your views here.
@@ -30,6 +30,10 @@ def signup(request):
 
         if CustomUser.objects.filter(username=username).exists():
             messages.error(request, "Username already exists. Please choose a different username.")
+            return redirect('signup')
+        
+        if CustomUser.objects.filter(email = email).exists():
+            messages.error(request, "This email address is already in use")
             return redirect('signup')
         
 
@@ -97,22 +101,42 @@ def dashboard(request):
 
     return render(request, "studentdashboard/dashboard.html", {'user': user, 'enrolled_subjects': enrolled_subjects})
 
+# def passreset_view(request):
+#     if request.method == "POST":
+#         # Check if the email has already been submitted for password reset
+#         if 'email_submitted' in request.session:
+#             # Email has already been submitted, show a message or redirect
+#             messages.info(request, 'Password reset email has already been sent.')
+#             return redirect('changepass')
+
+#         form = PasswordResetForm(request.POST)
+#         if form.is_valid():
+#             email = form.cleaned_data['email']
+#             # Send password reset email
+#             send_password_reset_email(email)
+#             # Mark email as submitted in session to prevent re-submission
+#             request.session['email_submitted'] = True
+#             return redirect('changepass')
+#     else:
+#         form = PasswordResetForm()
+#     return render(request, 'authentication/forgetpass.html', {'form': form})
 def passreset_view(request):
     if request.method == "POST":
-        # Check if the email has already been submitted for password reset
-        if 'email_submitted' in request.session:
-            # Email has already been submitted, show a message or redirect
-            messages.info(request, 'Password reset email has already been sent.')
-            return redirect('changepass')
-
         form = PasswordResetForm(request.POST)
         if form.is_valid():
             email = form.cleaned_data['email']
-            # Send password reset email
-            send_password_reset_email(email)
-            # Mark email as submitted in session to prevent re-submission
-            request.session['email_submitted'] = True
-            return redirect('changepass')
+            try:
+                # Check if a user with this email exists
+                user = CustomUser.objects.get(email=email)
+                # Send password reset email
+                send_password_reset_email(email)
+                # Mark email as submitted in session to prevent re-submission
+                request.session['email_submitted'] = True
+                # Redirect to a success page or render a success message
+                return redirect('changepass')
+            except CustomUser.DoesNotExist:
+                # Handle case where no user is found with the provided email
+                return redirect('changepass')
     else:
         form = PasswordResetForm()
     return render(request, 'authentication/forgetpass.html', {'form': form})
