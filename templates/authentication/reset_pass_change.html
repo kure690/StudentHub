@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Password Reset Confirmation</title>
+    <!-- Add your CSS links or styles here -->
+    <style>
+        /* Add your custom CSS styles here */
+        .error-message {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Password Reset Confirmation</h2>
+        <p>Please enter your new password below:</p>
+        <form method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="id_new_password1">New Password:</label>
+                <input type="password" name="new_password1" id="id_new_password1" class="form-control" required>
+                {% for error in form.new_password1.errors %}
+                    <p class="error-message">{{ error }}</p>
+                {% endfor %}
+            </div>
+            <div class="form-group">
+                <label for="id_new_password2">Confirm New Password:</label>
+                <input type="password" name="new_password2" id="id_new_password2" class="form-control" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Reset Password</button>
+        </form>
+    </div>
+    <!-- Add your JavaScript code here if needed -->
+    <script>
+        // Add your JavaScript code here
+    </script>
+</body>
+</html>

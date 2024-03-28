@@ -11,6 +11,14 @@ from django.contrib.auth.forms import PasswordResetForm
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth import update_session_auth_hash
 from django.shortcuts import get_object_or_404
+from django.contrib.auth.tokens import PasswordResetTokenGenerator
+from django.utils.encoding import force_bytes
+from django.utils.http import urlsafe_base64_encode
+from django.urls import reverse
+from django.utils.http import urlsafe_base64_decode
+from django.utils.encoding import force_str
+from django.http import HttpRequest
+from django.contrib.auth.tokens import default_token_generator
 
 
 # Create your views here.
@@ -55,7 +63,7 @@ def signup(request):
 
             #Welcome Email
             subject ="Welcome to StudentHub!!"
-            message ="Hello " + myuser.first_name + " and Welcome to Student Hub!"
+            message ="Hello " + myuser.first_name + myuser.last_name + " and Welcome to Student Hub!"
             from_email = settings.EMAIL_HOST_USER
             to_list = [myuser.email]
             send_mail(subject, message, from_email, to_list, fail_silently=False)
@@ -120,36 +128,66 @@ def dashboard(request):
 #     else:
 #         form = PasswordResetForm()
 #     return render(request, 'authentication/forgetpass.html', {'form': form})
-def passreset_view(request):
-    if request.method == "POST":
-        form = PasswordResetForm(request.POST)
-        if form.is_valid():
-            email = form.cleaned_data['email']
-            try:
-                # Check if a user with this email exists
-                user = CustomUser.objects.get(email=email)
-                # Send password reset email
-                send_password_reset_email(email)
-                # Mark email as submitted in session to prevent re-submission
-                request.session['email_submitted'] = True
-                # Redirect to a success page or render a success message
-                return redirect('changepass')
-            except CustomUser.DoesNotExist:
-                # Handle case where no user is found with the provided email
-                return redirect('changepass')
-    else:
-        form = PasswordResetForm()
-    return render(request, 'authentication/forgetpass.html', {'form': form})
+# def passreset_view(request):
+#     if request.method == "POST":
+#         form = PasswordResetForm(request.POST)
+#         if form.is_valid():
+#             email = form.cleaned_data['email']
+#             try:
+#                 # Check if a user with this email exists
+#                 user = CustomUser.objects.get(email=email)
+#                 # Send password reset email
+#                 send_password_reset_email(request, email)
+#                 # Mark email as submitted in session to prevent re-submission
+#                 request.session['email_submitted'] = True
+#                 # Redirect to a success page or render a success message
+#                 return redirect('resetpass')
+#             except CustomUser.DoesNotExist:
+#                 # Handle case where no user is found with the provided email
+#                 return redirect('resetpass')
+#     else:
+#         form = PasswordResetForm()
+#     return render(request, 'authentication/forgetpass.html', {'form': form})
 
-def send_password_reset_email(email):
-    # Implement your logic to send the password reset email here
-    # You can use Django's send_mail function or any other email sending library
-    subject = 'Password Reset Request'
-    message = 'Please follow the link to reset your password.'
-    from_email = settings.EMAIL_HOST_USER
-    send_mail(subject, message, from_email, [email])
+# def send_password_reset_email(email):
+#     user = CustomUser.objects.get(email=email)  # Retrieve the user object
 
-#def passresetdone(request):
+#     # Generate a token for the user
+#     token_generator = PasswordResetTokenGenerator()
+#     uid = urlsafe_base64_encode(force_bytes(user.pk))  # Use user's primary key directly
+#     token = token_generator.make_token(user)
+
+#     # Decode uid to a string
+#     uid_str = force_str(urlsafe_base64_decode(uid))
+
+#     # Construct the reset URL with the token
+#     #reset_url = reverse('resetpass') + f'?uid={uid_str}&token={token}'
+#     reset_url = request.build_absolute_uri(reverse('password_reset_confirm', kwargs={'uidb64': user.pk, 'token': token}))
+
+#     # Email content
+#     subject = 'Password Reset Request'
+#     message = f'Please follow the link to reset your password: {reset_url}'
+#     from_email = settings.EMAIL_HOST_USER
+
+#     # Send email
+#     send_mail(subject, message, from_email, [email])
+# def send_password_reset_email(request, email):  # Add request as an argument here
+#     user = CustomUser.objects.get(email=email)  # Retrieve the user object
+
+#     # Generate a token for the user
+#     token = default_token_generator.make_token(user)
+
+#     # Construct the reset URL with the token
+#     reset_url = request.build_absolute_uri(reverse('password_reset_confirm', kwargs={'uidb64': user.pk, 'token': token}))
+
+#     # Email content
+#     subject = 'Password Reset Request'
+#     message = f'Please follow the link to reset your password: {reset_url}'
+#     from_email = settings.EMAIL_HOST_USER
+
+#     # Send email
+#     send_mail(subject, message, from_email, [email])
+# #def passresetdone(request):
     
 def changepass(request):
     if request.method == "POST":
@@ -167,6 +205,11 @@ def changepass(request):
         # If it's a GET request, initialize an empty form
         form = PasswordChangeForm(request.user)
     return render(request, 'authentication/changepass.html', {'form': form})
+
+# def resetpass(request):
+#     return render(request, 'authentication/resetpass.html')
+
+
 
 
     

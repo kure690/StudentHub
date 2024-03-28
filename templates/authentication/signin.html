@@ -58,30 +58,15 @@
           text-align: center;
         "
       >
-        {% for message in messages %}
-        <div
-          class="alert alert-{{ message.tags }} alert-dismissable fade show"
-          role="alert"
-          style="
-            background-color: rgba(252, 240, 193, 0.8);
-            color: #333;
-            padding: 8px;
-            margin-bottom: 8px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-          "
-        >
+      {% for message in messages %}
+      <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert" style="background-color: rgba(252, 240, 193, 0.8); color: #333; padding: 8px; margin-bottom: 8px; border: 1px solid #ddd; border-radius: 5px;">
           <strong>Message:</strong> {{ message }}
-          <button
-            type="button"
-            class="close"
-            data-dismiss="alert"
-            aria-label="Close"
-          >
-            <span aria-hidden="true">&times;</span>
+          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
           </button>
-        </div>
-        {% endfor %}
+      </div>
+      {% endfor %}
+      
 
         <h3 style="color: #333">Sign In</h3>
 
@@ -163,7 +148,7 @@
           </button>
           <br />
           <br />
-          <a href="{% url 'passreset' %}"
+          <a href="{% url 'reset_password' %}"
           style = "padding: 10px;">
           Forget Password?</a>
           
@@ -171,5 +156,6 @@
       </div>
     </div>
     <script src="" async defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-************************************" crossorigin="anonymous"></script>
   </body>
 </html>
