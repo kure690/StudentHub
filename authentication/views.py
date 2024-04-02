@@ -1,7 +1,7 @@
 from django.http import HttpResponse
 from .models import CustomUser
 from django.contrib import messages
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
 from django.shortcuts import redirect, render
 from StudentHub import settings
 from django.core.mail import send_mail
@@ -121,8 +121,16 @@ class InfoUpdate(UpdateView):
     success_url = reverse_lazy('dashboard')
 
 def Change_Password(request):
-    form = PasswordChangeForm(user=request.user)
-    return render (request, 'authentication/changepass1.html',{'form': form})
+    if request.method=='POST':
+        form = PasswordChangeForm(user=request.user,data=request.POST)
+        if form.is_valid():
+            form.save()
+            update_session_auth_hash(request,form.user)
+            messages.success(request, '')
+            return redirect('dashboard')
+    else:
+        form = PasswordChangeForm(user=request.user)
+    return render (request, 'authentication/changepass.html',{'form': form})
 # def passreset_view(request):
 #     if request.method == "POST":
 #         # Check if the email has already been submitted for password reset

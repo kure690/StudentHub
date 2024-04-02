@@ -74,6 +74,18 @@
       <!-- User image -->
       <img src="{% static 'user.png' %}" alt="User Image">
       <!-- Display the first name here -->
+      <button
+type="changepass"
+name="changepass_button"
+style="
+background-color: #fff394;
+border: 1px solid #fdffc9;
+color: #000000; 
+padding: 5px;
+cursor: pointer;
+border-radius: 5px;
+box-shadow: 0 0 30px rgba(255, 255, 255, 0.8);">
+<a href="{% url 'ChangePassword' %}" style="text-decoration: none; color: #000000;">Change Password</a> 
       <p>Welcome, {{ username }}</p>
     </div>
   </div>
