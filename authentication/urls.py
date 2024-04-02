@@ -2,6 +2,7 @@ from django.contrib import admin
 from django.urls import path, include
 from django.contrib.auth import views as auth_views
 from . import views
+from .views import InfoUpdate
 
 
 urlpatterns = [
@@ -9,6 +10,9 @@ urlpatterns = [
     path('signup', views.signup, name="signup"),
     path('signin', views.signin, name="signin"),
     path('signout', views.signout, name="signout"),
+    path('dashboard/', views.dashboard, name='dashboard'),
+    path('editprofile/<int:pk>/', InfoUpdate.as_view(), name='Info-Update'),
+    path('changepass', views.Change_Password, name= "ChangePassword"),
 
 
     path('reset_password/', auth_views.PasswordResetView.as_view(template_name='authentication/reset_pass.html'), name = "reset_password"),

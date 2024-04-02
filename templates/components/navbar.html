@@ -131,8 +131,8 @@
         <!-- Profile Logo moved a little more to the right -->
         {% if user.is_teacher %}
         <p style="padding: 10">Teacher</p>
-        {% endif %} {% if user.is_stduent %}
-        <p>Student</p>
+        {% elif user.is_student %}
+        <p style="padding: 10">Student</p>
         {% endif %}
         <img
           src="{% static 'imgs/user.png' %}"
@@ -143,7 +143,7 @@
         <div class="dropdown">
           <button class="dropbtn">Profile</button>
           <div class="dropdown-content">
-            <a href="#">Edit Profile</a>
+            <a href="">Edit Profile</a>
             <a href="{% url 'signout' %}">Sign Out</a>
           </div>
         </div>

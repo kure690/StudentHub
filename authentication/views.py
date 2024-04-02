@@ -21,6 +21,10 @@ from django.http import HttpRequest
 from django.contrib.auth.tokens import default_token_generator
 from django.contrib.auth.views import PasswordResetConfirmView
 from django.contrib.auth.forms import SetPasswordForm
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.decorators import login_required
+from django.views.generic.edit import CreateView, UpdateView, DeleteView
+from django.urls import reverse_lazy
 
 
 # Create your views here.
@@ -89,8 +93,7 @@ def signin(request):
 
         if user is not None:
             login(request, user)
-            fname = user.first_name
-            return render(request, "studentdashboard/dashboard.html", {'fname': fname})
+            return redirect('dashboard')
 
         else:
             messages.error(request, "Bad Credentials")
@@ -104,13 +107,22 @@ def signout(request):
     messages.success(request, "Logged Out Successfully!")
     return redirect('home')
 
-
+@login_required
 def dashboard(request):
-    user = request.user
+    username = request.user.username
     enrolled_subjects = ["Math", "English", "Science"]  # Replace with actual enrolled subjects data
 
-    return render(request, "studentdashboard/dashboard.html", {'user': user, 'enrolled_subjects': enrolled_subjects})
+    return render(request, "studentdashboard/dashboard.html", {'username': username, 'enrolled_subjects': enrolled_subjects})
 
+class InfoUpdate(UpdateView):
+    model = CustomUser
+    fields = ['first_name', 'last_name', 'email']
+    template_name = 'authentication/editprofile.html'
+    success_url = reverse_lazy('dashboard')
+
+def Change_Password(request):
+    form = PasswordChangeForm(user=request.user)
+    return render (request, 'authentication/changepass1.html',{'form': form})
 # def passreset_view(request):
 #     if request.method == "POST":
 #         # Check if the email has already been submitted for password reset
