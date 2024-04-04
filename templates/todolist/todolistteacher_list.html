@@ -133,6 +133,7 @@
       <th>Tasks</th>
       <th>Deadline</th>
       <th>Status</th>
+      <th>Score</th>
       <th></th>
       <th></th>
       <th></th>
@@ -142,7 +143,7 @@
     {% for task in tasks %}
     <tr>
       <td>{{ task.user.first_name }} {{ task.user.last_name }}</td>
-      <td>{{ task.subject }}</td>
+      <td>{{ task.Subject_Code }}</td>
       <td>{{ task.task }}</td>
       <td>{{ task.deadline|date:"m/d/y" }}</td>
       <td>{% if task.status %}
@@ -152,6 +153,7 @@
         <!-- Task is not completed -->
         <p>Pending</p>
      {% endif %}
+     <td>{{ task.score }}/{{ task.perfect }}</td>
     </td>
       <td><a href="{% url 'task' task.id %}" class="action-link">View</a></td>
       <td><a href="{% url 'task-update' task.id %}" class="action-link">Edit</a></td>
@@ -161,6 +163,10 @@
     {% empty %}
     <tr>
       <td colspan="6" style="text-align: center;"><h3>No items in list</h3></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
     </tr>
     {% endfor %}
   </table>

@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.urls import path, include
 from django.contrib.auth import views as auth_views
 from . import views
-from .views import InfoUpdate
+from .views import InfoUpdate, ClassView
 
 
 urlpatterns = [
@@ -11,6 +11,7 @@ urlpatterns = [
     path('signin', views.signin, name="signin"),
     path('signout', views.signout, name="signout"),
     path('dashboard/', views.dashboard, name='dashboard'),
+    path('dashboard2/', ClassView.as_view(), name='dashboard2'),
     path('editprofile/<int:pk>/', InfoUpdate.as_view(), name='editprofile'),
     path('changepass', views.Change_Password, name= "ChangePassword"),
 

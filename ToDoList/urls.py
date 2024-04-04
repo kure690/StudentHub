@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import ToDo, ToDoDetail, TaskCreate, TaskUpdate, DeleteTask, TeacherToDo
+from .views import ToDo, ToDoDetail, TaskCreate, TaskUpdate, DeleteTask, TeacherToDo, ClassCreate, ClassView
 
 urlpatterns = [
     path('todolist/', ToDo.as_view(), name='tasks'),
@@ -8,5 +8,7 @@ urlpatterns = [
     path('task-update/<int:pk>/', TaskUpdate.as_view(), name='task-update'),
     path('task-delete/<int:pk>/', DeleteTask.as_view(), name='task-delete'),
     path('teacher-todolist/', TeacherToDo.as_view(), name='teacher_tasks'),
+    path('create_class/', ClassCreate.as_view(), name='Class_create'),
+    path('classview/', ClassView.as_view(), name='Class_view'),
 
 ]

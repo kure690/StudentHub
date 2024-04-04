@@ -1,0 +1,15 @@
+<h1>Subject List</h1>
+
+<table>
+    <tr>
+        <th>Class</th>
+    </tr>
+    {% for subject in class %}
+    <tr>
+        <h3>{{ subject.Subject_Name }}</h3>
+        <h3>{{ subject.Subject_Code }}</h3>
+    </tr>
+    {% empty %}
+        <h3>No item</h3>
+    {% endfor %}
+</table>

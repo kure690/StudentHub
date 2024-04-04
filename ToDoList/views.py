@@ -1,14 +1,12 @@
-from django.forms import BaseModelForm
-from django.http import HttpResponse
-from django.shortcuts import render
 from django.views.generic.list import ListView
 from django.views.generic.detail import DetailView
-from .models import ToDoList
+from .models import ToDoList, Subjects
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import UserPassesTestMixin
+from authentication.models import CustomUser
+from django import forms
 
 # Create your views here.
 
@@ -63,17 +61,31 @@ class ToDoDetail(DetailView):
 
 class TaskCreate(CreateView):
     model = ToDoList
-    fields = '__all__'
+    fields = ['Subject_Code', 'task', 'description', 'deadline', 'perfect']
     template_name = 'todolist/task_form.html'
     success_url = reverse_lazy('teacher_tasks')
+
+    def form_valid(self, form):
+        # Save the form instance
+        response = super().form_valid(form)
+        # Get the subject code from the form
+        subject_code = form.cleaned_data['Subject_Code']
+        # Retrieve users under the selected subject
+        users = CustomUser.objects.filter(subjects__Subject_Code=subject_code)
+        # Assign the task to the retrieved users
+        for user in users:
+            self.object.users.add(user)
+        return response
 
 
 
 class TaskUpdate(UpdateView):
     model = ToDoList
-    fields = ['subject', 'task', 'description', 'status', 'deadline']
+    fields = ['Subject_Code', 'task', 'description', 'status', 'deadline', 'score', 'perfect']
     template_name = 'todolist/task_form.html'
     success_url = reverse_lazy('teacher_tasks')
+
+    
 
 
 class DeleteTask(DeleteView):
@@ -83,4 +95,39 @@ class DeleteTask(DeleteView):
     success_url = reverse_lazy('teacher_tasks')
 
 
+
+class ClassCreate(CreateView):
+    model = Subjects
+    context_object_name = 'class'
+    fields = '__all__'
+    template_name = 'todolist/CreateClass.html'
+    success_url = reverse_lazy('dashboard')
+
+    def get_form(self, form_class=None):
+        form = super().get_form(form_class)
+        users_queryset = CustomUser.objects.filter(is_student=True)
+        form.fields['users'] = forms.ModelMultipleChoiceField(
+            queryset=users_queryset,
+            widget=forms.CheckboxSelectMultiple,
+            required=False
+        )
+        return form
+
+    def form_valid(self, form):
+        # Save the form instance
+        response = super().form_valid(form)
+        # Add selected users to the task
+        self.object.users.set(form.cleaned_data['users'])
+        return response
+
+
+
+class ClassView(ListView):
+    model = Subjects
+    context_object_name = 'class'
+    template_name = 'todolist/ClassView.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['class'] = context['class'].filter(user=self.request.user)
 

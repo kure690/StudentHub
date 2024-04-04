@@ -26,7 +26,8 @@ from django.contrib.auth.decorators import login_required
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 from django.http import Http404
-from ToDoList.views import ToDo
+from ToDoList.views import ToDo, ClassView
+
 
 
 # Create your views here.
@@ -115,11 +116,15 @@ def dashboard(request):
     role = 'teacher' if request.user.is_teacher else 'student'
     todo_view = ToDo()
     tasks = todo_view.get_queryset().filter(user=request.user)
+    class_view = ClassView()
+    subject = class_view.get_queryset()
+    print(subject)
+    print
     username = request.user.username
     id = request.user.id
     pk = request.user.pk
     if role == 'teacher':
-        return render(request, "teacherdashboard/dashboard.html", {'username': username, 'id': id, 'pk': pk, 'tasks': tasks})
+        return render(request, "teacherdashboard/dashboard.html", {'username': username, 'id': id, 'pk': pk, 'tasks': tasks, 'subjects': subject})
     
     elif role == 'student':
         return render(request, "studentdashboard/dashboard.html", {'username': username, 'id': id, 'pk': pk, 'tasks': tasks})

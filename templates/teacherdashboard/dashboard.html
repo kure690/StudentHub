@@ -40,17 +40,10 @@
       <h3 class="card-title"><a href="{% url 'teacher_tasks' %}" class="to-do-link" style="text-decoration: none; color: #00060c;">To Do List</a></h3>
 
       <table style="width:100%;">
+          {% for subject in subjects %}
           <tr>
-              <th style="text-align: left;">Teacher</th>
-              <th style="text-align: left;">Items</th>
-              <th style="text-align: left;">Deadline</th>
-          </tr>
-          {% for task in tasks %}
-          <tr>
-              <td style="text-align: left; word-wrap: break-word;">{{ task.subject }}</td>
-              <td style="text-align: left; word-wrap: break-word;">{{ task.task }}</td>
-              <td style="text-align: left; word-wrap: break-word;">{{ task.deadline|date:"m/d/y" }}</td>
-          </tr>
+              <td style="text-align: left; word-wrap: break-word;">{{ subject.Subject_Name }}</td>
+              <td style="text-align: left; word-wrap: break-word;">{{ subject.Subject_Code }}</td>
           {% empty %}
           <tr>
               <td colspan="4" style="text-align: left;">No items in list</td>
@@ -58,6 +51,8 @@
           {% endfor %}
       </table>
     </div>
+
+    
   
   </div>
   
@@ -76,6 +71,7 @@
         box-shadow: 0 0 50px rgba(0, 0, 0, 0.1), 0 0 100px rgba(0, 0, 0, 0.2);
         text-align: center;
     ">
+    <a href="{% url 'Class_create' %}">Create Class</a>
     </div>
   </div>
 </div>
