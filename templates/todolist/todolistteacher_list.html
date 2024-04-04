@@ -13,6 +13,7 @@
       background-color: #fcf0c1;
       margin: 0;
       position: relative;
+      overflow: hidden;
     }
     .container {
       max-width: 1200px;
@@ -22,12 +23,13 @@
       border-radius: 8px;
       box-shadow: 0 0 50px rgba(0, 0, 0, 0.1), 0 0 100px rgba(0, 0, 0, 0.2);
       position: absolute;
-    top: 0; /* Position container at the top of the page */
-    left: 50%; /* Center horizontally */
-    transform: translateX(-50%);
-    width: calc(100% - 40px);/* Center horizontally */
-
-    }
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: calc(100% - 40px);
+      max-height: calc(100vh - 40px); 
+      overflow-y: auto; 
+}
     .sidebar {
       position: fixed;
       top: 0;
@@ -117,7 +119,7 @@
 <div class="container">
   <h1 class="title">My To Do List</h1>
   <a href="{% url 'dashboard' %}" class="link">Go back</a>
-  <!-- <a href="{% url 'task-create' %}" class="link">Add Task</a> -->
+  <a href="{% url 'task-create' %}" class="link">Add Task</a>
 
   <form method="GET" class="form-container">
     <input type="text" name="search area" class="search-input" placeholder="Search" value="{{ search_input }}">
@@ -126,14 +128,20 @@
 
   <table>
     <tr>
+      <th>Student</th>
       <th>Subjects</th>
       <th>Tasks</th>
       <th>Deadline</th>
       <th>Status</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
       
     </tr>
     {% for task in tasks %}
     <tr>
+      <td>{{ task.user.first_name }} {{ task.user.last_name }}</td>
       <td>{{ task.subject }}</td>
       <td>{{ task.task }}</td>
       <td>{{ task.deadline|date:"m/d/y" }}</td>

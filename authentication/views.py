@@ -95,6 +95,7 @@ def signin(request):
 
         if user is not None:
             login(request, user)
+
             return redirect('dashboard')
 
         else:
@@ -111,13 +112,17 @@ def signout(request):
 
 @login_required
 def dashboard(request):
+    role = 'teacher' if request.user.is_teacher else 'student'
     todo_view = ToDo()
     tasks = todo_view.get_queryset().filter(user=request.user)
     username = request.user.username
     id = request.user.id
     pk = request.user.pk
-
-    return render(request, "studentdashboard/dashboard.html", {'username': username, 'id': id, 'pk': pk, 'tasks': tasks})
+    if role == 'teacher':
+        return render(request, "teacherdashboard/dashboard.html", {'username': username, 'id': id, 'pk': pk, 'tasks': tasks})
+    
+    elif role == 'student':
+        return render(request, "studentdashboard/dashboard.html", {'username': username, 'id': id, 'pk': pk, 'tasks': tasks})
 
 class InfoUpdate(LoginRequiredMixin, UpdateView):
     model = CustomUser

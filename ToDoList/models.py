@@ -15,3 +15,9 @@ class ToDoList(models.Model):
     
     class Meta:
         ordering =['status']
+
+class Subjects(models.Model):
+    Subject_Name = models.CharField(max_length=100)
+    Subject_Code = models.CharField(max_length=100)
+    User
+
