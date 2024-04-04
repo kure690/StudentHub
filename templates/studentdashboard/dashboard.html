@@ -36,28 +36,31 @@
       background-color: #fff9e1;
       border-radius: 20px;
   ">
-    <div class="card-body">
-      <h3 class="card-title">To Do List</h3>
-      <table>
-        <tr>
-            <th>Subjects</th>
-            <th>Items</th>
-            <th>Deadline</th>
-        </tr>
-        {% for task in tasks %}
-        <tr>
-            <td>{{ task.subject }}</td>
-            <td>{{ task.task }}</td>
-            <td>{{ task.deadline }}</td>
-            <td><a href="{% url 'task' task.id %}">View</a></td>
-        </tr>
-        {% empty %}
-        <h3>No items in list</h3>
-        {% endfor %}
-    </table>
+    <div class="card-body"  style="margin: 20px;">
+      <h3 class="card-title"><a href="{% url 'tasks' %}" class="to-do-link" style="text-decoration: none; color: #00060c;">To Do List</a></h3>
+
+      <table style="width:100%;">
+          <tr>
+              <th style="text-align: left;">Subjects</th>
+              <th style="text-align: left;">Items</th>
+              <th style="text-align: left;">Deadline</th>
+          </tr>
+          {% for task in tasks %}
+          <tr>
+              <td style="text-align: left; word-wrap: break-word;">{{ task.subject }}</td>
+              <td style="text-align: left; word-wrap: break-word;">{{ task.task }}</td>
+              <td style="text-align: left; word-wrap: break-word;">{{ task.deadline|date:"m/d/y" }}</td>
+          </tr>
+          {% empty %}
+          <tr>
+              <td colspan="4" style="text-align: left;">No items in list</td>
+          </tr>
+          {% endfor %}
+      </table>
     </div>
+  
   </div>
-  <a href="{% url 'tasks' %}">To Do List</a>
+  
 
   <!-- Your dashboard content goes here -->
   <div style="

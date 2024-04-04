@@ -21,6 +21,13 @@ class ToDo(LoginRequiredMixin, ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['tasks'] = context['tasks'].filter(user=self.request.user)
+
+        search_input = self.request.GET.get('search area') or ''
+        if search_input:
+            context['tasks']=context['tasks'].filter(subject__icontains=search_input)
+
+        context['search_input']=search_input
+        
         return context
     
 
@@ -32,7 +39,7 @@ class ToDoDetail(DetailView):
 
 class TaskCreate(CreateView):
     model = ToDoList
-    fields = '__all__'
+    fields = ['subject', 'task', 'description', 'status', 'deadline']
     template_name = 'todolist/task_form.html'
     success_url = reverse_lazy('tasks')
 
@@ -43,7 +50,7 @@ class TaskCreate(CreateView):
 
 class TaskUpdate(UpdateView):
     model = ToDoList
-    fields = '__all__'
+    fields = ['subject', 'task', 'description', 'status', 'deadline']
     template_name = 'todolist/task_form.html'
     success_url = reverse_lazy('tasks')
 
