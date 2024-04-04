@@ -28,8 +28,8 @@
 
   <!-- Sample Card -->
   <div class="card" style="
-      width: 18rem;
-      height: 20rem;
+      width: 23rem;
+      height: 25rem;
       margin-top: 20px;
       float: left;
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -37,25 +37,27 @@
       border-radius: 20px;
   ">
     <div class="card-body">
-      <h5 class="card-title">Sample Subject</h5>
+      <h3 class="card-title">To Do List</h3>
       <table>
         <tr>
+            <th>Subjects</th>
             <th>Items</th>
-            <th></th>
-            <th></th>
+            <th>Deadline</th>
         </tr>
         {% for task in tasks %}
         <tr>
+            <td>{{ task.subject }}</td>
             <td>{{ task.task }}</td>
+            <td>{{ task.deadline }}</td>
             <td><a href="{% url 'task' task.id %}">View</a></td>
         </tr>
         {% empty %}
         <h3>No items in list</h3>
         {% endfor %}
     </table>
-      <a href="#" class="btn btn-primary">Learn More</a>
     </div>
   </div>
+  <a href="{% url 'tasks' %}">To Do List</a>
 
   <!-- Your dashboard content goes here -->
   <div style="
@@ -71,22 +73,6 @@
         box-shadow: 0 0 50px rgba(0, 0, 0, 0.1), 0 0 100px rgba(0, 0, 0, 0.2);
         text-align: center;
     ">
-      <!-- User image -->
-      <img src="{% static 'user.png' %}" alt="User Image">
-      <!-- Display the first name here -->
-      <button
-type="changepass"
-name="changepass_button"
-style="
-background-color: #fff394;
-border: 1px solid #fdffc9;
-color: #000000; 
-padding: 5px;
-cursor: pointer;
-border-radius: 5px;
-box-shadow: 0 0 30px rgba(255, 255, 255, 0.8);">
-<a href="{% url 'ChangePassword' %}" style="text-decoration: none; color: #000000;">Change Password</a> 
-      <p>Welcome, {{ username }}</p>
     </div>
   </div>
 </div>

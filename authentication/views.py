@@ -25,6 +25,8 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
+from django.http import Http404
+from ToDoList.views import ToDo
 
 
 # Create your views here.
@@ -109,28 +111,43 @@ def signout(request):
 
 @login_required
 def dashboard(request):
+    todo_view = ToDo()
+    tasks = todo_view.get_queryset().filter(user=request.user)
     username = request.user.username
-    enrolled_subjects = ["Math", "English", "Science"]  # Replace with actual enrolled subjects data
+    id = request.user.id
+    pk = request.user.pk
 
-    return render(request, "studentdashboard/dashboard.html", {'username': username, 'enrolled_subjects': enrolled_subjects})
+    return render(request, "studentdashboard/dashboard.html", {'username': username, 'id': id, 'pk': pk, 'tasks': tasks})
 
-class InfoUpdate(UpdateView):
+class InfoUpdate(LoginRequiredMixin, UpdateView):
     model = CustomUser
     fields = ['first_name', 'last_name', 'email']
     template_name = 'authentication/editprofile.html'
     success_url = reverse_lazy('dashboard')
 
+    def get_object(self, queryset=None):
+        # Get the object being edited
+        obj = super().get_object(queryset)
+
+        # Check if the current user is the owner of the profile being edited
+        if obj != self.request.user:
+            raise Http404("You are not allowed to access this page.")
+        
+        return obj
+
+@login_required
 def Change_Password(request):
     if request.method=='POST':
         form = PasswordChangeForm(user=request.user,data=request.POST)
         if form.is_valid():
             form.save()
             update_session_auth_hash(request,form.user)
-            messages.success(request, '')
+            messages.success(request, 'Your password has been successfully changed.')
             return redirect('dashboard')
     else:
         form = PasswordChangeForm(user=request.user)
-    return render (request, 'authentication/changepass.html',{'form': form})
+    pk=request.user.pk
+    return render(request, 'authentication/changepass.html', {'form': form, 'pk': pk})
 # def passreset_view(request):
 #     if request.method == "POST":
 #         # Check if the email has already been submitted for password reset
@@ -210,23 +227,6 @@ def Change_Password(request):
 #     # Send email
 #     send_mail(subject, message, from_email, [email])
 # #def passresetdone(request):
-    
-def changepass(request):
-    if request.method == "POST":
-        form = PasswordChangeForm(request.user, request.POST)
-        if form.is_valid():
-            user = form.save()
-            # Update the user's session to reflect the new password
-            update_session_auth_hash(request, user)
-            messages.success(request, "Your password has been successfully changed.")
-            return redirect('home')  # Redirect to the homepage or wherever you want
-        else:
-            # If the form is not valid, show the form with errors
-            messages.error(request, "Please correct the errors below.")
-    else:
-        # If it's a GET request, initialize an empty form
-        form = PasswordChangeForm(request.user)
-    return render(request, 'authentication/changepass.html', {'form': form})
 
 # def resetpass(request):
 #     return render(request, 'authentication/resetpass.html')
@@ -234,15 +234,6 @@ def changepass(request):
 
     
 
-     
-
-
-#     # #Welcome Email
-#     # subject ="Welcome to StudentHub!!"
-#     # message ="Hello and Welcome to Student Hub!"
-#     # from_email = settings.EMAIL_HOST_USER
-#     # to_list = [CustomUser.email]
-#     # send_mail(subject, message, from_email, to_list, fail_silently=False)
 
 
 #     # Your logic here

@@ -127,13 +127,14 @@
       <!-- User information and logo (moved more to the right) -->
       <div style="display: flex; align-items: center; margin-right: 20px">
         <!-- Display user's name beside the profile logo -->
-        <span style="margin-right: 10px; font-size: 14px">{{ user_name }}</span>
         <!-- Profile Logo moved a little more to the right -->
-        {% if user.is_teacher %}
+        <!-- {% if user.is_teacher %}
         <p style="padding: 10">Teacher</p>
         {% elif user.is_student %}
         <p style="padding: 10">Student</p>
-        {% endif %}
+        {% endif %} -->
+        <span style="margin-right: 10px; font-size: 14px">{{ username }}</span>
+
         <img
           src="{% static 'imgs/user.png' %}"
           alt="Profile Logo"
@@ -143,8 +144,10 @@
         <div class="dropdown">
           <button class="dropbtn">Profile</button>
           <div class="dropdown-content">
-            <a href="">Edit Profile</a>
+            <a href="{% url 'editprofile' pk=pk %}">Edit Profile</a>
             <a href="{% url 'signout' %}">Sign Out</a>
+
+
           </div>
         </div>
       </div>
