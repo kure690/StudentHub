@@ -132,6 +132,7 @@
       <th>Tasks</th>
       <th>Deadline</th>
       <th>Status</th>
+      <th></th>
       
     </tr>
     {% for task in tasks %}
@@ -147,6 +148,7 @@
         <p>Pending</p>
      {% endif %}
     </td>
+    <td><a href="{% url 'task' task.id %}" class="action-link">View</a></td>
       <!-- <td><a href="{% url 'task' task.id %}" class="action-link">View</a></td>
       <td><a href="{% url 'task-update' task.id %}" class="action-link">Edit</a></td>
       <td><a href="{% url 'task-delete' task.id %}" class="action-link">Delete</a></td>
@@ -159,6 +161,9 @@
     {% endfor %}
   </table>
 </div>
+<script>
+  
+</script>
 
 </body>
 </html>

@@ -72,7 +72,16 @@ class TaskCreate(CreateView):
         return context
 
     def form_valid(self, form):
+        # Set the Subject_Code_id for the task
         form.instance.Subject_Code_id = self.kwargs.get('pk')
+        
+        # Assign the task to students under the class
+        subject = form.instance.Subject_Code
+        users = subject.users.all()
+        for user in users:
+            form.instance.user = user
+            form.save()
+
         return super().form_valid(form)
     
     def get_success_url(self):
@@ -138,6 +147,7 @@ class ClassUpdate(UpdateView):
     fields = '__all__'
     template_name = 'todolist/ClassAdd.html'
     success_url = reverse_lazy('teacher_tasks')
+    
 
 class ClassDetails(DetailView):
     model = Subjects
@@ -162,6 +172,18 @@ class AddStudent(UpdateView):
         success_url = reverse_lazy('class_details', kwargs={'pk': subject_pk})
         return success_url
     
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['pk'] = self.kwargs.get('pk')
+        return context
+    
+
+class DeleteClass(DeleteView):
+    model = Subjects
+    context_object_name = 'subject'
+    template_name = 'todolist/class_delete.html'
+    success_url = reverse_lazy('dashboard')
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['pk'] = self.kwargs.get('pk')

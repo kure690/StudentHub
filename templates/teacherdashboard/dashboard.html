@@ -39,10 +39,10 @@
   ">
     <div class="card-body"  style="margin: 20px;">
       <h3 class="card-title"><a href="{% url 'class_details' pk=subject.pk %}" class="to-do-link" style="text-decoration: none; color: #00060c;">{{ subject.Subject_Name }}</a></h3>
+      <h4>{{ subject.Subject_Code }}</h4>
 
       <table style="width:100%;">
           <tr>
-              <td style="text-align: left; word-wrap: break-word;">{{ subject.Subject_Name }}</td>
               <td style="text-align: left; word-wrap: break-word;">{{ subject.Subject_Code }}</td>
           </tr>
       </table>

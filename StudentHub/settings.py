@@ -131,6 +131,7 @@ STATICFILES_DIRS = [
     BASE_DIR / "static",
 ]
 
+
 # Load environment variables from .env file
 load_dotenv()
 
