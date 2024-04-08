@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Class Details</title>
+</head>
+<body>
+    <a href="{% url 'dashboard' %}">Go back</a>
+    <h1>Class Details</h1>
+    <h2>{{ subject.Subject_Name }}</h2>
+    <p>Subject Code: {{ subject.Subject_Code }}</p>
+    
+    <h2>Students</h2>
+    <ul>
+        {% for student in subject.users.all %}
+            <li>{{ student }}</li>
+        {% empty %}
+            <li>No students in this class</li>
+        {% endfor %}
+    </ul>
+    
+    <h2>Tasks</h2>
+    <ul>
+        {% for task in tasks %}
+            <li>{{ task.task }}</li>
+            <!-- Add more task details here as needed -->
+        {% empty %}
+            <li>No tasks associated with this subject</li>
+        {% endfor %}
+    </ul>
+    
+    <a href="{% url 'add_student' pk=subject.pk %}">Add Student</a>
+    <a href="{% url 'task-create' pk=subject.pk %}">Create Task</a>
+    <!-- Add more details as needed -->
+</body>
+</html>

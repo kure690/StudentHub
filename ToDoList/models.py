@@ -18,7 +18,6 @@ class ToDoList(models.Model):
     deadline = models.DateField()
     score = models.IntegerField(default=0)
     perfect = models.IntegerField(default=0)
-    users = models.ManyToManyField('authentication.CustomUser', related_name='tasks')
 
     def __str__(self):
         return self.task

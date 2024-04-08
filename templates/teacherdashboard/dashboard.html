@@ -27,6 +27,7 @@
   {% endfor %}
 
   <!-- Sample Card -->
+  {% for subject in subjects %}
   <div class="card" style="
       width: 23rem;
       height: 25rem;
@@ -37,20 +38,19 @@
       border-radius: 20px;
   ">
     <div class="card-body"  style="margin: 20px;">
-      <h3 class="card-title"><a href="{% url 'teacher_tasks' %}" class="to-do-link" style="text-decoration: none; color: #00060c;">To Do List</a></h3>
+      <h3 class="card-title"><a href="{% url 'class_details' pk=subject.pk %}" class="to-do-link" style="text-decoration: none; color: #00060c;">{{ subject.Subject_Name }}</a></h3>
 
       <table style="width:100%;">
-          {% for subject in subjects %}
           <tr>
               <td style="text-align: left; word-wrap: break-word;">{{ subject.Subject_Name }}</td>
               <td style="text-align: left; word-wrap: break-word;">{{ subject.Subject_Code }}</td>
-          {% empty %}
-          <tr>
-              <td colspan="4" style="text-align: left;">No items in list</td>
           </tr>
-          {% endfor %}
       </table>
     </div>
+  </div>
+  {% endfor %}
+
+    
 
     
   

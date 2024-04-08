@@ -1,3 +1,4 @@
+from django.shortcuts import render, redirect
 from django.views.generic.list import ListView
 from django.views.generic.detail import DetailView
 from .models import ToDoList, Subjects
@@ -23,11 +24,12 @@ class ToDo(LoginRequiredMixin, ListView):
 
         search_input = self.request.GET.get('search area') or ''
         if search_input:
-            context['tasks']=context['tasks'].filter(subject__icontains=search_input)
+            context['tasks'] = context['tasks'].filter(Subject_Code__Subject_Code__icontains=search_input)
 
         context['search_input']=search_input
         
         return context
+    
     
 class TeacherToDo(LoginRequiredMixin, UserPassesTestMixin, ListView):
     model = ToDoList
@@ -61,21 +63,24 @@ class ToDoDetail(DetailView):
 
 class TaskCreate(CreateView):
     model = ToDoList
-    fields = ['Subject_Code', 'task', 'description', 'deadline', 'perfect']
+    fields = ['task', 'description', 'deadline', 'perfect']
     template_name = 'todolist/task_form.html'
-    success_url = reverse_lazy('teacher_tasks')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['pk'] = self.kwargs.get('pk')
+        return context
 
     def form_valid(self, form):
-        # Save the form instance
-        response = super().form_valid(form)
-        # Get the subject code from the form
-        subject_code = form.cleaned_data['Subject_Code']
-        # Retrieve users under the selected subject
-        users = CustomUser.objects.filter(subjects__Subject_Code=subject_code)
-        # Assign the task to the retrieved users
-        for user in users:
-            self.object.users.add(user)
-        return response
+        form.instance.Subject_Code_id = self.kwargs.get('pk')
+        return super().form_valid(form)
+    
+    def get_success_url(self):
+        # Get the primary key (pk) of the subject object
+        subject_pk = self.kwargs['pk']
+        # Generate the success URL with the subject's pk
+        success_url = reverse_lazy('class_details', kwargs={'pk': subject_pk})
+        return success_url
 
 
 
@@ -119,15 +124,45 @@ class ClassCreate(CreateView):
         # Add selected users to the task
         self.object.users.set(form.cleaned_data['users'])
         return response
-
-
-
+    
 class ClassView(ListView):
     model = Subjects
     context_object_name = 'class'
     template_name = 'todolist/ClassView.html'
 
+    def get_queryset(self):
+        return Subjects.objects.all()
+
+class ClassUpdate(UpdateView):
+    model = Subjects
+    fields = '__all__'
+    template_name = 'todolist/ClassAdd.html'
+    success_url = reverse_lazy('teacher_tasks')
+
+class ClassDetails(DetailView):
+    model = Subjects
+    context_object_name = 'subject'  # Change context_object_name to match what you're using in the template
+    template_name = 'todolist/ClassDetails.html'
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['class'] = context['class'].filter(user=self.request.user)
+        subject = self.get_object()
+        context['tasks'] = ToDoList.objects.filter(Subject_Code=subject)
+        return context
+    
+class AddStudent(UpdateView):
+    model = Subjects
+    fields = ['users']
+    template_name = 'todolist/ClassAdd.html'
 
+    def get_success_url(self):
+        # Get the primary key (pk) of the subject object
+        subject_pk = self.kwargs['pk']
+        # Generate the success URL with the subject's pk
+        success_url = reverse_lazy('class_details', kwargs={'pk': subject_pk})
+        return success_url
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['pk'] = self.kwargs.get('pk')
+        return context

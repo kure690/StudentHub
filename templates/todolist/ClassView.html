@@ -6,10 +6,14 @@
     </tr>
     {% for subject in class %}
     <tr>
-        <h3>{{ subject.Subject_Name }}</h3>
-        <h3>{{ subject.Subject_Code }}</h3>
+        <td>{{ subject.Subject_Name }}</td>
+        <td><a href="" class="action-link">View</a></td>
+        <td><a href="{% url 'class_update' pk=subject.id %}">Update</a></td>
+        <td><a href="" class="action-link">Delete</a></td>
     </tr>
     {% empty %}
-        <h3>No item</h3>
+    <tr>
+        <td colspan="4"><h3>No items</h3></td>
+    </tr>
     {% endfor %}
 </table>
