@@ -71,10 +71,19 @@
             box-sizing: border-box;
             font-size: 12px;
         }
+
+        .go-back {
+            position: absolute; 
+            top: 20px; 
+            left: 20px; 
+            color: black; 
+            text-decoration: none;
+            font-size: 16px; 
+        }
     </style>
 
 <body>
-<a href="{% url 'dashboard' %}">Go back</a>
+<a href="{% url 'dashboard' %}" class="go-back">Go back</a>
 <div class="container">
 
 
