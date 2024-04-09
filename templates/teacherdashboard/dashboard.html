@@ -1,0 +1,78 @@
+
+<!-- templates/dashboard/dashboard.html -->
+{% extends 'base.html' %} 
+{% load static %}
+{% block content %}
+<div style="
+    background-color: rgba(231, 209, 168, 0.8);
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 0 50px rgba(0, 0, 0, 0.1), 0 0 100px rgba(0, 0, 0, 0.2);
+    text-align: center;
+">
+  {% for message in messages %}
+  <div class="alert alert-{{ message.tags }} alert-dismissable fade show" role="alert" style="
+      background-color: rgba(252, 240, 193, 0.8);
+      color: #333;
+      padding: 8px;
+      margin-bottom: 8px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+  ">
+    <strong>Message:</strong> {{ message }}
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  {% endfor %}
+
+  <!-- Sample Card -->
+  {% for subject in subjects %}
+  <div class="card" style="
+      width: 23rem;
+      height: 25rem;
+      margin-top: 20px;
+      float: left;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      background-color: #fff9e1;
+      border-radius: 20px;
+  ">
+    <div class="card-body"  style="margin: 20px;">
+      <h3 class="card-title"><a href="{% url 'class_details' pk=subject.pk %}" class="to-do-link" style="text-decoration: none; color: #00060c;">{{ subject.Subject_Name }}</a></h3>
+      <h4>{{ subject.Subject_Code }}</h4>
+
+      <table style="width:100%;">
+          <tr>
+              <td style="text-align: left; word-wrap: break-word;">{{ subject.Subject_Code }}</td>
+          </tr>
+      </table>
+    </div>
+  </div>
+  {% endfor %}
+
+    
+
+    
+  
+  </div>
+  
+
+  <!-- Your dashboard content goes here -->
+  <div style="
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+  ">
+    <div style="
+        background-color: rgba(231, 209, 168, 0.8);
+        padding: 15px;
+        border-radius: 8px;
+        box-shadow: 0 0 50px rgba(0, 0, 0, 0.1), 0 0 100px rgba(0, 0, 0, 0.2);
+        text-align: center;
+    ">
+    <a href="{% url 'Class_create' %}">Create Class</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

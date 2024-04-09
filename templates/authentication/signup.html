@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>Authentication</title>
+    <meta name="description" content="" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="{% static 'authentication/style.css' %}" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+      integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+  </head>
+  <body
+    style="
+      background-color: #fcf0c1;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      font-family: 'Jua', sans-serif;
+    "
+  >
+    <button
+      class="home-button"
+      onclick="window.location.href='{% url 'home' %}';"
+      style="
+        background-color: #fcf0c1;
+        color: #aeb5b0;
+        border: none;
+        outline: none;
+        padding: 8px;
+        border-radius: 10px;
+        font-size: 20px;
+        position: absolute;
+        top: 0px;
+        left: 0px;
+        cursor: pointer;
+      "
+    >
+      <i class="fa-solid fa-house"></i>
+    </button>
+
+    <div
+      style="
+        background-color: rgba(231, 209, 168, 0.8);
+        padding: 15px;
+        border-radius: 8px;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5), 0 0 40px rgba(0, 0, 0, 0.2);
+        text-align: center;
+      "
+    >
+    {% for message in messages %}
+    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert" style="background-color: rgba(252, 240, 193, 0.8); color: #333; padding: 8px; margin-bottom: 8px; border: 1px solid #ddd; border-radius: 5px;">
+        <strong>Message:</strong> {{ message }}
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    {% endfor %}
+    
+      <h3 style="color: #333">Sign Up</h3>
+
+      <form action="/signup" method="post" style="margin-top: 15px">
+        {% csrf_token %}
+        <input
+          type="text"
+          id="username"
+          name="username"
+          placeholder="Create a username"
+          required
+          style="
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-bottom: 8px;
+            font-family: 'Jua', sans-serif;
+            box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.5);
+          "
+        /><br />
+
+        <input
+          type="text"
+          id="fname"
+          name="fname"
+          placeholder="First Name"
+          required
+          style="
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-bottom: 8px;
+            font-family: 'Jua', sans-serif;
+            box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.5);
+          "
+        /><br />
+        <input
+          type="text"
+          id="lname"
+          name="lname"
+          placeholder="Last Name"
+          required
+          style="
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-bottom: 8px;
+            font-family: 'Jua', sans-serif;
+            box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.5);
+          "
+        /><br />
+        <input
+          type="email"
+          id="email"
+          name="email"
+          placeholder="Enter Your Email Address"
+          required
+          style="
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-bottom: 8px;
+            font-family: 'Jua', sans-serif;
+            box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.5);
+          "
+        /><br />
+        <input
+          type="password"
+          id="password1"
+          name="password1"
+          placeholder="Create a Password"
+          required
+          style="
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-bottom: 8px;
+            font-family: 'Jua', sans-serif;
+            box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.5);
+          "
+        /><br />
+        <input
+          type="password"
+          id="password2"
+          name="password2"
+          placeholder="Confirm Your Password"
+          required
+          style="
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-bottom: 8px;
+            font-family: 'Jua', sans-serif;
+            box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.5);
+          "
+        /><br />
+        <input
+          type="radio"
+          id="student"
+          name="role"
+          value="student"
+          required
+          style="margin-bottom: 8px"
+        />
+        <label for="student">Student</label>
+        <br />
+
+        <input
+          type="radio"
+          id="teacher"
+          name="role"
+          value="teacher"
+          required
+          style="margin-bottom: 8px"
+        />
+        <label for="teacher">Teacher</label>
+        <br />
+
+        <button
+          type="submit"
+          style="
+            background-color: #007bff;
+            color: #fff;
+            padding: 8px;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            box-shadow: 0 0 30px rgba(255, 255, 255, 0.8);
+          "
+        >
+          Sign Up
+        </button>
+      </form>
+    </div>
+    <script src="" async defer></script>
+  </body>
+</html>

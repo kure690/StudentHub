@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Profile</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jua&display=swap"/>
+
+    <style>
+        body {
+            background-color: #fcf0c1;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            font-family: 'Jua', sans-serif;
+        }
+
+        .container {
+            background-color: rgba(231, 209, 168, 0.8);
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 50px rgba(0, 0, 0, 0.1), 0 0 100px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            width: 50%;
+        }
+
+        input {
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-bottom: 8px;
+            box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.5);
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        input[type="file"] {
+            padding: 10px;
+            border: 2px;
+            border-radius: 5px;
+            font-size: 12px;
+            cursor: pointer;
+            width: 200px;
+            display: block;
+            margin: 0 auto;
+        }
+
+
+        .input-group label {
+            display: block;
+            margin-bottom: 5px;
+            text-align: center;
+        }
+
+        .input-group-inline {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .input-group-inline .input-group {
+            width: 48%;
+        }
+
+        .input-group select {
+            padding: 7px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            width: 50%;
+            box-sizing: border-box;
+            font-size: 12px;
+        }
+
+        .go-back {
+            position: absolute; 
+            top: 20px; 
+            left: 20px; 
+            color: black; 
+            text-decoration: none;
+            font-size: 16px; 
+        }
+    </style>
+
+<body>
+<a href="{% url 'dashboard' %}" class="go-back">Go back</a>
+<div class="container">
+
+
+    <h2>EDIT PROFILE</h2>
+
+    <button
+type="changepass"
+name="changepass_button"
+style="
+background-color: #fff394;
+border: 1px solid #fdffc9;
+color: #000000; 
+padding: 5px;
+cursor: pointer;
+border-radius: 5px;
+box-shadow: 0 0 30px rgba(255, 255, 255, 0.8);">
+<a href="{% url 'ChangePassword' %}" style="text-decoration: none; color: #000000;">Change Password</a> 
+
+</button>
+
+    <form method="POST" action="">
+    {% csrf_token %}
+    <div class="input-group-inline">
+        <div class="input-group">
+            <label for="{{ form.fname.id_for_label }}">First Name: </label>
+            {{ form.first_name }}
+        </div>
+        <div class="input-group">
+            <label for="{{ form.lname.id_for_label }}">Last Name: </label>
+            {{ form.last_name }}
+        </div>
+    </div>
+    <div class="input-group">
+        <label for="{{ form.email.id_for_label }}">Email Address: </label>
+        {{ form.email }}
+    </div>
+
+    <input type="submit" name="edit_button" value="Save Changes" style="background-color: #007bff; color: #fff; padding: 5px; cursor: pointer; border-radius: 5px; box-shadow: 0 0 30px rgba(255, 255, 255, 0.8); border: none; text-decoration: none; width: 120px;">
+
+</form>  
+    
+
+</div>
+
+
+
+</body>
+

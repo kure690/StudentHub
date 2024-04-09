@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>Password Reset Confirmation</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jua&display=swap"/>
+    <!-- Add your CSS links or styles here -->
+    <style>
+        body {
+            background-color: #fcf0c1;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            font-family: 'Jua', sans-serif;
+        }
+
+        .container {
+            background-color: rgba(231, 209, 168, 0.8);
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 50px rgba(0, 0, 0, 0.1), 0 0 100px rgba(0, 0, 0, 0.2);
+            text-align: left;
+            width: 50%;
+        }
+    </style>
+</head>
+<body>
+    <a href="{% url 'editprofile' pk=pk %}">Go back</a>
+    <div class="container">
+        <h2>CHANGE PASSWORD</h2>
+        <p>Please enter your new password below:</p>
+        <form method="POST">
+            {% csrf_token %}
+            <div>
+                <label for="id_old_password">Old Password:</label>
+                <input type="password" id="id_old_password" name="old_password">
+                <br>
+                <!-- Render error messages for this field -->
+                {% for error in form.old_password.errors %}
+                    <span style="color: red;">{{ error }}</span><br>
+                {% endfor %}
+            </div>
+            <br>
+            <div>
+                <label for="id_new_password1">New Password:</label>
+                {{ form.new_password1 }}
+                <!-- Render error messages for this field -->
+                <br>
+                {% for error in form.new_password1.errors %}
+                    <span style="color: red;">{{ error }}</span><br>
+                {% endfor %}
+            </div>
+            <div class="password-requirements">
+                <label><input type="checkbox" id="requirement1" disabled> Your password must contain at least 8 characters.</label>
+                <br>
+                <label><input type="checkbox" id="requirement2" disabled> Your password can't be a commonly used password.</label>
+                <br>
+                <label><input type="checkbox" id="requirement3" disabled> Your password can't be entirely numeric.</label>
+            </div>
+            <div>
+                <label for="id_new_password2">Confirm New Password:</label>
+                {{ form.new_password2 }}
+                <!-- Render error messages for this field -->
+                <br>
+                {% for error in form.new_password2.errors %}
+                    <span style="color: red;">{{ error }}</span><br>
+                {% endfor %}
+            </div>
+            <br>
+            <button type="submit"style="
+            background-color: #007bff;
+            color: #fff;
+            padding: 5px;
+            cursor: pointer;
+            border-radius: 5px;
+            box-shadow: 0 0 30px rgba(255, 255, 255, 0.8);">Change Password</button>
+            
+            
+        </form>
+    </div>
+    <script>
+        const idNewPassword1Input = document.getElementById('id_new_password1');
+        const requirements = [
+            document.getElementById('requirement1'),
+            document.getElementById('requirement2'),
+            document.getElementById('requirement3')
+        ];
+
+        idNewPassword1Input.addEventListener('input', function() {
+            const password = idNewPassword1Input.value;
+
+            const meetsRequirements = [
+                password.length >= 8,
+                !commonPasswords.includes(password.toLowerCase()),
+                !(/^\d+$/.test(password))
+            ];
+
+            requirements.forEach((requirement, index) => {
+                requirement.checked = meetsRequirements[index];
+            });
+        });
+
+        idNewPassword1Input.addEventListener('input', function() {
+            if (idNewPassword1Input.value === '') {
+                requirements.forEach(requirement => {
+                    requirement.checked = false;
+                });
+            }
+        });
+
+        const commonPasswords = [
+            'password',
+            '123456',
+            'qwerty',
+            'abc123',
+        ];
+    </script>
+</body>
+
+
+
+
+

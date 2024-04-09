@@ -1,0 +1,19 @@
+<h1>Subject List</h1>
+
+<table>
+    <tr>
+        <th>Class</th>
+    </tr>
+    {% for subject in class %}
+    <tr>
+        <td>{{ subject.Subject_Name }}</td>
+        <td><a href="" class="action-link">View</a></td>
+        <td><a href="{% url 'class_update' pk=subject.id %}">Update</a></td>
+        <td><a href="" class="action-link">Delete</a></td>
+    </tr>
+    {% empty %}
+    <tr>
+        <td colspan="4"><h3>No items</h3></td>
+    </tr>
+    {% endfor %}
+</table>

@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jua&display=swap"/>
+    <title>Class Details</title>
+    <style>
+        body {
+            background-color: #fcf0c1;
+            margin: 0;
+            font-family: 'Jua', sans-serif;
+            padding: 20px;
+            text-align: center;
+        }
+
+        h1 {
+            text-align: center;
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .container, .student-container, .task-container {
+            background-color: rgba(231, 209, 168, 0.8);
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .container {
+            text-align: center;
+        }
+
+        .button-container {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .button-container a {
+            display: inline-block;
+            padding: 10px 20px;
+            margin-right: 10px;
+            background-color: #007bff;
+            color: white;
+            text-decoration: none;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .button-container a:last-child {
+            margin-right: 0;
+        }
+
+        .go-back {
+            position: absolute; 
+            top: 20px; 
+            left: 20px; 
+            color: black; 
+            text-decoration: none;
+            font-size: 16px; 
+        }
+    </style>
+</head>
+
+<body>
+    <a href="{% url 'dashboard' %}" class="go-back">Go back</a>
+    <h1>Class Details</h1>
+    
+    <div class="container">
+        <h2>{{ subject.Subject_Name }}</h2>
+        <p>Subject Code: {{ subject.Subject_Code }}</p>
+    </div>
+
+    <div class="student-container">
+        <h2>Students</h2>
+        <ul>
+            {% for student in subject.users.all %}
+                <li>{{ student }}</li>
+            {% empty %}
+                <li>No students in this class</li>
+            {% endfor %}
+        </ul>
+    </div>
+    
+    <div class="task-container">
+        <h2>Tasks</h2>
+        <ul>
+            {% for task in tasks %}
+                <li>{{ task.task }}</li>
+                <!-- Add more task details here as needed -->
+            {% empty %}
+                <li>No tasks associated with this subject</li>
+            {% endfor %}
+        </ul>
+    </div>
+    
+    <div class="button-container">
+        <a href="{% url 'add_student' pk=subject.pk %}">Add Student</a>
+        <a href="{% url 'task-create' pk=subject.pk %}">Create Task</a>
+        <a href="{% url 'class_delete' pk=subject.pk %}">Delete Class</a>
+    </div>
+</body>
+</html>

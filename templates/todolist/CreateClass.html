@@ -1,0 +1,8 @@
+<h3>Create Class</h3>
+<a href="{% url 'dashboard' %}">Go back</a>
+
+<form method="POST" action="">
+    {% csrf_token %}
+    {{form.as_p}}
+    <input type="submit" value="Submit">
+</form>
