@@ -52,6 +52,9 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    # 'django.contrib.sessions.middleware.SessionMiddleware',
+    # 'django_session_timeout.middleware.SessionTimeoutMiddleware',
+    # 'StudentHub.middleware.AutoLogoutMiddleware',
 ]
 
 ROOT_URLCONF = 'StudentHub.urls'
@@ -142,3 +145,6 @@ EMAIL_PORT = int(os.getenv("EMAIL_PORT"))
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
 EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
+
+SESSION_EXPIRE_SECONDS = 10
+SESSION_EXPIRE_AFTER_LAST_ACTIVITY = True

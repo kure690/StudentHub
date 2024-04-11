@@ -8,6 +8,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.mixins import UserPassesTestMixin
 from authentication.models import CustomUser
 from django import forms
+from collections import OrderedDict
 
 # Create your views here.
 
@@ -61,7 +62,7 @@ class ToDoDetail(DetailView):
     context_object_name = 'data'
     template_name = 'todolist/todolist.html'
 
-class TaskCreate(CreateView):
+class TaskCreate(LoginRequiredMixin, CreateView):
     model = ToDoList
     fields = ['task', 'description', 'deadline', 'perfect']
     template_name = 'todolist/task_form.html'
@@ -75,12 +76,21 @@ class TaskCreate(CreateView):
         # Set the Subject_Code_id for the task
         form.instance.Subject_Code_id = self.kwargs.get('pk')
         
-        # Assign the task to students under the class
+        # Get the users related to the subject code
         subject = form.instance.Subject_Code
         users = subject.users.all()
+        
+        # Create and save a task instance for each user
         for user in users:
-            form.instance.user = user
-            form.save()
+            task = ToDoList.objects.create(
+                Subject_Code=form.instance.Subject_Code,
+                user=user,
+                task=form.cleaned_data['task'],
+                description=form.cleaned_data['description'],
+                status=False,  # Default status to False
+                deadline=form.cleaned_data['deadline'],
+                perfect=form.cleaned_data['perfect']
+            )
 
         return super().form_valid(form)
     
@@ -110,7 +120,7 @@ class DeleteTask(DeleteView):
 
 
 
-class ClassCreate(CreateView):
+class ClassCreate(LoginRequiredMixin, CreateView):
     model = Subjects
     context_object_name = 'class'
     fields = '__all__'
@@ -149,7 +159,7 @@ class ClassUpdate(UpdateView):
     success_url = reverse_lazy('teacher_tasks')
     
 
-class ClassDetails(DetailView):
+class ClassDetails(LoginRequiredMixin, DetailView):
     model = Subjects
     context_object_name = 'subject'  # Change context_object_name to match what you're using in the template
     template_name = 'todolist/ClassDetails.html'
@@ -157,10 +167,21 @@ class ClassDetails(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         subject = self.get_object()
-        context['tasks'] = ToDoList.objects.filter(Subject_Code=subject)
+        
+        # Fetching all tasks related to the subject
+        tasks = ToDoList.objects.filter(Subject_Code=subject)
+        
+        # Using OrderedDict to maintain the order of tasks and remove duplicates
+        unique_tasks = OrderedDict()
+
+        for task in tasks:
+            unique_tasks[task.task] = task
+
+        context['tasks'] = unique_tasks.values()
+
         return context
     
-class AddStudent(UpdateView):
+class AddStudent(LoginRequiredMixin, UpdateView):
     model = Subjects
     fields = ['users']
     template_name = 'todolist/ClassAdd.html'
@@ -178,7 +199,7 @@ class AddStudent(UpdateView):
         return context
     
 
-class DeleteClass(DeleteView):
+class DeleteClass(LoginRequiredMixin, DeleteView):
     model = Subjects
     context_object_name = 'subject'
     template_name = 'todolist/class_delete.html'
