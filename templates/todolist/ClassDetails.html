@@ -62,6 +62,41 @@
             text-decoration: none;
             font-size: 16px; 
         }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            border-radius: 8px;
+        }
+
+        th, td {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+            border-collapse: separate;
+            border-spacing: 0 10px;
+            text-align: center; /* Center content */
+        }
+
+        th {
+            background-color: #f2f2f2;
+            border-radius: 8px;
+            color: gray;
+        }
+
+        td {
+            vertical-align: middle;
+            text-align: center;
+        }
+        
+        tr {
+            vertical-align: middle;
+        }
+
+        .highlight {
+            background-color: #00b4d8;
+            color: white;
+        }
     </style>
 </head>
 
@@ -69,32 +104,39 @@
     <a href="{% url 'dashboard' %}" class="go-back">Go back</a>
     <h1>Class Details</h1>
     
-    <div class="container">
-        <h2>{{ subject.Subject_Name }}</h2>
+    <div class="subject-info">
         <p>Subject Code: {{ subject.Subject_Code }}</p>
+        <p>Subject Name: {{ subject.Subject_Name }}</p>
     </div>
 
-    <div class="student-container">
-        <h2>Students</h2>
-        <ul>
-            {% for student in subject.users.all %}
-                <li>{{ student }}</li>
-            {% empty %}
-                <li>No students in this class</li>
-            {% endfor %}
-        </ul>
-    </div>
-    
-    <div class="task-container">
-        <h2>Tasks</h2>
-        <ul>
-            {% for task in tasks %}
-                <li>{{ task.task }}</li>
-                <!-- Add more task details here as needed -->
-            {% empty %}
-                <li>No tasks associated with this subject</li>
-            {% endfor %}
-        </ul>
+    <div class="container">
+        <table id="class-details">
+            <tr>
+                <th onclick="showColumn(0)">Students</th>
+                <th onclick="showColumn(1)">Tasks</th>
+            </tr>
+            <tr>
+                <td>
+                    <ul>
+                        {% for student in subject.users.all %}
+                            <li>{{ student }}</li>
+                        {% empty %}
+                            <li>No students in this class</li>
+                        {% endfor %}
+                    </ul>
+                </td>
+                <td>
+                    <ul>
+                        {% for task in tasks %}
+                            <li>{{ task.task }}</li>
+                            <!-- Add more task details here as needed -->
+                        {% empty %}
+                            <li>No tasks associated with this subject</li>
+                        {% endfor %}
+                    </ul>
+                </td>
+            </tr>
+        </table>
     </div>
     
     <div class="button-container">
@@ -102,5 +144,45 @@
         <a href="{% url 'task-create' pk=subject.pk %}">Create Task</a>
         <a href="{% url 'class_delete' pk=subject.pk %}">Delete Class</a>
     </div>
+
+    <script>
+        function showColumn(index) {
+            var table = document.getElementById('class-details');
+            var rows = table.getElementsByTagName('tr');
+            
+            // Remove highlight from all cells and column titles
+            var cells = table.getElementsByTagName('td');
+            var headers = table.getElementsByTagName('th');
+            for (var i = 0; i < cells.length; i++) {
+                cells[i].classList.remove('highlight');
+            }
+            for (var i = 0; i < headers.length; i++) {
+                headers[i].classList.remove('highlight');
+            }
+    
+            // Highlight the entire table
+            table.classList.add('highlight');
+    
+            // Highlight the clicked header
+            headers[index].classList.add('highlight');
+            
+            // Hide cells in other columns
+            for (var i = 0; i < rows.length; i++) {
+                var cells = rows[i].getElementsByTagName('td');
+                for (var j = 0; j < cells.length; j++) {
+                    if (j !== index) {
+                        cells[j].style.visibility = 'hidden';
+                    } else {
+                        cells[j].style.visibility = 'visible';
+                    }
+                }
+            }
+        }
+    </script>
+    
+    
+    
+    
+    
 </body>
 </html>

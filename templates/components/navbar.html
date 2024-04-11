@@ -72,7 +72,7 @@
         </div>
 
         <!-- Search Bar centered with Box Shadow (slightly shorter) -->
-        <div style="
+        {% comment %} <div style="
         flex-grow: 1; 
         text-align: center; 
         position: relative">
@@ -81,7 +81,7 @@
             <input type="text" id="search" name="search" placeholder="Search" style="padding-left: 40px; padding: 8px; border: none; border-radius: 5px; box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.1); width: 80%;" />
             <!-- Include the search.png image -->
             <img src="{% static 'imgs/search.png' %}" alt="Search Icon" style="position: absolute; left: 15px; top: 50%; transform: translateY(-50%); width: 20px; height: 20px;" />
-        </div>
+        </div> {% endcomment %}
 
         <!-- User information and logo (moved more to the right) -->
         <div style="display: flex; align-items: center; margin-right: 20px">
