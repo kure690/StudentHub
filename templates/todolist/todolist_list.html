@@ -172,6 +172,8 @@
       <th>Tasks</th>
       <th>Deadline</th>
       <th>Status</th>
+      <th>Score</th>
+      <th>Out of</th>
       <th></th>
     </tr>
     {% for task in tasks %}
@@ -187,6 +189,8 @@
         <p>Pending</p>
      {% endif %}
     </td>
+    <td>{{ task.score }}</td>
+    <td>{{ task.perfect }}</td>
     
 
     <td><a href="#" class="action-link" onclick="openPopup('{{ task.Subject_Code }}', '{{ task.task }}', '{{task.deadline|date:"m/d/y"}}', '{{ task.description }}')">View</a></td>

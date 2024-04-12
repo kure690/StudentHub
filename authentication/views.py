@@ -119,7 +119,6 @@ def dashboard(request):
     class_view = ClassView()
     subject = class_view.get_queryset()
     print(subject)
-    print
     username = request.user.username
     id = request.user.id
     pk = request.user.pk
@@ -127,7 +126,7 @@ def dashboard(request):
         return render(request, "teacherdashboard/dashboard.html", {'username': username, 'id': id, 'pk': pk, 'tasks': tasks, 'subjects': subject})
     
     elif role == 'student':
-        return render(request, "studentdashboard/dashboard.html", {'username': username, 'id': id, 'pk': pk, 'tasks': tasks})
+        return render(request, "studentdashboard/dashboard.html", {'username': username, 'id': id, 'pk': pk, 'tasks': tasks, 'subjects': subject})
 
 class InfoUpdate(LoginRequiredMixin, UpdateView):
     model = CustomUser
