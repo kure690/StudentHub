@@ -135,6 +135,10 @@ STATICFILES_DIRS = [
 ]
 
 
+# Set X_FRAME_OPTIONS to 'SAMEORIGIN' to allow embedding the site in an iframe
+X_FRAME_OPTIONS = 'SAMEORIGIN'
+
+
 # Load environment variables from .env file
 load_dotenv()
 

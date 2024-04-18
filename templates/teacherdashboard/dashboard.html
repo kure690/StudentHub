@@ -3,13 +3,29 @@
 {% extends 'base.html' %} 
 {% load static %}
 {% block content %}
-<div style="
-    background-color: rgba(231, 209, 168, 0.8);
-    padding: 15px;
-    border-radius: 8px;
-    box-shadow: 0 0 50px rgba(0, 0, 0, 0.1), 0 0 100px rgba(0, 0, 0, 0.2);
-    text-align: center;
-">
+
+
+<button
+      class="addClass-button"
+      onclick="window.location.href='{% url 'Class_create' %}';"
+      style="
+        background-color: rgba(231, 209, 168);
+        color: black;
+        border: none;
+        outline: none;
+        padding: 8px;
+        border-radius: 10px;
+        font-size: 20px;
+        position: absolute;
+        top: 5px;
+        right: 185px;
+        cursor: pointer;
+      "
+    >
+    <i class="fa-solid fa-plus"></i>
+    </button>
+    
+
   {% for message in messages %}
   <div class="alert alert-{{ message.tags }} alert-dismissable fade show" role="alert" style="
       background-color: rgba(252, 240, 193, 0.8);
@@ -28,8 +44,8 @@
 
   <!-- Sample Card -->
   {% for subject in subjects %}
-<div class="card" style="
-    width: 23rem;
+  <div class="card" style="
+    width: 22rem;
     height: 25rem;
     margin-top: 20px;
     margin-right: 20px; /* Added margin-right to create space between cards */
@@ -59,22 +75,6 @@
   </div>
   
 
-  <!-- Your dashboard content goes here -->
-  <div style="
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-  ">
-    <div style="
-        background-color: rgba(231, 209, 168, 0.8);
-        padding: 15px;
-        border-radius: 8px;
-        box-shadow: 0 0 50px rgba(0, 0, 0, 0.1), 0 0 100px rgba(0, 0, 0, 0.2);
-        text-align: center;
-    ">
-    <a href="{% url 'Class_create' %}">Create Class</a>
-    
     </div>
   </div>
 </div>

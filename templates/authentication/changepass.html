@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <title>Password Reset Confirmation</title>
+    <title>Change Password</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jua&display=swap"/>
     <!-- Add your CSS links or styles here -->
     <style>
@@ -25,10 +25,18 @@
             text-align: left;
             width: 50%;
         }
+        .go-back {
+            position: absolute; 
+            top: 20px; 
+            left: 20px; 
+            color: black; 
+            text-decoration: none;
+            font-size: 16px; 
+        }
     </style>
 </head>
 <body>
-    <a href="{% url 'editprofile' pk=pk %}">Go back</a>
+    <a href="{% url 'editprofile' pk=pk %}" class="go-back">Go back</a>
     <div class="container">
         <h2>CHANGE PASSWORD</h2>
         <p>Please enter your new password below:</p>

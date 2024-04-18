@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Grades</title>
+    <title>Tasks</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -92,71 +92,42 @@
     </style>
 </head>
 <body>
-    <h1>Grades</h1>
+    
+    <h1>Tasks</h1>
     <a href="{% url 'class_details' pk=subject.pk %}" class="go-back">Go back</a>
-
     <h2>Pending Tasks</h2>
     <table id="pending-table">
         <thead>
             <tr>
-                <th></th> 
-                {% for task in tasks %}
-                <th>
-                    {{ task.task }}<br>
-                    <sup style="font-size: smaller">Out of {{ task.perfect }}</sup>
-                </th>
-                {% empty %}
-                    <tr>
-                        <td colspan="6" style="text-align: center;"><h3>No pending tasks</h3></td>
-                    </tr>
-                {% endfor %}
-            </tr>
-        </thead>
-        <tbody>
-            {% for student_data in student_scores %}
-                <tr>
-                    <td>{{ student_data.student }}</td>
-                    {% for score_info in student_data.scores %}
-                        <td>{{ score_info.score }}</td>
-                    {% endfor %}
-                </tr>
-            {% endfor %}
-        </tbody>
-        
-    </table>
+                <th></th>
+                <th>Task</th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
 
-    <!-- <h2>Completed Tasks</h2>
-    <table id="completed-table">
-        <thead>
-            <tr>
-                <th></th> 
-                {% for task in tasks %}
-                <th>
-                    {{ task.task }}<br>
-                    <sup style="font-size: smaller">Out of {{ task.perfect }}</sup>
-                </th>
-                {% empty %}
-                    <tr>
-                        <td colspan="6" style="text-align: center;"><h3>No pending tasks</h3></td>
-                    </tr>
-                {% endfor %}
             </tr>
         </thead>
         <tbody>
-            {% for student_data in student_scores %}
-                <tr>
-                    <td>{{ student_data.student }}</td>
-                    {% for score_info in student_data.scores %}
-                        <td>{{ score_info.score }}</td>
-                    {% endfor %}
-                </tr>
+            {% for task in tasks %}
+            <tr>
+                <td></td>
+                <td>{{ task.task }}</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td><a href="{% url 'task-update' task.id %}">Edit</a>
+                <td><a href="{% url 'task-delete' task.id %}">Delete</a></td>
+            </tr>
             {% endfor %}
         </tbody>
-        
-    </table> -->
+    </table>
     
 
-
+    
     
 </body>
 </html>

@@ -1,6 +1,13 @@
 {% extends 'base.html' %} 
 {% load static %}
 {% block content %}
+<style>
+  .today {
+    background-color: #ffcc00;
+    color: #333;
+    font-weight: bold;
+}
+</style>
 <div style="
     background-color: rgba(231, 209, 168, 0.8);
     padding: 15px;
@@ -24,24 +31,23 @@
   </div>
   {% endfor %}
 
-  <!-- Sample Card -->
   <div class="card" style="
       width: 23rem;
-      height: 25rem;
+      height: 20.5rem;
       margin-top: 20px;
       margin-right: 20px; /* Added margin */
       float: left;
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
       background-color: #fff9e1;
       border-radius: 10px;
+      overflow: hidden;
   ">
     <div class="card-body" style="margin: 30px;">
       <div style="display: flex; justify-content: space-between; align-items: center;">
         <h3 style="text-align: left; margin: 0;">Pending Tasks</h3>
-        <h3 class="card-title" style="margin: 0;"><a href="{% url 'tasks' %}" class="to-do-link" style="text-decoration: none; color: #888e94;">More...</a></h3>
+        <h4 class="card-title" style="margin: 0;"><a href="{% url 'tasks' %}" class="to-do-link" style="text-decoration: none; color: #888e94;">More...</a></h4>
       </div>
       <table style="width:100%;">
-        <!-- Table content goes here -->
         <br>
         <tr>
           <th style="text-align: left;">Subjects</th>
@@ -67,22 +73,22 @@
 
   <div class="card" style="
     width: 23rem;
-    height: 25rem;
+    height: 20.5rem;
     margin-top: 20px;
     float: left;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     background-color: #fff9e1;
     border-radius: 10px;
+    overflow: hidden;
   ">
     <div class="card-body" style="margin: 30px;">
       <div style="display: flex; justify-content: space-between; align-items: center;">
         <h3 style="text-align: left; margin: 0;">{{ user.first_name }}'s Subjects</h3>
-        <h3 class="card-title" style="margin: 0;"><a href="{% url 'tasks' %}" class="to-do-link" style="text-decoration: none; color: #888e94;">More...</a></h3>
+        <h4 class="card-title" style="margin: 0;"><a href="{% url 'tasks' %}" class="to-do-link" style="text-decoration: none; color: #888e94;">More...</a></h4>
       </div>
       <br>
       {% if subjects %}
       <table style="width:100%;">
-        <!-- Table content goes here -->
         {% for subject in subjects %}
         {% if request.user in subject.users.all %}
         <tr>
@@ -106,8 +112,6 @@
     </div>
   </div>
 
-
-  <!-- Your dashboard content goes here -->
   <div style="
       display: flex;
       align-items: center;
@@ -121,6 +125,26 @@
         box-shadow: 0 0 50px rgba(0, 0, 0, 0.1), 0 0 100px rgba(0, 0, 0, 0.2);
         text-align: center;
     ">
+
+    <div style="
+        background-color: rgba(231, 209, 168, 0.8);
+        padding: 15px;
+        border-radius: 8px;
+        box-shadow: 0 0 50px rgba(0, 0, 0, 0.1), 0 0 100px rgba(0, 0, 0, 0.2);
+        text-align: center;
+        display: flex;
+        justify-content: flex-end; 
+        align-items: center; 
+        flex-direction: column; 
+    ">
+
+      <div style="margin-top: 20px; width: 300px; font-size: larger;">
+          {{ calendar | safe }}
+      </div>
+    </div>
+
+    
+
     </div>
   </div>
 </div>

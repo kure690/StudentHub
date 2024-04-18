@@ -131,30 +131,36 @@
     font-size: 28px;
     font-weight: bold;
   }
-
-</style>
-
+  .asc:after,
+  .desc:after {
+        content: ""; /* Remove arrow icon */
     }
-  </style>
+</style>
+  
 </head>
 <body>
 
-<div class="sidebar">
-    <div style="display: flex; align-items: center">
-        <img
-          src="{% static 'imgs/StudentHub_Logo.png' %}"
-          alt="StudentHub Logo"
-          style="width: 50px; height: 50px; margin: 6px"
-        />
-      </div>
-</div>
-<img
+  <div class="sidebar">
+    <div style="display: flex; flex-direction: column; align-items: center;">
+      <img
+        src="{% static 'imgs/StudentHub_Logo.png' %}"
+        alt="StudentHub Logo"
+        style="width: 50px; height: 50px; margin: 6px;"
+      />
+      <img
+        src="{% static 'imgs/user.png' %}"
+        alt="Profile Logo"
+        style="width: 50px; height: 50px; margin: 6px;"
+      />
+    </div>
+  </div>
+  
+<!-- <img
           src="{% static 'imgs/user.png' %}"
           alt="Profile Logo"
-          style="width: 50px; height: 50px; border-radius: 50%; margin-top: 63px; margin-left: 5px"
-
+          style="position: fixed; width: 50px; height: 50px; top: 70px"
         />
-</div>
+</div> -->
 
 <div class="container">
   <h1 class="title">My To Do List</h1>
@@ -168,11 +174,12 @@
 
   <table>
     <tr>
-      <th>Subjects</th>
-      <th>Tasks</th>
+      <th onclick="sortTable(0)" style="cursor: pointer;">Subject</th>
+      </th>
+      <th onclick="sortTable(1)" style = "cursor: pointer">Task</th>
       <th>Deadline</th>
       <th>Status</th>
-      <th>Score</th>
+      <th onclick="sortTable(4)" style = "cursor: pointer">Score</th>
       <th>Out of</th>
       <th></th>
     </tr>
@@ -239,8 +246,60 @@
       modal.style.display = "none"; 
     }
   }
-</script>
+  
+  var ascending = true;
 
+  function sortTable(columnIndex) {
+    var table, rows, switching, i, x, y, shouldSwitch;
+    table = document.querySelector('table');
+    switching = true;
+
+    // Remove existing arrow indicators
+    var headers = table.getElementsByTagName('th');
+    for (var i = 0; i < headers.length; i++) {
+      headers[i].classList.remove('asc');
+      headers[i].classList.remove('desc');
+    }
+
+    // Add arrow indicator to the clicked header
+    if (ascending) {
+      headers[columnIndex].classList.add('asc');
+    } else {
+      headers[columnIndex].classList.add('desc');
+    }
+
+    while (switching) {
+      switching = false;
+      rows = table.rows;
+
+      for (i = 1; i < (rows.length - 1); i++) {
+        shouldSwitch = false;
+        x = rows[i].getElementsByTagName('td')[columnIndex];
+        y = rows[i + 1].getElementsByTagName('td')[columnIndex];
+
+        if (ascending) {
+          if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+            shouldSwitch = true;
+            break;
+          }
+        } else {
+          if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
+            shouldSwitch = true;
+            break;
+          }
+        }
+      }
+
+      if (shouldSwitch) {
+        rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+        switching = true;
+      }
+    }
+
+    ascending = !ascending;
+  }
+
+</script>
 
 </body>
 </html>
