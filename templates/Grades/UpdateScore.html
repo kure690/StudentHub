@@ -1,0 +1,159 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Update Score</title>
+  <meta name="description" content="" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #fcf0c1;
+      margin: 0;
+      position: relative;
+      overflow: hidden;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 20px auto;
+      background-color: rgba(231, 209, 168, 0.8);
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 50px rgba(0, 0, 0, 0.1), 0 0 100px rgba(0, 0, 0, 0.2);
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: calc(100% - 40px);
+      max-height: calc(100vh - 40px); 
+      overflow-y: auto; 
+}
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 60px;
+      background-color: rgba(231, 209, 168, 0.8);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      display: flex;
+      border-right: 1px solid #ddd;
+      justify-content: space-between;
+      align-items: start;
+    }
+    .title {
+      margin-bottom: 20px;
+      color: #333;
+    }
+    .link {
+      display: block;
+      margin-bottom: 20px;
+      text-decoration: none;
+      color: #0066cc;
+    }
+    .form-container {
+      margin-bottom: 20px;
+    }
+    .search-input {
+      width: 30%;
+      padding: 10px;
+      border: 1px solid #0d0000;
+      border-radius: 5px;
+      margin-right: 10px;
+    }
+    .search-btn {
+      padding: 10px;
+      border: none;
+      border-radius: 5px;
+      background-color: #0066cc;
+      color: #fff;
+      cursor: pointer;
+    }
+    table {
+      width: 100%;
+      border: 1px solid #0c0000;
+      border-collapse: collapse;
+    }
+    th, td {
+      padding: 10px;
+      border-bottom: 1px solid #0c0000;
+    }
+    th {
+      background-color: #0066cc;
+      color: #fff;
+      text-align: left;
+    }
+    tr:nth-child(odd) {
+      background-color: #fff9e1;
+    }
+    tr:nth-child(even) {
+      background-color: #f2f2f2;
+    }
+    .action-link {
+      text-decoration: none;
+      color: #0066cc;
+    }
+  </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1 class="title">Scores for {{ task_name }}</h1>
+        <a href="" class="link">Go back</a> 
+        <form method="GET" class="form-container">
+          <input type="text" name="search area" class="search-input" placeholder="Search" value="{{ search_input }}">
+          <input type="submit" value="Search" class="search-btn">
+        </form>
+      
+        <table>
+          <tr>
+            <th>Student</th>
+            <th>Score</th>
+            <th></th>
+            <th></th>
+            <th>Status</th>
+            <th></th>
+            <th></th>
+            <th>Edit</th>
+            <th></th>
+            <th></th>
+          </tr>
+          {% for task in tasks %}
+          {% if task.user %}
+          <tr>
+            <td>{{ task.user.first_name }} {{ task.user.last_name }}</td>
+            <td>{{ task.score }}/{{ task.perfect }}</td>
+            <td></td>
+            <td></td>
+            <td>{% if task.status %}
+              <!-- Task is completed -->
+              <p>Completed</p>
+           {% else %}
+              <!-- Task is not completed -->
+              <p>Pending</p>
+           {% endif %}
+          </td>
+            <td></td>
+            <td></td>
+            <td><a href="{% url 'scoring' task.id %}" class="action-link">Edit</a></td>
+            <td></td>
+            <td></td>
+          </tr>
+          {% endif %}
+          {% empty %}
+          <tr>
+            <td colspan="6" style="text-align: center;"><h3>No items in list</h3></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
+          {% endfor %}
+        </table>
+      </div>
+      
+
+</body>
+</html>

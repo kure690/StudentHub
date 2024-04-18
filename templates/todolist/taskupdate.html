@@ -46,7 +46,7 @@
     
     <div class="wrapper">
     <h3>TASK FORM</h3>
-    
+    <a href="{% url 'viewtasks' pk=request.session.subject_pk %}" class="go-back">Go back</a>
     <div class="container">
         <form method="POST" action="">
             {% csrf_token %}

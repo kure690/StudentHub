@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import ToDo, ToDoDetail, TaskCreate, TaskUpdate, TeacherToDo, ClassCreate, ClassView, ClassUpdate, ClassDetails, AddStudent, DeleteClass, ViewGrades, ViewTasks, DeleteTask
+from .views import ToDo, ToDoDetail, TaskCreate, TaskUpdate, TeacherToDo, ClassCreate, ClassView, ClassDetails, AddStudent, DeleteClass, ViewGrades, ViewTasks, DeleteTask, UpdateScore, Scoring
 
 urlpatterns = [
     path('todolist/', ToDo.as_view(), name='tasks'),
@@ -9,7 +9,6 @@ urlpatterns = [
     path('teacher-todolist/', TeacherToDo.as_view(), name='teacher_tasks'),
     path('create_class/', ClassCreate.as_view(), name='Class_create'),
     path('classview/', ClassView.as_view(), name='Class_view'),
-    path('classupdate/<int:pk>/', ClassUpdate.as_view(), name='class_update'),
     path('classdetails/<int:pk>/', ClassDetails.as_view(), name='class_details'),
     path('addstudent/<int:pk>/', AddStudent.as_view(), name='add_student'),
     path('classdelete/<int:pk>/', DeleteClass.as_view(), name='class_delete'),
@@ -18,5 +17,7 @@ urlpatterns = [
     # path('delete-task/<int:task_id>/', DeleteTask.as_view(), name='delete-task'),
     path('task-delete/<int:pk>/', DeleteTask.as_view(), name='task-delete'),
     # path('confirm-delete/<int:subject_pk>/', ConfirmDeleteView.as_view(), name='confirm-delete'),
+    path('updatescore/<str:task_name>/', UpdateScore.as_view(), name='scoreupdate'),
+    path('scoring/<int:pk>/', Scoring.as_view(), name='scoring'),
 
 ]

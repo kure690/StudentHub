@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <title>Grades</title>
     <style>
         body {
@@ -89,6 +90,9 @@
             color: #777;
             font-style: italic;
         }
+        .fa-ellipsis-h {
+            font-size: 0.7em; /* Adjust size as needed */
+        }
     </style>
 </head>
 <body>
@@ -102,7 +106,7 @@
                 <th></th> 
                 {% for task in tasks %}
                 <th>
-                    {{ task.task }}<br>
+                    <a href="{% url 'scoreupdate' task.task %}" style="color: black;">{{ task.task }}</a><br>
                     <sup style="font-size: smaller">Out of {{ task.perfect }}</sup>
                 </th>
                 {% empty %}
@@ -115,7 +119,7 @@
         <tbody>
             {% for student_data in student_scores %}
                 <tr>
-                    <td>{{ student_data.student }}</td>
+                    <td>{{ student_data.student.first_name }} {{ student_data.student.last_name }}</td>
                     {% for score_info in student_data.scores %}
                         <td>{{ score_info.score }}</td>
                     {% endfor %}

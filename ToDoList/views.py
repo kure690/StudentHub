@@ -67,10 +67,13 @@ class ToDoDetail(DetailView):
     context_object_name = 'data'
     template_name = 'todolist/todolist.html'
 
-class TaskCreate(LoginRequiredMixin, CreateView):
+class TaskCreate(LoginRequiredMixin,  UserPassesTestMixin, CreateView):
     model = ToDoList
     fields = ['task', 'description', 'deadline', 'perfect']
     template_name = 'todolist/task_form.html'
+
+    def test_func(self):
+        return self.request.user.is_teacher
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -78,7 +81,7 @@ class TaskCreate(LoginRequiredMixin, CreateView):
         return context
 
     def form_valid(self, form):
-        # Set the Subject_Code_id for the task
+    # Set the Subject_Code_id for the task
         form.instance.Subject_Code_id = self.kwargs.get('pk')
         
         # Get the users related to the subject code
@@ -87,8 +90,11 @@ class TaskCreate(LoginRequiredMixin, CreateView):
         
         print("Users found:", users)
         
+        # Filter out users who are None
+        users = [user for user in users if user is not None]
+
         # Check if there are any users related to the subject code
-        if users.exists():
+        if users:
             # Get the number of students assigned to the subject code
             
             # Create and save a task instance for each user
@@ -111,6 +117,7 @@ class TaskCreate(LoginRequiredMixin, CreateView):
             # No users related to the subject code, return an error or handle it accordingly
             print("No users found related to the subject code. Cannot create task.")
             return HttpResponse("No users related to the subject code. Cannot create task.")
+
     
     def get_success_url(self):
         # Get the primary key (pk) of the subject object
@@ -124,22 +131,42 @@ class TaskCreate(LoginRequiredMixin, CreateView):
 
 
 
-class TaskUpdate(UpdateView):
+class TaskUpdate( UserPassesTestMixin, UpdateView):
     model = ToDoList
-    fields = ['Subject_Code', 'task', 'description', 'status', 'deadline', 'score', 'perfect']
+    fields = ['Subject_Code', 'description', 'deadline', 'perfect']
     template_name = 'todolist/taskupdate.html'
     success_url = reverse_lazy('teacher_tasks')
+
+    def test_func(self):
+        return self.request.user.is_teacher
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['pk'] = self.kwargs['pk']  # Pass the 'pk' from URL kwargs to the template
         return context
     
-class DeleteTask(DeleteView):
+    def form_valid(self, form):
+        # Get the task being updated
+        task = form.instance
+        # Get all tasks with the same name
+        tasks_to_update = ToDoList.objects.filter(task=task.task)
+        # Update all tasks with the same name
+        for task_to_update in tasks_to_update:
+            task_to_update.Subject_Code = task.Subject_Code
+            task_to_update.description = task.description
+            task_to_update.deadline = task.deadline
+            task_to_update.perfect = task.perfect
+            task_to_update.save()
+        return super().form_valid(form)
+    
+class DeleteTask (UserPassesTestMixin,  DeleteView):
     model = ToDoList
     context_object_name = 'data'
     template_name = 'todolist/task_delete.html'
     success_url = reverse_lazy('viewgrades')
+
+    def test_func(self):
+        return self.request.user.is_teacher
 
     def get_object(self, queryset=None):
         # Return the task object based on the provided task ID
@@ -262,12 +289,15 @@ class DeleteTask(DeleteView):
 
 
 
-class ClassCreate(LoginRequiredMixin, CreateView):
+class ClassCreate(LoginRequiredMixin,  UserPassesTestMixin, CreateView):
     model = Subjects
     context_object_name = 'class'
     fields = '__all__'
     template_name = 'todolist/CreateClass.html'
     success_url = reverse_lazy('dashboard')
+
+    def test_func(self):
+        return self.request.user.is_teacher
 
     def get_form(self, form_class=None):
         form = super().get_form(form_class)
@@ -286,25 +316,26 @@ class ClassCreate(LoginRequiredMixin, CreateView):
         self.object.users.set(form.cleaned_data['users'])
         return response
     
-class ClassView(ListView):
+class ClassView( UserPassesTestMixin, ListView):
     model = Subjects
     context_object_name = 'class'
     template_name = 'todolist/ClassView.html'
 
+    def test_func(self):
+        return self.request.user.is_teacher
+    
+
     def get_queryset(self):
         return Subjects.objects.all()
 
-class ClassUpdate(UpdateView):
-    model = Subjects
-    fields = '__all__'
-    template_name = 'todolist/ClassAdd.html'
-    success_url = reverse_lazy('teacher_tasks')
-    
 
-class ClassDetails(LoginRequiredMixin, DetailView):
+class ClassDetails(LoginRequiredMixin,  UserPassesTestMixin, DetailView):
     model = Subjects
     context_object_name = 'subject'  # Change context_object_name to match what you're using in the template
     template_name = 'todolist/ClassDetails.html'
+
+    def test_func(self):
+        return self.request.user.is_teacher
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -328,6 +359,9 @@ class AddStudent(LoginRequiredMixin, UpdateView):
     fields = ['users']
     template_name = 'todolist/ClassAdd.html'
 
+    def test_func(self):
+        return self.request.user.is_teacher
+
     def get_success_url(self):
         # Get the primary key (pk) of the subject object
         subject_pk = self.kwargs['pk']
@@ -341,12 +375,20 @@ class AddStudent(LoginRequiredMixin, UpdateView):
         return context
     
 
-class DeleteClass(LoginRequiredMixin, DeleteView):
+class DeleteClass(LoginRequiredMixin,  UserPassesTestMixin, DeleteView):
 
     model = Subjects
     context_object_name = 'subject'
     template_name = 'todolist/class_delete.html'
     success_url = reverse_lazy('dashboard')
+
+    def test_func(self):
+        return self.request.user.is_teacher
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['pk'] = self.kwargs.get('pk')
+        return context
 
     
 
@@ -354,11 +396,43 @@ class DeleteClass(LoginRequiredMixin, DeleteView):
         # Retrieve subject PK from session
         subject_pk = self.request.session.get('subject_pk')
         print("Retrieved subject PK from session:", subject_pk)
-        return reverse_lazy('viewtasks', kwargs={'pk': subject_pk})
+        return reverse_lazy('dashboard')
     
 
 
-class ViewGrades(DetailView):
+
+    
+class ViewTasks( UserPassesTestMixin, DetailView):
+    model = Subjects
+    context_object_name = 'subject'
+    template_name = 'todolist/StudentClass.html'
+
+    def test_func(self):
+        return self.request.user.is_teacher
+    
+    def get(self, request, *args, **kwargs):
+        # Store subject PK in session
+        subject_pk = self.kwargs['pk']
+        request.session['subject_pk'] = subject_pk
+        print("Stored subject PK in session:", subject_pk)
+        return super().get(request, *args, **kwargs)
+    
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        subject = self.get_object() 
+        all_tasks = ToDoList.objects.filter(Subject_Code=subject)
+
+        unique_tasks = []
+        seen_tasks = set()
+        for task in all_tasks:
+            if task.task not in seen_tasks:
+                unique_tasks.append(task)
+                seen_tasks.add(task.task)
+        context['tasks'] = unique_tasks
+        return context
+    
+class ViewGrades( UserPassesTestMixin, DetailView):
     model = Subjects
     context_object_name = 'subject'
     template_name = 'Grades/viewgradestrial.html'
@@ -399,37 +473,85 @@ class ViewGrades(DetailView):
 
         return context
     
-class ViewTasks(DetailView):
-    model = Subjects
-    context_object_name = 'subject'
-    template_name = 'todolist/StudentClass.html'
+
+class UpdateScore(UserPassesTestMixin, ListView):
+    model = ToDoList
+    context_object_name = 'tasks'
+    template_name = 'Grades/UpdateScore.html'
 
     def test_func(self):
         return self.request.user.is_teacher
-    
-    def get(self, request, *args, **kwargs):
-        # Store subject PK in session
-        subject_pk = self.kwargs['pk']
-        request.session['subject_pk'] = subject_pk
-        print("Stored subject PK in session:", subject_pk)
-        return super().get(request, *args, **kwargs)
-    
+
+    def get_queryset(self):
+        # Retrieve the task name from URL parameters
+        task_name = self.kwargs.get('task_name')
+        if task_name:
+            # Filter tasks based on the task name
+            return ToDoList.objects.filter(task=task_name)
+        else:
+            # If task name is not available, return an empty queryset
+            return ToDoList.objects.none()
+        
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        subject = self.get_object() 
-        all_tasks = ToDoList.objects.filter(Subject_Code=subject)
-
-        unique_tasks = []
-        seen_tasks = set()
-        for task in all_tasks:
-            if task.task not in seen_tasks:
-                unique_tasks.append(task)
-                seen_tasks.add(task.task)
-        context['tasks'] = unique_tasks
+        # Pass the task name to the template
+        context['task_name'] = self.kwargs.get('task_name')
+        
+        # Filter students associated with the task and remove None values
+        task_name = self.kwargs.get('task_name')
+        if task_name:
+            # Assuming ToDoList has a ForeignKey field 'user' to the user model
+            students = ToDoList.objects.filter(task=task_name).values_list('user', flat=True).distinct().exclude(user=None)
+            print(students)
+            context['students'] = students
+        
         return context
+        
+
+
+class Scoring(LoginRequiredMixin, UpdateView):
+    model = ToDoList
+    fields = ['score', 'status']
+    template_name = 'Grades/Scoring.html'
+    
+    def get_success_url(self):
+    # Assuming you have access to the task name through the ToDoList model
+        task_name = self.object.task
+        return reverse_lazy('scoreupdate', kwargs={'task_name': task_name})
+
+
+    # def get_context_data(self, **kwargs):
+    #     context = super().get_context_data(**kwargs)
+    #     # Get the specific task object
+    #     task = self.get_object()
+    #     # Get all students associated with the task
+    #     students = task.users.all()
+    #     # Prepare data for rendering in the template
+    #     context['task'] = task
+    #     context['students'] = students
+    #     return context
     
 
+    # class UpdateScore(UserPassesTestMixin, ListView):
+#     model = ToDoList
+#     context_object_name = 'tasks'
+#     fields = ['score']  # Fields to be displayed in the form
+#     template_name = 'Grades/UpdateScore.html'  # Replace 'your_template_name.html' with your actual template name
+#     success_url = reverse_lazy('viewgrades')
+
+#     def test_func(self):
+#         return self.request.user.is_teacher
+
+#     def get_queryset(self):
+#         # Assuming you have a subject code stored in the session or passed through URL parameters
+#         subject_code = self.request.session.get('subject_code')  # Change 'subject_code' to your actual session key
+#         if subject_code:
+#             # Filter tasks based on the subject code
+#             return ToDoList.objects.filter(subject_code=subject_code)
+#         else:
+#             # If subject code is not available, return an empty queryset
+#             return ToDoList.objects.none()
     
 
     
