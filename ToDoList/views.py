@@ -69,7 +69,7 @@ class ToDoDetail(DetailView):
 
 class TaskCreate(LoginRequiredMixin,  UserPassesTestMixin, CreateView):
     model = ToDoList
-    fields = ['task', 'description', 'deadline', 'perfect']
+    fields = ['task', 'description', 'perfect', 'deadline']
     template_name = 'todolist/task_form.html'
 
     def test_func(self):
@@ -133,7 +133,7 @@ class TaskCreate(LoginRequiredMixin,  UserPassesTestMixin, CreateView):
 
 class TaskUpdate( UserPassesTestMixin, UpdateView):
     model = ToDoList
-    fields = ['Subject_Code', 'description', 'deadline', 'perfect']
+    fields = ['Subject_Code', 'description', 'perfect', 'deadline']
     template_name = 'todolist/taskupdate.html'
     success_url = reverse_lazy('teacher_tasks')
 

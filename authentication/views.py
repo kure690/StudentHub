@@ -101,11 +101,12 @@ def signout(request):
     return redirect('home')
 
 class HighlightedHTMLCalendar(HTMLCalendar):
-    def __init__(self, year, month, *args, **kwargs):
+    def __init__(self, year, month, pending_task_deadlines=None, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.year = year
         self.month = month
         self.today = date.today().day
+        self.pending_task_deadlines = pending_task_deadlines or []
 
     def formatday(self, day, weekday):
         if day == 0:
@@ -113,6 +114,8 @@ class HighlightedHTMLCalendar(HTMLCalendar):
         else:
             if day == self.today:
                 return f'<td class="today">{day}</td>'  # Highlight current day
+            elif day in self.pending_task_deadlines:
+                return f'<td class="pending-deadline">{day}</td>'  # Highlight pending task deadline
             else:
                 return f'<td>{day}</td>'
 
@@ -129,6 +132,7 @@ def dashboard(request):
     username = request.user.username
     id = request.user.id
     pk = request.user.pk
+    pending_task_deadlines = [task.deadline.day for task in tasks if not task.status]
     if role == 'teacher':
         return render(request, "teacherdashboard/dashboard.html", {'username': username, 'id': id, 'pk': pk, 'tasks': tasks, 'subjects': subject})
     
@@ -137,7 +141,7 @@ def dashboard(request):
         current_year = now.year
         current_month = now.month
         month_number = current_month
-        cal = HighlightedHTMLCalendar(current_year, current_month).formatmonth(current_year, current_month)
+        cal = HighlightedHTMLCalendar(current_year, current_month, pending_task_deadlines).formatmonth(current_year, current_month)
         return render(request, "studentdashboard/dashboard.html", {'username': username, 'id': id, 'pk': pk, 'tasks': tasks, 'subjects': subject, 'calendar': mark_safe(cal)})
         
     # def calendar(request):

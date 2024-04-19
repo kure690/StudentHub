@@ -98,10 +98,9 @@
   </style>
 </head>
 <body>
-
     <div class="container">
         <h1 class="title">Scores for {{ task_name }}</h1>
-        <a href="" class="link">Go back</a> 
+        <a href="{% url 'viewgrades' pk=request.session.subject_pk %}" class="link">Go back</a> 
         <form method="GET" class="form-container">
           <input type="text" name="search area" class="search-input" placeholder="Search" value="{{ search_input }}">
           <input type="submit" value="Search" class="search-btn">
