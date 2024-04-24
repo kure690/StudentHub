@@ -118,7 +118,12 @@
     padding: 10px;
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); 
-    width: 80%; 
+    width: 50%; 
+    height: 50%;
+    position: fixed;
+    top: 10%;
+    left: 50%;
+    transform: translate(-50%, -50%);
   }
 
   .close {
@@ -126,38 +131,36 @@
     font-size: 28px;
     font-weight: bold;
   }
-
-  .img {
-    position: fixed;
-    width: 100px; 
-    height: 100px; 
-    border-radius: 50%; 
-    margin: 6px;
-}
-
-
-</style>
-
+  .asc:after,
+  .desc:after {
+        content: ""; /* Remove arrow icon */
     }
-  </style>
+</style>
+  
 </head>
 <body>
 
-<div class="sidebar">
-    <div style="display: flex; align-items: center">
-        <img
-          src="{% static 'imgs/StudentHub_Logo.png' %}"
-          alt="StudentHub Logo"
-          style="width: 50px; height: 50px; margin: 6px"
-        />
-      </div>
-</div>
-<img
+  <div class="sidebar">
+    <div style="display: flex; flex-direction: column; align-items: center;">
+      <img
+        src="{% static 'imgs/StudentHub_Logo.png' %}"
+        alt="StudentHub Logo"
+        style="width: 50px; height: 50px; margin: 6px;"
+      />
+      <img
+        src="{% static 'imgs/user.png' %}"
+        alt="Profile Logo"
+        style="width: 50px; height: 50px; margin: 6px;"
+      />
+    </div>
+  </div>
+  
+<!-- <img
           src="{% static 'imgs/user.png' %}"
           alt="Profile Logo"
           style="position: fixed; width: 50px; height: 50px; top: 70px"
         />
-</div>
+</div> -->
 
 <div class="container">
   <h1 class="title">My To Do List</h1>
@@ -171,10 +174,13 @@
 
   <table>
     <tr>
-      <th>Subjects</th>
-      <th>Tasks</th>
+      <th onclick="sortTable(0)" style="cursor: pointer;">Subject</th>
+      </th>
+      <th onclick="sortTable(1)" style = "cursor: pointer">Task</th>
       <th>Deadline</th>
       <th>Status</th>
+      <th onclick="sortTable(4)" style = "cursor: pointer">Score</th>
+      <th>Out of</th>
       <th></th>
     </tr>
     {% for task in tasks %}
@@ -190,9 +196,11 @@
         <p>Pending</p>
      {% endif %}
     </td>
+    <td>{{ task.score }}</td>
+    <td>{{ task.perfect }}</td>
     
 
-    <td><a href="#" class="action-link" onclick="openPopup('{{ task.id }}', '{{ task.Subject_Code }}', '{{ task.task }}', '{{ task.deadline|date:"m/d/y" }}')">View</a></td>
+    <td><a href="#" class="action-link" onclick="openPopup('{{ task.Subject_Code }}', '{{ task.task }}', '{{task.deadline|date:"m/d/y"}}', '{{ task.description }}')">View</a></td>
     </tr>
     {% empty %}
     <tr>
@@ -211,23 +219,22 @@
 </div>
 
 <script>
-  
-  function openPopup(taskId, subjectCode, taskName, deadline) {
-    var modal = document.getElementById("myModal");
-    var modalContent = document.getElementById("modalContent");
+  function openPopup(subjectCode, taskName, deadline, description) {
+  var modal = document.getElementById("myModal");
+  var modalContent = document.getElementById("modalContent");
 
-    modalContent.innerHTML = `
-      <h2>Task Details</h2>
-      <p><strong>Task ID:</strong> ${taskId}</p>
-      <p><strong>Subject Code:</strong> ${subjectCode}</p>
-      <p><strong>Task Name:</strong> ${taskName}</p>
-      <p><strong>Deadline:</strong> ${deadline}</p>
-    `;
+  modalContent.innerHTML = `
+    <h2>Task Details</h2>
+    <p><strong>Subject Code:</strong> ${subjectCode}</p>
+    <p><strong>Task Name:</strong> ${taskName}</p>
+    <p><strong>Description:</strong> ${description}</p>
+    <p><strong>Deadline:</strong> ${deadline}</p>
+  `;
 
-    modal.style.display = "block"; 
-  }
+  modal.style.display = "block"; 
+}
 
- 
+
   function closePopup() {
     var modal = document.getElementById("myModal");
     modal.style.display = "none"; 
@@ -239,6 +246,59 @@
       modal.style.display = "none"; 
     }
   }
+  
+  var ascending = true;
+
+  function sortTable(columnIndex) {
+    var table, rows, switching, i, x, y, shouldSwitch;
+    table = document.querySelector('table');
+    switching = true;
+
+    // Remove existing arrow indicators
+    var headers = table.getElementsByTagName('th');
+    for (var i = 0; i < headers.length; i++) {
+      headers[i].classList.remove('asc');
+      headers[i].classList.remove('desc');
+    }
+
+    // Add arrow indicator to the clicked header
+    if (ascending) {
+      headers[columnIndex].classList.add('asc');
+    } else {
+      headers[columnIndex].classList.add('desc');
+    }
+
+    while (switching) {
+      switching = false;
+      rows = table.rows;
+
+      for (i = 1; i < (rows.length - 1); i++) {
+        shouldSwitch = false;
+        x = rows[i].getElementsByTagName('td')[columnIndex];
+        y = rows[i + 1].getElementsByTagName('td')[columnIndex];
+
+        if (ascending) {
+          if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+            shouldSwitch = true;
+            break;
+          }
+        } else {
+          if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
+            shouldSwitch = true;
+            break;
+          }
+        }
+      }
+
+      if (shouldSwitch) {
+        rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+        switching = true;
+      }
+    }
+
+    ascending = !ascending;
+  }
+
 </script>
 
 </body>

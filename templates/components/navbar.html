@@ -4,102 +4,152 @@
 {% load static %}
 
 <html lang="en">
-<head>
+  <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <title>StudentHub</title>
     <meta name="description" content="" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jua&display=swap" />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Jua&display=swap"
+    />
     <style>
+    
+      .dropdown {
+        position: relative;
+        display: inline-block;
+      }
 
-        /* Dropdown container */
-        .dropdown {
-            position: relative;
-            display: inline-block;
-        }
+      /* Dropdown button */
+      .dropbtn {
+        background-color: transparent;
+        color: #333;
+        padding: 15px;
+        font-size: 16px;
+        border: none;
+        cursor: pointer;
+      }
 
-        /* Dropdown button */
-        .dropbtn {
-            background-color: transparent;
-            color: #333;
-            padding: 15px;
-            font-size: 16px;
-            border: none;
-            cursor: pointer;
-        }
+      /* Dropdown content (hidden by default) */
+      .dropdown-content {
+        display: none;
+        position: absolute;
+        background-color: #f9f9f9;
+        width: 120%;
+        font-size: 14px;
+        text-align: center;
+        box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
+        z-index: 1;
+      }
 
-        /* Dropdown content (hidden by default) */
-        .dropdown-content {
-            display: none;
-            position: absolute;
-            background-color: #f9f9f9;
-            width: 120%; /* Adjust the width to match the navbar */
-            font-size: 14px;
-            text-align: center;
-            box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
-            z-index: 1;
-        }
+      /* Links inside the dropdown */
+      .dropdown-content a {
+        color: #333;
+        padding: 12px 16px;
+        text-decoration: none;
+        display: block;
+      }
 
-        /* Links inside the dropdown */
-        .dropdown-content a {
-            color: #333;
-            padding: 12px 16px;
-            text-decoration: none;
-            display: block;
-        }
+      /* Change color on hover */
+      .dropdown-content a:hover {
+        background-color: #ddd;
+      }
 
-        /* Change color on hover */
-        .dropdown-content a:hover {
-            background-color: #ddd;
-        }
-
-        /* Show the dropdown menu on hover */
-        .dropdown:hover .dropdown-content {
-            display: block;
-        }
+      /* Show the dropdown menu on hover */
+      .dropdown:hover .dropdown-content {
+        display: block;
+      }
     </style>
     <!-- Add your CSS styles or link to a separate stylesheet if needed -->
-</head>
+  </head>
 
-<body style="margin: 0; padding: 0; font-family: 'Jua', sans-serif">
+  <body style="margin: 0; padding: 0; font-family: 'Jua', sans-serif">
     <!-- Navbar with the specified layout -->
-    <div style="background-color: rgba(231, 209, 168, 0.8); width: 100%; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #ddd;">
-        <!-- StudentHub logo and text -->
-        <div style="display: flex; align-items: center">
-            <img src="{% static 'imgs/StudentHub_Logo.png' %}" alt="StudentHub Logo" style="width: 30px; height: 30px; margin-right: 10px" />
-            <h3 style="margin: 0; margin-right: 10px; font-size: 18px">StudentHub</h3>
+    <div
+      style="
+        background-color: rgba(231, 209, 168, 0.8);
+        width: 100%;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid #ddd;
+      "
+    >
+      <!-- StudentHub logo and text -->
+      <div style="display: flex; align-items: center">
+        <img
+          src="{% static 'imgs/StudentHub_Logo.png' %}"
+          alt="StudentHub Logo"
+          style="width: 30px; height: 30px; margin-right: 10px"
+        />
+        <h3 style="margin: 0; margin-right: 10px; font-size: 18px">
+          StudentHub
+        </h3>
+      </div>
+
+      <!-- Search Bar centered with Box Shadow (slightly shorter) -->
+      <div style="flex-grow: 1; text-align: center; position: relative">
+        <!-- Search logo inside the search bar -->
+
+        <!-- Input for search with some padding on the left to accommodate the search logo -->
+        <input
+          type="text"
+          id="search"
+          name="search"
+          placeholder="Search"
+          style="
+            padding-left: 40px;
+            padding: 8px;
+            border: none;
+            border-radius: 5px;
+            box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.1);
+            width: 80%;
+          "
+        />
+        <!-- Include the search.png image -->
+        <img
+          src="{% static 'imgs/search.png' %}"
+          alt="Search Icon"
+          style="
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 20px;
+            height: 20px;
+          "
+        />
+      </div>
+
+      <!-- User information and logo (moved more to the right) -->
+      <div style="display: flex; align-items: center; margin-right: 20px">
+        <!-- Display user's name beside the profile logo -->
+        <!-- Profile Logo moved a little more to the right -->
+        <!-- {% if user.is_teacher %}
+        <p style="padding: 10">Teacher</p>
+        {% elif user.is_student %}
+        <p style="padding: 10">Student</p>
+        {% endif %} -->
+        <span style="margin-right: 10px; font-size: 14px">{{ username }}</span>
+
+        <img
+          src="{% static 'imgs/user.png' %}"
+          alt="Profile Logo"
+          style="width: 25px; height: 25px; border-radius: 50%"
+        />
+
+        <div class="dropdown">
+          <button class="dropbtn">Profile</button>
+          <div class="dropdown-content">
+            <a href="{% url 'editprofile' pk=pk %}">Edit Profile</a>
+            <a href="{% url 'signout' %}">Sign Out</a>
+
+
+          </div>
         </div>
-
-        <!-- Search Bar centered with Box Shadow (slightly shorter) -->
-        {% comment %} <div style="
-        flex-grow: 1; 
-        text-align: center; 
-        position: relative">
-            <!-- Search logo inside the search bar -->
-            <!-- Input for search with some padding on the left to accommodate the search logo -->
-            <input type="text" id="search" name="search" placeholder="Search" style="padding-left: 40px; padding: 8px; border: none; border-radius: 5px; box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.1); width: 80%;" />
-            <!-- Include the search.png image -->
-            <img src="{% static 'imgs/search.png' %}" alt="Search Icon" style="position: absolute; left: 15px; top: 50%; transform: translateY(-50%); width: 20px; height: 20px;" />
-        </div> {% endcomment %}
-
-        <!-- User information and logo (moved more to the right) -->
-        <div style="display: flex; align-items: center; margin-right: 20px">
-            <!-- Display user's name beside the profile logo -->
-            <!-- Profile Logo moved a little more to the right -->
-            <!-- {% if user.is_teacher %} <p style="padding: 10">Teacher</p> {% elif user.is_student %} <p style="padding: 10">Student</p> {% endif %} -->
-            <span style="margin-right: 10px; font-size: 14px">{{ username }}</span>
-
-            <img src="{% static 'imgs/user.png' %}" alt="Profile Logo" style="width: 25px; height: 25px; border-radius: 50%" />
-
-            <div class="dropdown">
-                <button class="dropbtn">Profile</button>
-                <div class="dropdown-content">
-                    <a href="{% url 'editprofile' pk=pk %}">Edit Profile</a>
-                    <a href="{% url 'signout' %}">Sign Out</a>
-                </div>
-            </div>
-        </div>
+      </div>
     </div>
-</body>
+  </body>
 </html>

@@ -1,33 +1,22 @@
-from django.http import HttpResponse
 from .models import CustomUser
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
 from django.shortcuts import redirect, render
 from StudentHub import settings
 from django.core.mail import send_mail
-from django.contrib.auth.views import PasswordResetView
 from django.db import IntegrityError
-from django.contrib.auth.forms import PasswordResetForm
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth import update_session_auth_hash
-from django.shortcuts import get_object_or_404
-from django.contrib.auth.tokens import PasswordResetTokenGenerator
-from django.utils.encoding import force_bytes
-from django.utils.http import urlsafe_base64_encode
-from django.urls import reverse
-from django.utils.http import urlsafe_base64_decode
-from django.utils.encoding import force_str
-from django.http import HttpRequest
-from django.contrib.auth.tokens import default_token_generator
-from django.contrib.auth.views import PasswordResetConfirmView
-from django.contrib.auth.forms import SetPasswordForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
-from django.views.generic.edit import CreateView, UpdateView, DeleteView
+from django.views.generic.edit import UpdateView
 from django.urls import reverse_lazy
 from django.http import Http404
 from ToDoList.views import ToDo, ClassView
-
+from django.utils.safestring import mark_safe
+import calendar
+from calendar import HTMLCalendar
+from datetime import datetime, date
 
 
 # Create your views here.
@@ -111,6 +100,27 @@ def signout(request):
     messages.success(request, "Logged Out Successfully!")
     return redirect('home')
 
+class HighlightedHTMLCalendar(HTMLCalendar):
+    def __init__(self, year, month, pending_task_deadlines=None, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.year = year
+        self.month = month
+        self.today = date.today().day
+        self.pending_task_deadlines = pending_task_deadlines or []
+
+    def formatday(self, day, weekday):
+        if day == 0:
+            return '<td class="noday">&nbsp;</td>'  # Day outside month
+        else:
+            if day == self.today:
+                return f'<td class="today">{day}</td>'  # Highlight current day
+            elif day in self.pending_task_deadlines:
+                return f'<td class="pending-deadline">{day}</td>'  # Highlight pending task deadline
+            else:
+                return f'<td>{day}</td>'
+
+            
+
 @login_required
 def dashboard(request):
     role = 'teacher' if request.user.is_teacher else 'student'
@@ -119,15 +129,28 @@ def dashboard(request):
     class_view = ClassView()
     subject = class_view.get_queryset()
     print(subject)
-    print
     username = request.user.username
     id = request.user.id
     pk = request.user.pk
+    pending_task_deadlines = [task.deadline.day for task in tasks if not task.status]
     if role == 'teacher':
         return render(request, "teacherdashboard/dashboard.html", {'username': username, 'id': id, 'pk': pk, 'tasks': tasks, 'subjects': subject})
     
     elif role == 'student':
-        return render(request, "studentdashboard/dashboard.html", {'username': username, 'id': id, 'pk': pk, 'tasks': tasks})
+        now = datetime.now()
+        current_year = now.year
+        current_month = now.month
+        month_number = current_month
+        cal = HighlightedHTMLCalendar(current_year, current_month, pending_task_deadlines).formatmonth(current_year, current_month)
+        return render(request, "studentdashboard/dashboard.html", {'username': username, 'id': id, 'pk': pk, 'tasks': tasks, 'subjects': subject, 'calendar': mark_safe(cal)})
+        
+    # def calendar(request):
+    #     now = datetime.now
+    #     current_year = now.year
+    #     current_month = now.month
+    #     month_number = list(calendar.month_name).index(current_month)
+    #     cal = HTMLCalendar().formatmonth(current_year, month_number)
+
 
 class InfoUpdate(LoginRequiredMixin, UpdateView):
     model = CustomUser
@@ -158,6 +181,8 @@ def Change_Password(request):
         form = PasswordChangeForm(user=request.user)
     pk=request.user.pk
     return render(request, 'authentication/changepass.html', {'form': form, 'pk': pk})
+
+
 # def passreset_view(request):
 #     if request.method == "POST":
 #         # Check if the email has already been submitted for password reset

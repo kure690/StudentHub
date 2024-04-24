@@ -1,3 +1,4 @@
+
 <!-- templates/dashboard/dashboard.html -->
 {% extends 'base.html' %} 
 {% load static %}
@@ -23,6 +24,7 @@
     >
     <i class="fa-solid fa-plus"></i>
     </button>
+    
 
   {% for message in messages %}
   <div class="alert alert-{{ message.tags }} alert-dismissable fade show" role="alert" style="
@@ -43,30 +45,35 @@
   <!-- Sample Card -->
   {% for subject in subjects %}
   <div class="card" style="
-      width: 20rem;
-      height: 10rem;
-      margin-top: 20px;
-      margin-right: 20px; 
-      float: left;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-      background-color: #fff9e1;
-      border-radius: 20px;
-  ">
+    width: 22rem;
+    height: 25rem;
+    margin-top: 20px;
+    margin-right: 20px; /* Added margin-right to create space between cards */
+    float: left;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background-color: #fff9e1;
+    border-radius: 20px;
+">
+    <div class="card-body" style="margin: 20px;">
+        <h3 class="card-title"><a href="{% url 'class_details' pk=subject.pk %}" class="to-do-link" style="text-decoration: none; color: #00060c;">{{ subject.Subject_Name }}</a></h3>
+        <h4>{{ subject.Subject_Code }}</h4>
 
-    <div class="card-body"  style="margin: 20px;">
-      <h3 class="card-title"><a href="{% url 'class_details' pk=subject.pk %}" class="to-do-link" style="text-decoration: none; color: #00060c;">{{ subject.Subject_Name }}</a></h3>
-      <h4>{{ subject.Subject_Code }}</h4>
-
-      <table style="width:100%;">
-          <tr>
-              <td style="text-align: left; word-wrap: break-word;">{{ subject.Subject_Code }}</td>
-          </tr>
-      </table>
+        <table style="width:100%;">
+            <tr>
+                <td style="text-align: left; word-wrap: break-word;">{{ subject.Subject_Code }}</td>
+            </tr>
+        </table>
     </div>
+</div>
+{% endfor %}
+
+
+    
+
+    
+  
   </div>
-  {% endfor %}
-  </div>
- 
+  
 
     </div>
   </div>

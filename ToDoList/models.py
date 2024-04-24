@@ -18,6 +18,7 @@ class ToDoList(models.Model):
     deadline = models.DateField()
     score = models.IntegerField(default=0)
     perfect = models.IntegerField(default=0)
+    assigned_user = models.ForeignKey('authentication.CustomUser', on_delete=models.CASCADE, related_name='assigned_tasks', null=True, blank=True)
 
     def __str__(self):
         return self.task

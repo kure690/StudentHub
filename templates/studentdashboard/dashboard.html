@@ -1,15 +1,64 @@
-
-<!-- templates/dashboard/dashboard.html -->
 {% extends 'base.html' %} 
 {% load static %}
 {% block content %}
-<div style="
-    background-color: rgba(231, 209, 168, 0.8);
+<style>
+
+  .fixed-container {
+    position: fixed;
+    width: 350px;
+    top: 1%; 
+    right: 0px;
+    background-color: rgba(231, 209, 168, 0.9);
     padding: 15px;
     border-radius: 8px;
     box-shadow: 0 0 50px rgba(0, 0, 0, 0.1), 0 0 100px rgba(0, 0, 0, 0.2);
     text-align: center;
-">
+    z-index: -1;
+  }
+
+  .today {
+    background-color: #ffcc00;
+    color: #333;
+    font-weight: bold;
+}
+  .pending-deadline {
+        background-color: #f80000; /* Red background for pending task deadlines */
+        color: #333;
+        font-weight: bold;
+}
+/* CSS for Legend */
+.legend {
+    margin-top: 20px;
+    display: flex;
+    align-items: center;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    margin-right: 20px;
+}
+
+.legend-color {
+    width: 20px;
+    height: 20px;
+    margin-right: 5px;
+}
+
+.today-color {
+    background-color: #ffcc00; /* Yellow */
+}
+
+.deadline-color {
+    background-color: #ff0000; /* Red */
+}
+
+.legend-text {
+    font-size: 16px;
+}
+</style>
+</style>
+
   {% for message in messages %}
   <div class="alert alert-{{ message.tags }} alert-dismissable fade show" role="alert" style="
       background-color: rgba(252, 240, 193, 0.8);
@@ -26,57 +75,158 @@
   </div>
   {% endfor %}
 
-  <!-- Sample Card -->
   <div class="card" style="
       width: 23rem;
-      height: 25rem;
+      height: 20.5rem;
       margin-top: 20px;
+      margin-right: 20px; /* Added margin */
       float: left;
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
       background-color: #fff9e1;
-      border-radius: 20px;
+      border-radius: 10px;
+      overflow: hidden;
   ">
-    <div class="card-body"  style="margin: 20px;">
-      <h3 class="card-title"><a href="{% url 'tasks' %}" class="to-do-link" style="text-decoration: none; color: #00060c;">To Do List</a></h3>
-
+    <div class="card-body" style="margin: 30px;">
+      <div style="
+      display: flex; 
+      justify-content: space-between;
+      align-items: center;">
+        <h3 style="
+        text-align: left; 
+        margin: 0;">
+        Pending Tasks</h3>
+        <h4 class="card-title" style="
+        margin: 0;">
+        <a href="{% url 'tasks' %}" class="to-do-link" style="text-decoration: none; color: #888e94;">More...</a></h4>
+      </div>
       <table style="width:100%;">
-          <tr>
-              <th style="text-align: left;">Subjects</th>
-              <th style="text-align: left;">Items</th>
-              <th style="text-align: left;">Deadline</th>
-          </tr>
-          {% for task in tasks %}
-          <tr>
-              <td style="text-align: left; word-wrap: break-word;">{{ task.Subject_Code }}</td>
-              <td style="text-align: left; word-wrap: break-word;">{{ task.task }}</td>
-              <td style="text-align: left; word-wrap: break-word;">{{ task.deadline|date:"m/d/y" }}</td>
-          </tr>
-          {% empty %}
-          <tr>
-              <td colspan="4" style="text-align: left;">No items in list</td>
-          </tr>
-          {% endfor %}
+        <br>
+        <tr>
+          <th style="text-align: left;">Subjects</th>
+          <th style="text-align: left;">Items</th>
+          <th style="text-align: left;">Deadline</th>
+        </tr>
+        {% for task in tasks %}
+        {% if not task.status %}
+        <tr>
+          <td style="text-align: left; word-wrap: break-word;">{{ task.Subject_Code }}</td>
+          <td style="text-align: left; word-wrap: break-word;">{{ task.task }}</td>
+          <td style="text-align: left; word-wrap: break-word;">{{ task.deadline|date:"m/d/y" }}</td>
+        </tr>
+        {% endif %}
+        {% empty %}
+        <tr>
+          <td colspan="3" style="text-align: left;">No pending items in list</td>
+        </tr>
+        {% endfor %}
       </table>
     </div>
-  
   </div>
-  
 
-  <!-- Your dashboard content goes here -->
-  <div style="
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
+  <div class="card" style="
+    width: 23rem;
+    height: 20.5rem;
+    margin-top: 20px;
+    float: left;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background-color: #fff9e1;
+    border-radius: 10px;
+    overflow: hidden;
   ">
-    <div style="
-        background-color: rgba(231, 209, 168, 0.8);
-        padding: 15px;
-        border-radius: 8px;
-        box-shadow: 0 0 50px rgba(0, 0, 0, 0.1), 0 0 100px rgba(0, 0, 0, 0.2);
-        text-align: center;
-    ">
+    <div class="card-body" style="margin: 30px;">
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <h3 style="text-align: left; margin: 0;">{{ user.first_name }}'s Subjects</h3>
+        <h4 class="card-title" style="margin: 0;"><a href="{% url 'tasks' %}" class="to-do-link" style="text-decoration: none; color: #888e94;">More...</a></h4>
+      </div>
+      <br>
+      {% if subjects %}
+      <table style="width:100%;">
+        {% for subject in subjects %}
+        {% if request.user in subject.users.all %}
+        <tr>
+          <td>
+            <div style="background-color: #1e8701; padding: 10px; border-radius: 10px;">
+              <div style="display: flex; align-items: center;">
+                  <div style="background-color: #61ec36; padding: 10px; border-radius: 5px; width: 70px; height: 40px; margin-right: 10px;">
+                      <div style="text-align: center; color: #fff;">{{ subject.Subject_Code }}</div>
+                  </div>
+                  <div style="color: #fff;">{{ subject.Subject_Name }}</div>
+              </div>
+          </div>                   
+          </td>
+        </tr>
+        {% endif %}
+        {% endfor %}
+      </table>      
+      {% else %}
+      <p>No subjects assigned</p>
+      {% endif %}
     </div>
+  </div>
+
+  <div class = "fixed-container">
+    <div style="
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+    ">
+    <div class="additional-container" style="
+      position: fixed;
+      top: 5%;
+      right: 20px;
+      background-color: rgba(231, 209, 168, 1);
+      padding: 15px;
+      border-radius: 8px;
+      box-shadow: 0 0 50px rgba(0, 0, 0, 0.1), 0 0 100px rgba(0, 0, 0, 0.2);
+      text-align: center;
+      width: 300px;
+      height: 350px;
+      ">
+      <h2> NOTIFICATIONS </h1>
+    </div>
+
+      <div class="calendar-container" style="
+          position: fixed;
+          bottom: 20px;
+          right: 0px; 
+          background-color: rgba(231, 209, 168, 0.8);
+          padding: 15px;
+          border-radius: 8px;
+          text-align: center;
+      ">
+
+      <div style="
+          background-color: rgba(231, 209, 168, 0.8);
+          padding: 15px;
+          border-radius: 8px;
+          box-shadow: 0 0 50px rgba(0, 0, 0, 0.1), 0 0 100px rgba(0, 0, 0, 0.2);
+          text-align: center;
+          display: flex;
+          justify-content: flex-end; 
+          align-items: center; 
+          flex-direction: column; 
+      ">
+
+        <div style="margin-top: 30px; width: 300px; font-size: x-large;">
+            {{ calendar | safe }}
+            <div class="legend">
+              <div class="legend-item">
+                  <div class="legend-color today-color"></div>
+                  <div class="legend-text">Current Day</div>
+              </div>
+              <div class="legend-item">
+                  <div class="legend-color deadline-color"></div>
+                  <div class="legend-text">Deadline</div>
+              </div>
+          </div>
+        </div>
+        
+      </div>
+    </div>
+
+    
+
   </div>
 </div>
 {% endblock %}
