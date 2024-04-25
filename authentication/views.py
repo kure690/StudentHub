@@ -132,14 +132,20 @@ def dashboard(request):
     username = request.user.username
     id = request.user.id
     pk = request.user.pk
-    pending_task_deadlines = [task.deadline.day for task in tasks if not task.status]
+
+
+    # Filter deadlines to include only those in the current month
+    now = datetime.now()
+    current_year = now.year
+    current_month = now.month
+    pending_task_deadlines = [task.deadline.day for task in tasks if not task.status 
+                              and task.deadline.month == current_month 
+                              and task.deadline.year == current_year]
+    
     if role == 'teacher':
         return render(request, "teacherdashboard/dashboard.html", {'username': username, 'id': id, 'pk': pk, 'tasks': tasks, 'subjects': subject})
     
     elif role == 'student':
-        now = datetime.now()
-        current_year = now.year
-        current_month = now.month
         month_number = current_month
         cal = HighlightedHTMLCalendar(current_year, current_month, pending_task_deadlines).formatmonth(current_year, current_month)
         return render(request, "studentdashboard/dashboard.html", {'username': username, 'id': id, 'pk': pk, 'tasks': tasks, 'subjects': subject, 'calendar': mark_safe(cal)})

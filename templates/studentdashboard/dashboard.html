@@ -2,6 +2,20 @@
 {% load static %}
 {% block content %}
 <style>
+
+  .fixed-container {
+    position: fixed;
+    width: 350px;
+    top: 1%; 
+    right: 0px;
+    background-color: rgba(231, 209, 168, 0.9);
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 0 50px rgba(0, 0, 0, 0.1), 0 0 100px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    z-index: -1;
+  }
+
   .today {
     background-color: #ffcc00;
     color: #333;
@@ -42,31 +56,9 @@
 .legend-text {
     font-size: 16px;
 }
-.calendar-container {
-    position: fixed;
-    bottom: 20px; /* Adjust as needed */
-    right: 20px; /* Adjust as needed */
-    background-color: rgba(231, 209, 168, 0.8);
-    padding: 15px;
-    border-radius: 8px;
-    box-shadow: 0 0 50px rgba(0, 0, 0, 0.1), 0 0 100px rgba(0, 0, 0, 0.2);
-    text-align: center;
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-    flex-direction: column;
-}
-
-
 </style>
 </style>
-<div style="
-    background-color: rgba(231, 209, 168, 0.8);
-    padding: 15px;
-    border-radius: 8px;
-    box-shadow: 0 0 50px rgba(0, 0, 0, 0.1), 0 0 100px rgba(0, 0, 0, 0.2);
-    text-align: center;
-">
+
   {% for message in messages %}
   <div class="alert alert-{{ message.tags }} alert-dismissable fade show" role="alert" style="
       background-color: rgba(252, 240, 193, 0.8);
@@ -95,9 +87,17 @@
       overflow: hidden;
   ">
     <div class="card-body" style="margin: 30px;">
-      <div style="display: flex; justify-content: space-between; align-items: center;">
-        <h3 style="text-align: left; margin: 0;">Pending Tasks</h3>
-        <h4 class="card-title" style="margin: 0;"><a href="{% url 'tasks' %}" class="to-do-link" style="text-decoration: none; color: #888e94;">More...</a></h4>
+      <div style="
+      display: flex; 
+      justify-content: space-between;
+      align-items: center;">
+        <h3 style="
+        text-align: left; 
+        margin: 0;">
+        Pending Tasks</h3>
+        <h4 class="card-title" style="
+        margin: 0;">
+        <a href="{% url 'tasks' %}" class="to-do-link" style="text-decoration: none; color: #888e94;">More...</a></h4>
       </div>
       <table style="width:100%;">
         <br>
@@ -164,54 +164,69 @@
     </div>
   </div>
 
-  <div style="
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-  ">
+  <div class = "fixed-container">
     <div style="
-        position: absolute;
-        bottom: 20px;
-        right: 20px;
-        background-color: rgba(231, 209, 168, 0.8);
-        padding: 15px;
-        border-radius: 8px;
-        box-shadow: 0 0 50px rgba(0, 0, 0, 0.1), 0 0 100px rgba(0, 0, 0, 0.2);
-        text-align: center;
-    ">
-
-    <div style="
-        background-color: rgba(231, 209, 168, 0.8);
-        padding: 15px;
-        border-radius: 8px;
-        box-shadow: 0 0 50px rgba(0, 0, 0, 0.1), 0 0 100px rgba(0, 0, 0, 0.2);
-        text-align: center;
         display: flex;
-        justify-content: flex-end; 
-        align-items: center; 
-        flex-direction: column; 
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
     ">
+    <div class="additional-container" style="
+      position: fixed;
+      top: 5%;
+      right: 20px;
+      background-color: rgba(231, 209, 168, 1);
+      padding: 15px;
+      border-radius: 8px;
+      box-shadow: 0 0 50px rgba(0, 0, 0, 0.1), 0 0 100px rgba(0, 0, 0, 0.2);
+      text-align: center;
+      width: 300px;
+      height: 350px;
+      ">
+      <h2> NOTIFICATIONS </h1>
+    </div>
 
-      <div style="margin-top: 20px; width: 300px; font-size: larger;">
-          {{ calendar | safe }}
-          <div class="legend">
-            <div class="legend-item">
-                <div class="legend-color today-color"></div>
-                <div class="legend-text">Current Day</div>
-            </div>
-            <div class="legend-item">
-                <div class="legend-color deadline-color"></div>
-                <div class="legend-text">Deadline</div>
-            </div>
+      <div class="calendar-container" style="
+          position: fixed;
+          bottom: 20px;
+          right: 0px; 
+          background-color: rgba(231, 209, 168, 0.8);
+          padding: 15px;
+          border-radius: 8px;
+          text-align: center;
+      ">
+
+      <div style="
+          background-color: rgba(231, 209, 168, 0.8);
+          padding: 15px;
+          border-radius: 8px;
+          box-shadow: 0 0 50px rgba(0, 0, 0, 0.1), 0 0 100px rgba(0, 0, 0, 0.2);
+          text-align: center;
+          display: flex;
+          justify-content: flex-end; 
+          align-items: center; 
+          flex-direction: column; 
+      ">
+
+        <div style="margin-top: 30px; width: 300px; font-size: x-large;">
+            {{ calendar | safe }}
+            <div class="legend">
+              <div class="legend-item">
+                  <div class="legend-color today-color"></div>
+                  <div class="legend-text">Current Day</div>
+              </div>
+              <div class="legend-item">
+                  <div class="legend-color deadline-color"></div>
+                  <div class="legend-text">Deadline</div>
+              </div>
+          </div>
         </div>
+        
       </div>
-      
     </div>
 
     
 
-    </div>
   </div>
 </div>
 {% endblock %}

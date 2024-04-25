@@ -1,5 +1,5 @@
-from django.http import HttpResponse, HttpResponseRedirect
-from django.shortcuts import render, redirect
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
+from django.shortcuts import get_object_or_404, render, redirect
 from django.views import View
 from django.views.generic.list import ListView
 from django.views.generic.detail import DetailView
@@ -159,7 +159,13 @@ class TaskUpdate( UserPassesTestMixin, UpdateView):
             task_to_update.save()
         return super().form_valid(form)
     
-class DeleteTask (UserPassesTestMixin,  DeleteView):
+    def get_success_url(self):
+        # Retrieve subject PK from the session
+        subject_pk = self.request.session.get('subject_pk')
+        return reverse_lazy('viewtasks', kwargs={'pk': subject_pk})
+    
+
+class DeleteTask(UserPassesTestMixin, DeleteView):
     model = ToDoList
     context_object_name = 'data'
     template_name = 'todolist/task_delete.html'
@@ -168,38 +174,62 @@ class DeleteTask (UserPassesTestMixin,  DeleteView):
     def test_func(self):
         return self.request.user.is_teacher
 
-    def get_object(self, queryset=None):
-        # Return the task object based on the provided task ID
-        return self.model.objects.get(pk=self.kwargs['pk'])
-
     def post(self, request, *args, **kwargs):
-        # Check if the "Confirm Delete" button is clicked
-        if "confirm_delete" in request.POST:
-            # Proceed with the deletion
-            return self.confirm_delete(request, *args, **kwargs)
-        # If cancellation is requested, redirect back to the detail view
-        return HttpResponseRedirect(self.request.path)
-
-    def confirm_delete(self, request, *args, **kwargs):
-        # Retrieve the task object
-        task = self.get_object()
+        # Get the task object
+        task = get_object_or_404(ToDoList, pk=self.kwargs['pk'])
+        # Retrieve the subject code and task name
         subject = task.Subject_Code
         task_name = task.task
         # Delete all tasks with the same name as the selected task within the subject
         tasks_to_delete = ToDoList.objects.filter(Subject_Code=subject, task=task_name)
         tasks_to_delete.delete()
-        # Redirect to the success URL
-        return HttpResponseRedirect(self.get_success_url())
+        return JsonResponse({'message': 'Tasks deleted successfully'})
 
     def get_success_url(self):
         # Retrieve subject PK from the session
         subject_pk = self.request.session.get('subject_pk')
         return reverse_lazy('viewtasks', kwargs={'pk': subject_pk})
+    
+# class DeleteTask (UserPassesTestMixin,  DeleteView):
+#     model = ToDoList
+#     context_object_name = 'data'
+#     success_url = reverse_lazy('viewgrades')
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['pk'] = self.kwargs['pk']  # Pass subject_pk to the context
-        return context
+#     def test_func(self):
+#         return self.request.user.is_teacher
+
+#     def get_object(self, queryset=None):
+#         # Return the task object based on the provided task ID
+#         return self.model.objects.get(pk=self.kwargs['pk'])
+
+#     def post(self, request, *args, **kwargs):
+#         # Check if the "Confirm Delete" button is clicked
+#         if "confirm_delete" in request.POST:
+#             # Proceed with the deletion
+#             return self.confirm_delete(request, *args, **kwargs)
+#         # If cancellation is requested, redirect back to the detail view
+#         return HttpResponseRedirect(self.request.path)
+
+#     def confirm_delete(self, request, *args, **kwargs):
+#         # Retrieve the task object
+#         task = self.get_object()
+#         subject = task.Subject_Code
+#         task_name = task.task
+#         # Delete all tasks with the same name as the selected task within the subject
+#         tasks_to_delete = ToDoList.objects.filter(Subject_Code=subject, task=task_name)
+#         tasks_to_delete.delete()
+#         # Redirect to the success URL
+#         return HttpResponseRedirect(self.get_success_url())
+
+#     def get_success_url(self):
+#         # Retrieve subject PK from the session
+#         subject_pk = self.request.session.get('subject_pk')
+#         return reverse_lazy('viewtasks', kwargs={'pk': subject_pk})
+
+#     def get_context_data(self, **kwargs):
+#         context = super().get_context_data(**kwargs)
+#         context['pk'] = self.kwargs['pk']  # Pass subject_pk to the context
+#         return context
     
 # class DeleteTask(DeleteView):
 #     model = ToDoList
@@ -439,6 +469,15 @@ class ViewGrades( UserPassesTestMixin, DetailView):
 
     def test_func(self):
         return self.request.user.is_teacher  # Ensures only teachers can access this view
+    
+
+    def get(self, request, *args, **kwargs):
+        # Store subject PK in session
+        subject_pk = self.kwargs['pk']
+        request.session['subject_pk'] = subject_pk
+        print("Stored subject PK in session:", subject_pk)
+        return super().get(request, *args, **kwargs)
+    
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -481,6 +520,7 @@ class UpdateScore(UserPassesTestMixin, ListView):
 
     def test_func(self):
         return self.request.user.is_teacher
+    
 
     def get_queryset(self):
         # Retrieve the task name from URL parameters
