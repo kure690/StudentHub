@@ -1,9 +1,10 @@
+from datetime import datetime
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import get_object_or_404, render, redirect
 from django.views import View
 from django.views.generic.list import ListView
 from django.views.generic.detail import DetailView
-from .models import ToDoList, Subjects
+from .models import SubjectSchedule, ToDoList, Subjects
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.urls import reverse, reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -346,6 +347,18 @@ class ClassCreate(LoginRequiredMixin,  UserPassesTestMixin, CreateView):
         self.object.users.set(form.cleaned_data['users'])
         return response
     
+class CreateSchedule(LoginRequiredMixin,  UserPassesTestMixin, CreateView):
+    model = SubjectSchedule
+    fields = '__all__'
+    template_name = 'todolist/CreateSchedule.html'
+    success_url = reverse_lazy('dashboard')
+
+    def test_func(self):
+        return self.request.user.is_teacher
+
+    def form_valid(self, form):
+        return super().form_valid(form)
+    
 class ClassView( UserPassesTestMixin, ListView):
     model = Subjects
     context_object_name = 'class'
@@ -548,8 +561,6 @@ class UpdateScore(UserPassesTestMixin, ListView):
         
         return context
         
-
-
 class Scoring(LoginRequiredMixin, UpdateView):
     model = ToDoList
     fields = ['score', 'status']
@@ -559,6 +570,60 @@ class Scoring(LoginRequiredMixin, UpdateView):
     # Assuming you have access to the task name through the ToDoList model
         task_name = self.object.task
         return reverse_lazy('scoreupdate', kwargs={'task_name': task_name})
+    
+class UserScheduleView(View):
+    template_name = 'todolist/ViewSchedule.html'
+    context_object_name = 'subject'
+
+    def get(self, request, *args, **kwargs):
+        if request.user.is_authenticated:
+            user_subjects = Subjects.objects.filter(users=request.user)
+            schedule = {}
+            times = ['07:00 AM', '07:30 AM', '08:00 AM', '08:30 AM', '09:00 AM', '09:30 AM', '10:00 AM', '10:30 AM',
+                    '11:00 AM', '11:30 AM', '12:00 PM', '12:30 PM', '01:00 PM', '01:30 PM', '02:00 PM', '02:30 PM',
+                    '03:00 PM', '03:30 PM', '04:00 PM', '04:30 PM', '05:00 PM', '05:30 PM', '06:00 PM', '06:30 PM',
+                    '07:00 PM', '07:30 PM', '08:00 PM', '08:30 PM', '09:00 PM', '09:30 PM', '10:00 PM']
+
+            # Convert time strings to datetime objects
+            time_objects = [datetime.strptime(time_str, '%I:%M %p') for time_str in times]
+
+            # Convert datetime objects to military time format
+            military_times = [time_obj.strftime('%H:%M') for time_obj in time_objects]
+
+            print(military_times)
+
+            print("Data type of times:", type(military_times))
+            for day in range(1, 7):
+                schedule[day] = []
+
+            for subject in user_subjects:
+                subject_schedules = SubjectSchedule.objects.filter(subject=subject)
+                for subject_schedule in subject_schedules:
+                    formatted_start_time = subject_schedule.start_time.strftime('%I:%M %p')
+                    formatted_end_time = subject_schedule.end_time.strftime('%I:%M %p')
+                    
+                    # Convert start and end times to datetime objects
+                    start_time_obj = datetime.combine(datetime.today(), subject_schedule.start_time)
+                    end_time_obj = datetime.combine(datetime.today(), subject_schedule.end_time)
+                    
+                    # Convert start and end times to military time format
+                    military_start_time = start_time_obj.strftime('%H:%M')
+                    military_end_time = end_time_obj.strftime('%H:%M')
+                    
+                    duration = end_time_obj - start_time_obj
+                    duration_in_minutes = duration.total_seconds() / 60
+                    duration_in_intervals = duration_in_minutes // 30
+                    schedule[subject_schedule.day_of_week].append({
+                        'subject': subject.Subject_Name,
+                        'start_time': military_start_time,
+                        'end_time': military_end_time,
+                        'duration': duration_in_intervals  # Pass duration in intervals to template
+                    })
+
+            return render(request, self.template_name, {'schedule': schedule, 'times': military_times, 'user': request.user})
+        else:
+            return redirect('login')
+
 
 
     # def get_context_data(self, **kwargs):

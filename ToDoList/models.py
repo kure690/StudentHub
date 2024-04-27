@@ -9,6 +9,25 @@ class Subjects(models.Model):
 
     def __str__(self):
         return self.Subject_Code
+    
+
+class SubjectSchedule(models.Model):
+    subject = models.ForeignKey(Subjects, on_delete=models.CASCADE)
+    day_of_week = models.IntegerField(choices=[
+        (1, 'Monday'),
+        (2, 'Tuesday'),
+        (3, 'Wednesday'),
+        (4, 'Thursday'),
+        (5, 'Friday'),
+        (6, 'Saturday'),
+        (7, 'Sunday'),
+    ])
+    start_time = models.TimeField()
+    end_time = models.TimeField()
+
+    def __str__(self):
+        return f"{self.subject.Subject_Code} Schedule ({self.get_day_of_week_display()})"
+
 class ToDoList(models.Model):
     user = models.ForeignKey('authentication.CustomUser', on_delete=models.CASCADE, null=True, blank=True)
     Subject_Code = models.ForeignKey(Subjects, on_delete=models.CASCADE)
@@ -25,5 +44,6 @@ class ToDoList(models.Model):
     
     class Meta:
         ordering =['status']
+
 
 
