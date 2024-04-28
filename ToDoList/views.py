@@ -404,6 +404,16 @@ class AddStudent(LoginRequiredMixin, UpdateView):
 
     def test_func(self):
         return self.request.user.is_teacher
+    
+    def get_form(self, form_class=None):
+        form = super().get_form(form_class)
+        users_queryset = CustomUser.objects.filter(is_student=True)
+        form.fields['users'] = forms.ModelMultipleChoiceField(
+            queryset=users_queryset,
+            widget=forms.CheckboxSelectMultiple,
+            required=False
+        )
+        return form
 
     def get_success_url(self):
         # Get the primary key (pk) of the subject object
