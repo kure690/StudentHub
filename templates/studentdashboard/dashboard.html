@@ -5,7 +5,7 @@
 
   .fixed-container {
     position: fixed;
-    width: 350px;
+    min-width: 350px;
     top: 1%; 
     right: 0px;
     background-color: rgba(231, 209, 168, 0.9);
@@ -26,6 +26,11 @@
         color: #333;
         font-weight: bold;
 }
+
+  .card-body {
+    min-width: 300px;
+  }
+
 /* CSS for Legend */
 .legend {
     margin-top: 20px;
@@ -75,8 +80,9 @@
   </div>
   {% endfor %}
 
+  {% comment %} pending tasks card {% endcomment %}
   <div class="card" style="
-      width: 23rem;
+      min-width: 300px;
       height: 20.5rem;
       margin-top: 20px;
       margin-right: 20px; /* Added margin */
@@ -86,6 +92,8 @@
       border-radius: 10px;
       overflow: hidden;
   ">
+
+  {% comment %} subjects card {% endcomment %}
     <div class="card-body" style="margin: 30px;">
       <div style="
       display: flex; 
@@ -123,8 +131,9 @@
     </div>
   </div>
 
+  {% comment %} subjects card 2 {% endcomment %}
   <div class="card" style="
-    width: 23rem;
+    min-width: 23rem;
     height: 20.5rem;
     margin-top: 20px;
     float: left;
@@ -136,7 +145,7 @@
     <div class="card-body" style="margin: 30px;">
       <div style="display: flex; justify-content: space-between; align-items: center;">
         <h3 style="text-align: left; margin: 0;">{{ user.first_name }}'s Subjects</h3>
-        <h4 class="card-title" style="margin: 0;"><a href="{% url 'tasks' %}" class="to-do-link" style="text-decoration: none; color: #888e94;">More...</a></h4>
+        <h4 class="card-title" style="margin: 0;"><a href="{% url 'user_schedule' %}" class="to-do-link" style="text-decoration: none; color: #888e94;">More...</a></h4>
       </div>
       <br>
       {% if subjects %}
@@ -171,8 +180,11 @@
         justify-content: center;
         height: 100vh;
     ">
+
+    {% comment %} for notifications {% endcomment %}
     <div class="additional-container" style="
       position: fixed;
+      min-width: 300px;
       top: 5%;
       right: 20px;
       background-color: rgba(231, 209, 168, 1);
@@ -180,7 +192,6 @@
       border-radius: 8px;
       box-shadow: 0 0 50px rgba(0, 0, 0, 0.1), 0 0 100px rgba(0, 0, 0, 0.2);
       text-align: center;
-      width: 300px;
       height: 350px;
       ">
       <h2> NOTIFICATIONS </h1>

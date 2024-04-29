@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jua&display=swap"/>
     <title>Class Details</title>
+    <a href="{% url 'viewgrades' pk=subject.pk %}">View Grades</a>
     <style>
         body {
             background-color: #fcf0c1;
@@ -179,11 +180,25 @@
     </div>
     
     <div class="button-container">
-        <a href="{% url 'add_student' pk=subject.pk %}">Add Student</a>
+        <a href="#" id="add-student-link">Add Student</a>
         <a href="{% url 'task-create' pk=subject.pk %}">Create Task</a>
         <a href="{% url 'class_delete' pk=subject.pk %}" id="delete-class-link">Delete Class</a>
         <a href="{% url 'viewtasks' pk=subject.pk %}">Tasks View</a>
     </div>
+
+    <div id="add-student-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h3>Add Student</h3>
+            <div class="container">
+                <form id="add-student-form" method="POST" action="">
+                    {% csrf_token %}
+                </form>
+            </div>
+        </div>
+    </div>
+
+
 
     <div id="delete-modal" class="modal">
         <div class="modal-content">
@@ -212,6 +227,54 @@
     </div>
 
     <script>
+
+        var addStudentLink = document.getElementById('add-student-link');
+        var addStudentModal = document.getElementById('add-student-modal');
+        var addStudentForm = document.getElementById('add-student-form');
+
+        if (addStudentLink) {
+            addStudentLink.addEventListener('click', function(event) {
+            event.preventDefault();
+
+        
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', '{% url "add_student" pk=subject.pk %}', true);
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState === XMLHttpRequest.DONE) {
+                if (xhr.status === 200) {
+                    var parser = new DOMParser();
+                    var responseDoc = parser.parseFromString(xhr.responseText, 'text/html');
+                    var formElement = responseDoc.querySelector('form');
+                    addStudentForm.innerHTML = formElement.outerHTML;
+                    addStudentModal.style.display = 'block';
+                } else {
+                    console.error('Error occurred:', xhr.status);
+                }
+            }
+        };
+        xhr.send();
+    });
+}
+
+
+
+window.addEventListener('click', function(event) {
+    if (event.target == addStudentModal) {
+        addStudentModal.style.display = 'none';
+    }
+});
+
+var closeModal = addStudentModal.querySelector('.close');
+if (closeModal) {
+    closeModal.addEventListener('click', function() {
+        addStudentModal.style.display = 'none';
+    });
+}
+
+
+
+
+
         var deleteLink = document.getElementById('delete-class-link');
         var modal = document.getElementById('delete-modal');
 

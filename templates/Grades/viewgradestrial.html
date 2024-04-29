@@ -3,12 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <title>Grades</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            margin: 0;
+            margin: 20px;
             padding: 0;
             background-color: #fcf0c1;
         }
@@ -99,7 +98,7 @@
     <h1>Grades</h1>
     <a href="{% url 'class_details' pk=subject.pk %}" class="go-back">Go back</a>
 
-    <h2>Pending Tasks</h2>
+    <h2>Tasks</h2>
     <table id="pending-table">
         <thead>
             <tr>

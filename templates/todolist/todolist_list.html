@@ -18,7 +18,7 @@
       overflow: hidden;
     }
     .container {
-      max-width: 1200px;
+      min-width: 300px;
       margin: 20px auto;
       background-color: rgba(231, 209, 168, 0.8);
       padding: 20px;
@@ -26,12 +26,14 @@
       box-shadow: 0 0 50px rgba(0, 0, 0, 0.1), 0 0 100px rgba(0, 0, 0, 0.2);
       position: absolute;
       top: 0;
-      left: 50%;
-      transform: translateX(-50%);
-      width: calc(100% - 40px);
-      max-height: calc(100vh - 40px); 
-      overflow-y: auto; 
-}
+      right: 50px;
+      left: 100px; 
+      width: calc(100vw - 220px); 
+      max-height: calc(100vh - 40px);
+      overflow-y: auto;
+    }
+    
+
     .sidebar {
       position: fixed;
       top: 0;
@@ -177,7 +179,7 @@
       <th onclick="sortTable(0)" style="cursor: pointer;">Subject</th>
       </th>
       <th onclick="sortTable(1)" style = "cursor: pointer">Task</th>
-      <th>Deadline</th>
+      <th onclick="sortTable(2)" style = "cursor: pointer">Deadline</th>
       <th>Status</th>
       <th onclick="sortTable(4)" style = "cursor: pointer">Score</th>
       <th>Out of</th>
@@ -220,33 +222,32 @@
 
 <script>
   function openPopup(subjectCode, taskName, deadline, description) {
-  var modal = document.getElementById("myModal");
-  var modalContent = document.getElementById("modalContent");
+    var modal = document.getElementById("myModal");
+    var modalContent = document.getElementById("modalContent");
 
-  modalContent.innerHTML = `
-    <h2>Task Details</h2>
-    <p><strong>Subject Code:</strong> ${subjectCode}</p>
-    <p><strong>Task Name:</strong> ${taskName}</p>
-    <p><strong>Description:</strong> ${description}</p>
-    <p><strong>Deadline:</strong> ${deadline}</p>
-  `;
+    modalContent.innerHTML = `
+      <h2>Task Details</h2>
+      <p><strong>Subject Code:</strong> ${subjectCode}</p>
+      <p><strong>Task Name:</strong> ${taskName}</p>
+      <p><strong>Description:</strong> ${description}</p>
+      <p><strong>Deadline:</strong> ${deadline}</p>
+    `;
 
-  modal.style.display = "block"; 
-}
-
+    modal.style.display = "block";
+  }
 
   function closePopup() {
     var modal = document.getElementById("myModal");
-    modal.style.display = "none"; 
+    modal.style.display = "none";
   }
 
   window.onclick = function(event) {
     var modal = document.getElementById("myModal");
     if (event.target == modal) {
-      modal.style.display = "none"; 
+      modal.style.display = "none";
     }
   }
-  
+
   var ascending = true;
 
   function sortTable(columnIndex) {
@@ -277,15 +278,32 @@
         x = rows[i].getElementsByTagName('td')[columnIndex];
         y = rows[i + 1].getElementsByTagName('td')[columnIndex];
 
-        if (ascending) {
-          if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
-            shouldSwitch = true;
-            break;
+        // Handle date sorting for the deadline column
+        if (columnIndex === 2) {
+          var dateX = new Date(x.innerHTML);
+          var dateY = new Date(y.innerHTML);
+          if (ascending) {
+            if (dateX > dateY) {
+              shouldSwitch = true;
+              break;
+            }
+          } else {
+            if (dateX < dateY) {
+              shouldSwitch = true;
+              break;
+            }
           }
         } else {
-          if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
-            shouldSwitch = true;
-            break;
+          if (ascending) {
+            if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+              shouldSwitch = true;
+              break;
+            }
+          } else {
+            if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
+              shouldSwitch = true;
+              break;
+            }
           }
         }
       }
@@ -300,6 +318,7 @@
   }
 
 </script>
+
 
 </body>
 </html>
