@@ -20,7 +20,6 @@ class SubjectSchedule(models.Model):
         (4, 'Thursday'),
         (5, 'Friday'),
         (6, 'Saturday'),
-        (7, 'Sunday'),
     ])
     start_time = models.TimeField()
     end_time = models.TimeField()
@@ -38,6 +37,7 @@ class ToDoList(models.Model):
     score = models.IntegerField(default=0)
     perfect = models.IntegerField(default=0)
     assigned_user = models.ForeignKey('authentication.CustomUser', on_delete=models.CASCADE, related_name='assigned_tasks', null=True, blank=True)
+    
 
     def __str__(self):
         return self.task

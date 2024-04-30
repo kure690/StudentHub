@@ -184,6 +184,7 @@
         <a href="{% url 'task-create' pk=subject.pk %}">Create Task</a>
         <a href="{% url 'class_delete' pk=subject.pk %}" id="delete-class-link">Delete Class</a>
         <a href="{% url 'viewtasks' pk=subject.pk %}">Tasks View</a>
+        <a href="{% url 'Schedule_create' pk=subject.pk %}">Edit Schedule</a>
     </div>
 
     <div id="delete-modal" class="modal">

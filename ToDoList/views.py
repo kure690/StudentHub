@@ -349,15 +349,34 @@ class ClassCreate(LoginRequiredMixin,  UserPassesTestMixin, CreateView):
     
 class CreateSchedule(LoginRequiredMixin,  UserPassesTestMixin, CreateView):
     model = SubjectSchedule
-    fields = '__all__'
+    fields = ['day_of_week', 'start_time', 'end_time']
     template_name = 'todolist/CreateSchedule.html'
     success_url = reverse_lazy('dashboard')
 
     def test_func(self):
         return self.request.user.is_teacher
+    
+    def get(self, request, *args, **kwargs):
+        # Store subject PK in session
+        subject_pk = self.kwargs['pk']
+        request.session['subject_pk'] = subject_pk
+        print("Stored subject PK in session:", subject_pk)
+        return super().get(request, *args, **kwargs)
 
     def form_valid(self, form):
+        # Retrieve the subject from the session
+        subject_pk = self.request.session.get('subject_pk')
+        subject = Subjects.objects.get(pk=subject_pk)
+
+        # Associate the subject with the schedule
+        form.instance.subject = subject
+
         return super().form_valid(form)
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['subject_pk'] = self.kwargs['pk']
+        return context
     
 class ClassView( UserPassesTestMixin, ListView):
     model = Subjects
@@ -630,7 +649,7 @@ class UserScheduleView(View):
                         'duration': duration_in_intervals  # Pass duration in intervals to template
                     })
 
-            return render(request, self.template_name, {'schedule': schedule, 'times': military_times, 'user': request.user})
+            return render(request, self.template_name, {'schedule': schedule, 'times': military_times, 'user_subjects': user_subjects, 'user': request.user,})
         else:
             return redirect('login')
 
