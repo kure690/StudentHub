@@ -70,7 +70,7 @@ class ToDoDetail(DetailView):
 
 class TaskCreate(LoginRequiredMixin,  UserPassesTestMixin, CreateView):
     model = ToDoList
-    fields = ['task', 'description', 'perfect', 'deadline']
+    fields = ['task', 'description', 'perfect', 'task_type', 'deadline']
     template_name = 'todolist/task_form.html'
 
     def test_func(self):
@@ -109,6 +109,7 @@ class TaskCreate(LoginRequiredMixin,  UserPassesTestMixin, CreateView):
                     status=False,  # Default status to False
                     deadline=form.cleaned_data['deadline'],
                     perfect=form.cleaned_data['perfect'],
+                    task_type=form.cleaned_data['task_type'],
                     assigned_user=user  # Assign the user to the task
                 )
                 print("Task created:", task)
@@ -134,7 +135,7 @@ class TaskCreate(LoginRequiredMixin,  UserPassesTestMixin, CreateView):
 
 class TaskUpdate( UserPassesTestMixin, UpdateView):
     model = ToDoList
-    fields = ['Subject_Code', 'description', 'perfect', 'deadline']
+    fields = ['Subject_Code', 'description', 'perfect', 'task_type', 'deadline']
     template_name = 'todolist/taskupdate.html'
     success_url = reverse_lazy('teacher_tasks')
 
@@ -157,6 +158,7 @@ class TaskUpdate( UserPassesTestMixin, UpdateView):
             task_to_update.description = task.description
             task_to_update.deadline = task.deadline
             task_to_update.perfect = task.perfect
+            task_to_update.task_type = task.task_type
             task_to_update.save()
         return super().form_valid(form)
     
@@ -504,14 +506,13 @@ class ViewTasks( UserPassesTestMixin, DetailView):
         context['tasks'] = unique_tasks
         return context
     
-class ViewGrades( UserPassesTestMixin, DetailView):
+class ViewGrades(UserPassesTestMixin, DetailView):
     model = Subjects
     context_object_name = 'subject'
     template_name = 'Grades/viewgradestrial.html'
 
     def test_func(self):
         return self.request.user.is_teacher  # Ensures only teachers can access this view
-    
 
     def get(self, request, *args, **kwargs):
         # Store subject PK in session
@@ -519,7 +520,6 @@ class ViewGrades( UserPassesTestMixin, DetailView):
         request.session['subject_pk'] = subject_pk
         print("Stored subject PK in session:", subject_pk)
         return super().get(request, *args, **kwargs)
-    
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -537,22 +537,52 @@ class ViewGrades( UserPassesTestMixin, DetailView):
                 unique_tasks.append(task)
                 seen_tasks.add(task.task)
 
+        num_students = len(students)
         student_scores = []
+
         for student in students:
             student_data = {'student': student, 'scores': []}
+            total_score = 0
+            total_possible_score = 0
+
             for task in unique_tasks:
                 # Retrieve task assigned to the student
                 assigned_task = all_tasks.filter(task=task.task, user=student).first()
-                # If task is assigned to the student, retrieve score
-                score = assigned_task.score if assigned_task else None
+                # If task is assigned to the student and completed, retrieve score
+                if assigned_task and assigned_task.status:
+                    score = assigned_task.score
+                    total_score += score
+                    total_possible_score += task.perfect
+                else:
+                    score = 0
                 student_data['scores'].append({'task': task, 'score': score})
+
+            # Calculate the average grade for the student
+            average_grade = (total_score / total_possible_score) * 100 if total_possible_score > 0 else 0
+            student_data['average_grade'] = round(average_grade, 2)
+
             student_scores.append(student_data)
+
+        def calculate_class_average():
+            total_student_average = 0
+
+            for student_data in student_scores:
+                total_student_average += student_data['average_grade']
+
+            class_average = total_student_average / len(student_scores) if len(student_scores) > 0 else 0
+            return round(class_average, 2)
+
+        class_average_grade = calculate_class_average()
+
 
         context['students'] = students
         context['tasks'] = unique_tasks
         context['student_scores'] = student_scores
+        context['num_students'] = num_students
+        context['class_average_grade'] = class_average_grade
 
         return context
+
     
 
 class UpdateScore(UserPassesTestMixin, ListView):
