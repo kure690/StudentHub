@@ -581,6 +581,7 @@ class Scoring(LoginRequiredMixin, UpdateView):
         task_name = self.object.task
         return reverse_lazy('scoreupdate', kwargs={'task_name': task_name})
     
+    
 class UserScheduleView(View):
     template_name = 'todolist/ViewSchedule.html'
     context_object_name = 'subject'
