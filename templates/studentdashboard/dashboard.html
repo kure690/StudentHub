@@ -2,11 +2,12 @@
 {% load static %}
 {% block content %}
 <style>
-  /* body {
+  body {
     position: relative;
+    background-color: #fcf0c1;
   }
 
-  body::before {
+  /*body::before {
     content: "";
     position: fixed;
     top: 0;
@@ -74,6 +75,39 @@
 .legend-text {
     font-size: 16px;
 }
+.card2 {
+  width: 51.25rem;
+  height: 18rem;
+  margin-top: 20px;
+  margin-left: 20px;
+  margin-right: 20px;
+  float: left;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  background-color: transparent; /* Set the background color to transparent */
+  background-image: url('{% static 'imgs/corkboard.jpg' %}');
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  background-position: center;
+  border-radius: 5px;
+  overflow: hidden;
+  position: relative; /* Add position relative */
+}
+
+.card2::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(255, 255, 255, 0.2); /* Set the opacity to 20% (0.2) */
+  z-index: 1; /* Make sure the overlay is above the background image */
+}
+
+.card2 .card-body {
+  position: relative; /* Add position relative */
+  z-index: 2; /* Make the card-body content appear above the overlay */
+}
 
 
 </style>
@@ -137,8 +171,6 @@
 {% endif %}
     </div>
   </div>
-  
-
 
   <div class="card" style="
       width: 27rem;
@@ -198,21 +230,7 @@
     </div>
   </div>
   
-  <div class="card" style="
-    width: 51.25rem;
-    height: 18rem;
-    margin-top: 20px;
-    margin-left: 20px;
-    margin-right: 20px;
-    float: left;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    background-image: url('{% static 'imgs/corkboard.jpg' %}');
-    background-size: 100% 100%;
-    background-repeat: no-repeat;
-    background-position: center;
-    border-radius: 5px;
-    overflow: hidden;
-  ">
+  <div class="card card2">
     <div class="card-body" style="margin: 30px;">
       <div style="display: flex; justify-content: space-between; align-items: center;">
         <h3 style="text-align: left; margin: 0;">Progress Tracker</h3>
@@ -221,28 +239,28 @@
         </h4>
       </div>
       <div style="display: flex;">
-        <div style="background-color: #fff01b; padding: 10px; box-shadow: 0 0 50px rgba(0, 0, 0, 0.1), 0 0 100px rgba(0, 0, 0, 0.2); width: 150px; height: 80px; margin-right: 30px; margin-top: 10px;">
+        <div style="background-color: #fff01b; padding: 10px; box-shadow: 0 50px 50px rgba(0, 0, 0, 0.1), 0 0 100px rgba(0, 0, 0, 0.2); width: 150px; height: 80px; margin-right: 30px; margin-top: 10px;">
           <img src="{% static 'imgs/pin.png' %}" alt="Notebook Spring" style="width: 35px; height: 35px; margin: 0px; position: absolute;">
           <div style="text-align: center; color: #080101; font-size: 24px; font-weight: bold; margin-top: 10px;">
             {{ tasks.count }}
           </div>
           <div style="color: #040101; text-align: center;">Total Tasks</div>
       </div>
-        <div style="background-color: #fff01b; padding: 10px; box-shadow: 0 0 50px rgba(0, 0, 0, 0.1), 0 0 100px rgba(0, 0, 0, 0.2); width: 150px; height: 80px; margin-right: 30px; margin-top: 10px;">
+        <div style="background-color: #fff01b; padding: 10px; box-shadow: 0 50px 50px rgba(0, 0, 0, 0.1), 0 0 100px rgba(0, 0, 0, 0.2); width: 150px; height: 80px; margin-right: 30px; margin-top: 10px;">
           <!-- <img src="{% static 'imgs/pin.png' %}" alt="Notebook Spring" style="width: 35px; height: 35px; margin: 0px; position: absolute;"> -->
           <div style="text-align: center; color: #080101; font-size: 24px; font-weight: bold; margin-top: 10px;">
             {{ quiz_count }}
           </div>
           <div style="color: #040101; text-align: center;">Quizes</div>
         </div>
-        <div style="background-color: #fff01b; padding: 10px; box-shadow: 0 0 50px rgba(0, 0, 0, 0.1), 0 0 100px rgba(0, 0, 0, 0.2); width: 150px; height: 80px; margin-right: 30px;  margin-top: 10px;">
+        <div style="background-color: #fff01b; padding: 10px; box-shadow: 0 50px 50px rgba(0, 0, 0, 0.1), 0 0 100px rgba(0, 0, 0, 0.2); width: 150px; height: 80px; margin-right: 30px;  margin-top: 10px;">
           <!-- <img src="{% static 'imgs/pin.png' %}" alt="Notebook Spring" style="width: 35px; height: 35px; margin: 0px; position: absolute;"> -->
           <div style="text-align: center; color: #080101; font-size: 24px; font-weight: bold; margin-top: 10px;">
             {{ activity_count }}
           </div>
           <div style="color: #040101; text-align: center;">Activites</div>
         </div>
-        <div style="background-color: #fff01b; padding: 10px; box-shadow: 0 0 50px rgba(0, 0, 0, 0.1), 0 0 100px rgba(0, 0, 0, 0.2); width: 150px; height: 80px; margin-right: 30px;  margin-top: 10px;">
+        <div style="background-color: #fff01b; padding: 10px; box-shadow: 0 50px 50px rgba(0, 0, 0, 0.1), 0 0 100px rgba(0, 0, 0, 0.2); width: 150px; height: 80px; margin-right: 30px;  margin-top: 10px;">
           <img src="{% static 'imgs/pin.png' %}" alt="Notebook Spring" style="width: 35px; height: 35px; margin: 0px; position: absolute;">
           <div style="text-align: center; color: #080101; font-size: 24px; font-weight: bold; margin-top: 10px;">
             {{ final_grade_percentage }}

@@ -414,8 +414,10 @@ class ClassDetails(LoginRequiredMixin,  UserPassesTestMixin, DetailView):
         for task in tasks:
             unique_tasks[task.task] = task
 
-        context['tasks'] = unique_tasks.values()
+        subject_schedules = SubjectSchedule.objects.filter(subject=subject)
 
+        context['tasks'] = unique_tasks.values()
+        context['subject_schedules'] = subject_schedules
         return context
     
 class AddStudent(LoginRequiredMixin, UpdateView):

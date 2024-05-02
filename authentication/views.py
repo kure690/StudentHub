@@ -1,4 +1,4 @@
-from .models import CustomUser
+from .models import CustomUser, DEPARTMENT_CHOICES
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
 from django.shortcuts import redirect, render
@@ -26,7 +26,6 @@ def home(request):
     return render(request, "authentication/index.html")
 
 def signup(request):
-
     if request.method == "POST":
         username = request.POST['username']
         fname = request.POST['fname']
@@ -35,47 +34,44 @@ def signup(request):
         password1 = request.POST['password1']
         password2 = request.POST['password2']
         role = request.POST.get('role')
+        department = request.POST.get('department')
 
         if CustomUser.objects.filter(username=username).exists():
             messages.error(request, "Username already exists. Please choose a different username.")
             return redirect('signup')
-        
-        if CustomUser.objects.filter(email = email).exists():
+
+        if CustomUser.objects.filter(email=email).exists():
             messages.error(request, "This email address is already in use")
             return redirect('signup')
-        
 
         try:
             myuser = CustomUser.objects.create_user(username=username, email=email, password=password1)
             myuser.first_name = fname
-            myuser.last_name =lname
-
+            myuser.last_name = lname
             if role == 'student':
                 myuser.is_student = True
                 myuser.is_teacher = False
+                myuser.department = department  # Set the department for the student
             elif role == 'teacher':
                 myuser.is_student = False
                 myuser.is_teacher = True
-
             myuser.save()
-
             messages.success(request, "Your Account has been successfully created.")
 
-            #Welcome Email
-            subject ="Welcome to StudentHub!!"
-            message ="Hello " + myuser.first_name + myuser.last_name + " and Welcome to Student Hub!"
+            # Welcome Email
+            subject = "Welcome to StudentHub!!"
+            message = f"Hello {myuser.first_name} {myuser.last_name} and Welcome to Student Hub!"
             from_email = settings.EMAIL_HOST_USER
             to_list = [myuser.email]
             send_mail(subject, message, from_email, to_list, fail_silently=False)
-        
+
             return redirect('signin')
         except IntegrityError:
             messages.error(request, "An error occurred while creating your account. Please try again later.")
             return redirect('signup')
-    
 
-
-    return render(request, "authentication/signup.html")
+    departments = DEPARTMENT_CHOICES
+    return render(request, "authentication/signup.html", {'department_choices': departments})
 
 def signin(request):
 

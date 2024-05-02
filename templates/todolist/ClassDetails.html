@@ -233,7 +233,22 @@
     </div>
 
     <div class="header2_container">
-        <h2 style="text-align: left; margin-left: 20px;">{{ subject.Subject_Code }}</h2>
+        <div style="display: flex; align-items: center;">
+            <h2 style="text-align: left; margin-left: 20px; margin-right: 10px;">{{ subject.Subject_Code }} |</h2>
+            <div style="display: flex; align-items: center;">
+                <h3 style="margin: 0; margin-right: 10px;">Schedule:</h3>
+                {% if subject_schedules %}
+                <ul style="list-style-type: none; padding: 0; margin: 0; display: flex;">
+                    {% for schedule in subject_schedules %}
+                    <li style="margin-right: 20px; display: flex; align-items: center;">
+                        <span style="margin-right: 5px;">{{ schedule.get_day_of_week_display }}</span>
+                        <span>({{ schedule.start_time|time:"h:i A" }} - {{ schedule.end_time|time:"h:i A" }})</span>
+                    </li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+            </div>
+        </div>
     </div>
 
     <div class="container">
@@ -255,6 +270,7 @@
                 <tr>
                     <td>{{ student.first_name }}</td>
                     <td>{{ student.last_name }}</td>
+                    <td>{{ student.get_department_display }}</td>
                     <td></td>
                     <td></td> 
                 </tr>    
