@@ -34,8 +34,9 @@
         .tab-container {
             margin-top: 10px;
             display: flex;
-            justify-content: space-around;
-            margin-bottom: 0;
+            flex-direction: row;
+            margin-top: 10px;
+            margin-left: 10px;
         }
 
         .tab {
@@ -220,6 +221,7 @@
     <div class="box">
     </div>
     </div>
+    <a href="{% url 'viewgrades' pk=subject.pk %}">View Grades</a>
     
     <div class="header_container">
         <div class="header1_content">
