@@ -39,23 +39,31 @@
     }
 
     .overallprogress_container {
-        position: relative;
-        width: 200px; /* Adjust according to your circle size */
-        height: 200px; /* Adjust according to your circle size */
-        border-radius: 50%;
-        background-color: #f0f0f0;
-        margin-right: 30px;
-        display: flex;
-        justify-content: center;
-        
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    background-color: #f0f0f0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    margin-left: 30px;
+}
+@media screen and (max-width: 768px) {
+    .progress-content {
+        flex-direction: column;
     }
 
-    .class_average_text {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    color: #080101;
+    .graph-container {
+        margin-right: 0;
+        margin-bottom: 20px;
+    }
+
+    .overallprogress_container {
+        margin-top: 20px;
+    }
+}
+.class_average_text {
     font-size: 30px;
     font-weight: bold;
     text-align: center;
@@ -63,11 +71,10 @@
 
 .class_average_label {
     position: absolute;
-    top: calc(50% + 20px); /* Adjust this value to create space between the percentage and the text */
+    top: calc(50% + 30px);
     left: 50%;
     transform: translateX(-50%);
-    color: #080101;
-    font-size: 15px; /* Adjust the font size as needed */
+    font-size: 15px;
     text-align: center;
 }
 
@@ -133,19 +140,24 @@
         font-size: 0.7em; /* Adjust size as needed */
     }
 
-    .graph-container {
-            max-width: 70%; /* Set maximum width to 100% */
-            flex: 1;
-            margin-left: auto;
-            margin-right: 30px;
-    }
+    
+.graph-container {
+    flex: 1;
+    margin-left: 30px;
+    margin-right: 30px;
+    height: 400px;
+}
+    .progress-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
     
 </style>
 </head>
 <body>
     <div style="display: flex; align-items: center;">
-        <h1 style="text-align: left;">{{ subject.Subject_Name }}</h1>
-        <a href="{% url 'class_details' pk=subject.pk %}" class="go-back">Go back</a> 
+        <h1 style="text-align: left; margin-top: 0;">{{ subject.Subject_Name }}</h1>
     </div>
     
 
@@ -161,24 +173,50 @@
 
 
         <div class="progress-container">
-            <div style="display: flex;">
-                <h2 style="margin-left: 30px;">Overall Progress</h2>
+            <h2 style="margin-left: 30px;">Overall Progress</h2>
+            <div class="progress-content">
+                <div class="overallprogress_container">
+                    <div class="class_average_text">{{ class_average_grade|floatformat:2 }}%</div>
+                    <div class="class_average_label">Class Average</div>
+                </div>
                 <div class="graph-container">
                     <canvas id="myBarChart"></canvas>
                 </div>
             </div>
-            <div class="overallprogress_container">
-                <div class="class_average_text">{{ class_average_grade|floatformat:2 }}%</div>
-                <div class="class_average_label">Class Average</div>
-            </div>
         </div>
         <hr style="border: none; border-top: 2px solid #ccc; margin: 10px 0;">
 
-        
-          
 
-        <br>
-        <h2>Activities</h2>
+        <h2>Tasks</h2>
+    <table id="pending-table">
+        <thead>
+            <tr>
+                <th></th> 
+                {% for task in tasks %}
+                <th>
+                    <a href="{% url 'scoreupdate' task.task %}" style="color: black;">{{ task.task }}</a><br>
+                    <sup style="font-size: smaller">Out of {{ task.perfect }}</sup>
+                </th>
+                {% empty %}
+                    <tr>
+                        <td colspan="6" style="text-align: center;"><h3>No pending tasks</h3></td>
+                    </tr>
+                {% endfor %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for student_data in student_scores %}
+                <tr>
+                    <td>{{ student_data.student.first_name }} {{ student_data.student.last_name }}</td>
+                    {% for score_info in student_data.scores %}
+                        <td>{{ score_info.score }}</td>
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+        </tbody>
+        
+    </table>
+        <!-- <h2>Activities</h2>
         <table id="activity-table">
             <thead>
                 <tr>
@@ -242,7 +280,7 @@
                 </tr>
                 {% endfor %}
             </tbody>
-        </table>
+        </table> -->
     </div>
     <script>
         // Extracting student names and grades from Django template
@@ -268,6 +306,7 @@
         // Chart options
         const options = {
             responsive: true,
+            maintainAspectRatio: false,
             scales: {
                 y: {
                     min: 0,

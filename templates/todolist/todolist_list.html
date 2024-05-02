@@ -200,7 +200,7 @@
     <td>{{ task.perfect }}</td>
     
 
-    <td><a href="#" class="action-link" onclick="openPopup('{{ task.Subject_Code }}', '{{ task.task }}', '{{task.deadline|date:"m/d/y"}}', '{{ task.description }}')">View</a></td>
+    <td><a href="#" class="action-link" onclick="openPopup('{{ task.Subject_Code }}', '{{ task.task }}', '{{task.deadline|date:"m/d/y"}}', '{{ task.description }}', '{{ task.task_type }}')">View</a></td>
     </tr>
     {% empty %}
     <tr>
@@ -219,7 +219,7 @@
 </div>
 
 <script>
-  function openPopup(subjectCode, taskName, deadline, description) {
+  function openPopup(subjectCode, taskName, deadline, description, task_type) {
     var modal = document.getElementById("myModal");
     var modalContent = document.getElementById("modalContent");
 
@@ -228,7 +228,9 @@
       <p><strong>Subject Code:</strong> ${subjectCode}</p>
       <p><strong>Task Name:</strong> ${taskName}</p>
       <p><strong>Description:</strong> ${description}</p>
+      <p><strong>Type:</strong> ${task_type}</p>
       <p><strong>Deadline:</strong> ${deadline}</p>
+      
     `;
 
     modal.style.display = "block";
