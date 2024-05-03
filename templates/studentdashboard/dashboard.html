@@ -148,29 +148,27 @@
       </div>
       <hr style="border: none; border-top: 2px solid #ccc; margin: 10px 0;">
       {% if subjects %}
-<table style="width:100%;">
-    {% for subject in subjects %}
-    {% if request.user in subject.users.all %}
-    <tr>
-        <td>
-            <div style="background-color: #1e8701; padding: 10px; border-radius: 10px;">
-                <div style="display: flex; align-items: center;">
-                    <div style="background-color: #61ec36; padding: 10px; border-radius: 5px; width: 70px; height: 40px; margin-right: 10px;">
-                        <div style="text-align: center; color: #fff;">{{ subject.Subject_Code }}</div>
+      <table style="width:100%;">
+        {% for subject in request.user.enrolled_subjects.all %}
+        <tr>
+            <td>
+                <div style="background-color: #1e8701; padding: 10px; border-radius: 10px;">
+                    <div style="display: flex; align-items: center;">
+                        <div style="background-color: #61ec36; padding: 10px; border-radius: 5px; width: 70px; height: 40px; margin-right: 10px;">
+                            <div style="text-align: center; color: #fff;">{{ subject.Subject_Code }}</div>
+                        </div>
+                        <div style="color: #fff;">{{ subject.Subject_Name }}</div>
                     </div>
-                    <div style="color: #fff;">{{ subject.Subject_Name }}</div>
-                </div>
-            </div>                   
-        </td>
-    </tr>
+                </div>                   
+            </td>
+        </tr>
+        {% endfor %}
+    </table>  
+    {% else %}
+    <p>No subjects assigned</p>
     {% endif %}
-    {% endfor %}
-</table>      
-{% else %}
-<p>No subjects assigned</p>
-{% endif %}
-    </div>
-  </div>
+        </div>
+      </div>
 
   <div class="card" style="
       width: 27rem;

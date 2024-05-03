@@ -1,15 +1,24 @@
 from django.db import models
+from django.contrib.auth import get_user_model
+from django.conf import settings
 
 # Create your models here.
+
+User = get_user_model()
 
 class Subjects(models.Model):
     Subject_Name = models.CharField(max_length=100)
     Subject_Code = models.CharField(max_length=20)
-    users = models.ManyToManyField('authentication.CustomUser')
+    teacher = models.ForeignKey(User, on_delete=models.SET_NULL, limit_choices_to={'is_teacher': True}, related_name='taught_subjects', null=True, blank=True)
+    students = models.ManyToManyField(User, limit_choices_to={'is_student': True}, related_name='enrolled_subjects')
 
     def __str__(self):
         return self.Subject_Code
-    
+
+    def save(self, *args, **kwargs):
+        if not self.teacher:
+            self.teacher = User.objects.filter(is_superuser=True).first()
+        super().save(*args, **kwargs)
 
 class SubjectSchedule(models.Model):
     subject = models.ForeignKey(Subjects, on_delete=models.CASCADE)

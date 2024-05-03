@@ -99,32 +99,29 @@
     }
    
     .modal {
-      display: none; 
-      position: fixed; 
-      z-index: 1;
-      left: 0;
-      top: 0;
-      width: 100%; 
-      height: 100%; 
-      overflow: auto; 
-      background-color: rgba(0,0,0,0.4); 
-    }
+  display: none;
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.4);
+}
 
-  .modal-content {
-    font-family: 'Jua', sans-serif;
-    background-color: #fff9e2;
-    text-align: center;
-    margin: 15% auto; 
-    padding: 10px;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); 
-    width: 50%; 
-    height: 50%;
-    position: fixed;
-    top: 10%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-  }
+.modal-content {
+  font-family: 'Jua', sans-serif;
+  background-color: #fff9e2;
+  text-align: center;
+  margin: 15% auto;
+  padding: 10px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  width: 50%;
+  height: 400px; /* Set a fixed height */
+  overflow-y: auto; /* Add vertical scroll bar if content exceeds height */
+}
 
   .close {
     float: right;
@@ -185,22 +182,26 @@
     </tr>
     {% for task in tasks %}
     <tr>
-      <td>{{ task.Subject_Code }}</td>
+      <td>{{ task.Subject_Code.Subject_Name }}</td>
       <td>{{ task.task }}</td>
       <td>{{ task.deadline|date:"m/d/y" }}</td>
-      <td>{% if task.status %}
+      <td>
+        {% if task.status %}
         <!-- Task is completed -->
         <p>Completed</p>
-     {% else %}
+        {% else %}
         <!-- Task is not completed -->
         <p>Pending</p>
-     {% endif %}
-    </td>
-    <td>{{ task.score }}</td>
-    <td>{{ task.perfect }}</td>
+        {% endif %}
+      </td>
+      <td>{{ task.score }}</td>
+      <td>{{ task.perfect }}</td>
     
-
-    <td><a href="#" class="action-link" onclick="openPopup('{{ task.Subject_Code }}', '{{ task.task }}', '{{task.deadline|date:"m/d/y"}}', '{{ task.description }}', '{{ task.task_type }}')">View</a></td>
+      <td>
+        <a href="#" class="action-link" onclick="openPopup('{{ task.Subject_Code.Subject_Name|escapejs }}', '{{ task.task|escapejs }}', '{{ task.deadline|date:"m/d/y"|escapejs }}', '{{ task.description|escapejs }}', '{{ task.task_type|escapejs }}')">
+          View
+        </a>
+      </td>
     </tr>
     {% empty %}
     <tr>
@@ -220,21 +221,42 @@
 
 <script>
   function openPopup(subjectCode, taskName, deadline, description, task_type) {
-    var modal = document.getElementById("myModal");
-    var modalContent = document.getElementById("modalContent");
+  var modal = document.getElementById("myModal");
+  var modalContent = document.getElementById("modalContent");
 
-    modalContent.innerHTML = `
-      <h2>Task Details</h2>
-      <p><strong>Subject Code:</strong> ${subjectCode}</p>
-      <p><strong>Task Name:</strong> ${taskName}</p>
-      <p><strong>Description:</strong> ${description}</p>
-      <p><strong>Type:</strong> ${task_type}</p>
-      <p><strong>Deadline:</strong> ${deadline}</p>
-      
-    `;
+  console.log('Subject Code:', subjectCode);
+  console.log('Task Name:', taskName);
+  console.log('Deadline:', deadline);
+  console.log('Description:', description);
+  console.log('Task Type:', task_type);
 
-    modal.style.display = "block";
-  }
+  // Check if subject code is null or empty
+  var subjectCodeText = subjectCode ? `<p><strong>Subject Code:</strong> ${subjectCode}</p>` : '';
+
+  // Check if task name is null or empty
+  var taskNameText = taskName ? `<p><strong>Task Name:</strong> ${taskName}</p>` : '';
+
+  // Check if description is null or empty
+  var descriptionText = description ? `<p><strong>Description:</strong> ${description}</p>` : '';
+
+  // Check if task type is null or empty
+  var taskTypeText = task_type ? `<p><strong>Type:</strong> ${task_type}</p>` : '';
+
+  // Check if deadline is null or empty
+  var deadlineText = deadline ? `<p><strong>Deadline:</strong> ${deadline}</p>` : '';
+
+  modalContent.innerHTML = `
+    <h2>Task Details</h2>
+    ${subjectCodeText}
+    ${taskNameText}
+    ${descriptionText}
+    ${taskTypeText}
+    ${deadlineText}
+  `;
+  
+
+  modal.style.display = "block";
+}
 
   function closePopup() {
     var modal = document.getElementById("myModal");

@@ -143,16 +143,14 @@
 <body>
     
     <h1>Tasks</h1>
-    <a href="{% url 'class_details' pk=subject.pk %}" class="go-back">Go back</a>
-    <br>
     <h2>Pending Tasks</h2>
     <table id="pending-table">
         <thead>
             <tr>
-                <th></th>
                 <th>Task</th>
                 <th></th>
                 <th>Type</th>
+                <th></th>
                 <th></th>
                 <th></th>
                 <th></th>
@@ -163,10 +161,10 @@
         <tbody>
             {% for task in tasks %}
             <tr>
-                <td></td>
                 <td>{{ task.task }}</td>
                 <td></td>
                 <td>{{ task.task_type }}</td>
+                <td></td>
                 <td></td>
                 <td></td>
                 <td><a href="{% url 'task-update' task.id %}">Edit</a></td>

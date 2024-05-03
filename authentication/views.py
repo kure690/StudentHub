@@ -123,32 +123,22 @@ class HighlightedHTMLCalendar(HTMLCalendar):
 def dashboard(request):
     role = 'teacher' if request.user.is_teacher else 'student'
     todo_view = ToDo()
-    tasks = todo_view.get_queryset().filter(user=request.user)
-    class_view = ClassView()
-    subject = class_view.get_queryset()
-    print(subject)
-    username = request.user.username
-    id = request.user.id
-    pk = request.user.pk
-    quiz_count = tasks.filter(task_type='quiz').count()
-    activity_count = tasks.filter(task_type='activity').count()
-
-
-
-
-    # Filter deadlines to include only those in the current month
-    now = datetime.now()
-    current_year = now.year
-    current_month = now.month
-    pending_task_deadlines = [task.deadline.day for task in tasks if not task.status 
-                              and task.deadline.month == current_month 
-                              and task.deadline.year == current_year]
+    tasks = todo_view.get_queryset().filter(assigned_user=request.user)
     
     if role == 'teacher':
-        return render(request, "teacherdashboard/dashboard.html", {'username': username, 'id': id, 'pk': pk, 'tasks': tasks, 'subjects': subject})
+        taught_subjects = request.user.taught_subjects.all()
+        return render(request, "teacherdashboard/dashboard.html", {'username': request.user.username, 'id': request.user.id, 'pk': request.user.pk, 'tasks': tasks, 'subjects': taught_subjects})
     
     elif role == 'student':
-        month_number = current_month
+        enrolled_subjects = request.user.enrolled_subjects.all()
+        
+        now = datetime.now()
+        current_year = now.year
+        current_month = now.month
+        pending_task_deadlines = [task.deadline.day for task in tasks if not task.status 
+                                  and task.deadline.month == current_month 
+                                  and task.deadline.year == current_year]
+        
         cal = HighlightedHTMLCalendar(current_year, current_month, pending_task_deadlines).formatmonth(current_year, current_month)
         
         completed_tasks = tasks.filter(status=True)
@@ -157,17 +147,17 @@ def dashboard(request):
         total_activity_score = completed_tasks.filter(task_type='activity').aggregate(Sum('score'))['score__sum'] or 0
         total_activity_perfect = completed_tasks.filter(task_type='activity').aggregate(Sum('perfect'))['perfect__sum'] or 0
         total_perfect_scores = 0
-        for task in completed_tasks:
+        for task in tasks:
             if task.task_type == 'quiz' and task.score == task.perfect:
                 total_perfect_scores += 1
             elif task.task_type == 'activity' and task.score == task.perfect:
                 total_perfect_scores += 1
 
         total_high_scores = 0
-        for task in completed_tasks:
-            if task.task_type == 'quiz' and task.score > task.perfect * 0.8:
+        for task in tasks:
+            if task.task_type == 'quiz' and task.score >= task.perfect * 0.8:
                 total_high_scores += 1
-            elif task.task_type == 'activity' and task.score > task.perfect * 0.8:
+            elif task.task_type == 'activity' and task.score >= task.perfect * 0.8:
                 total_high_scores += 1
 
         total_low_scores = 0
@@ -177,19 +167,13 @@ def dashboard(request):
             elif task.task_type == 'activity' and task.score < task.perfect * 0.6:
                 total_low_scores += 1
 
-
-
-
-
         quiz_percentage = (total_quiz_score / total_quiz_perfect) * 100 if total_quiz_perfect > 0 else 0
         activity_percentage = (total_activity_score / total_activity_perfect) * 100 if total_activity_perfect > 0 else 0
-        
         
         weighted_quiz_score = quiz_percentage * 0.6
         weighted_activity_score = activity_percentage * 0.4
         final_grade_percentage = round(weighted_quiz_score + weighted_activity_score, 2)
         
-        # Convert final grade percentage to 1 to 5 scale
         if final_grade_percentage >= 90:
             final_grade = 5
         elif final_grade_percentage >= 80:
@@ -202,10 +186,13 @@ def dashboard(request):
             final_grade = 1
         
         return render(request, "studentdashboard/dashboard.html", {
-            'username': username, 'id': id, 'pk': pk, 'tasks': tasks, 'subjects': subject, 'calendar': mark_safe(cal),
-            'quiz_count': quiz_count, 'activity_count': activity_count, 'final_grade_percentage': final_grade_percentage,
-            'final_grade': final_grade, 'total_perfect_scores': total_perfect_scores, 'total_high_scores': total_high_scores,
-            'total_low_scores': total_low_scores
+            'username': request.user.username, 'id': request.user.id, 'pk': request.user.pk,
+            'tasks': tasks, 'subjects': enrolled_subjects, 'calendar': mark_safe(cal),
+            'quiz_count': tasks.filter(task_type='quiz').count(),
+            'activity_count': tasks.filter(task_type='activity').count(),
+            'final_grade_percentage': final_grade_percentage,
+            'final_grade': final_grade, 'total_perfect_scores': total_perfect_scores,
+            'total_high_scores': total_high_scores, 'total_low_scores': total_low_scores
         })
         
         

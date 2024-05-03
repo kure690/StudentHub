@@ -211,6 +211,8 @@
             margin-right: 0;
             background-color: rgba(220, 14, 11, 0.8);
         }
+        
+        
     </style>
 </head>
 <body>
@@ -226,6 +228,7 @@
     <div class="header_container">
         <div class="header1_content">
             <h1>{{ subject.Subject_Name }}</h1>
+            <p style="text-align: left;">Teacher: {{ subject.teacher.get_full_name }}</p>
         </div>
         <div class="header1_items">
             <img src="{% static 'imgs/classroom.png' %}" alt="Profile Logo">
@@ -258,7 +261,7 @@
             <div class="tab" onclick="showTab(2)">Grades</div>
         </div>
         <div class="tab-content">
-            <div id="students-content" style=" text-align: left;">
+            <div id="students-content" style="text-align: left;">
                 <table>
                     <tr>
                         <th>First Name</th>
@@ -266,20 +269,24 @@
                         <th>Department</th>
                         <th></th>
                     </tr>
-                {% for student in subject.users.all %}    
-                <tr>
-                    <td>{{ student.first_name }}</td>
-                    <td>{{ student.last_name }}</td>
-                    <td>{{ student.get_department_display }}</td>
-                    <td></td>
-                    <td></td> 
-                </tr>    
-                {% endfor %}
+                    {% for student in subject.students.all %}
+                    <tr>
+                        <td>{{ student.first_name }}</td>
+                        <td>{{ student.last_name }}</td>
+                        <td>{{ student.get_department_display }}</td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="4">No students enrolled in this subject.</td>
+                    </tr>
+                    {% endfor %}
                 </table>
-                
             </div>
             <div id="tasks-content" style="display: none; text-align: left;">
-                <table>
+                <iframe src="{% url 'viewtasks' pk=subject.pk %}" style="width: 100%; height: 500px; border: none;"></iframe>
+                <!-- <table>
                     <tr>
                         <th>Task Name</th>
                         <th>Task Type</th>
@@ -298,7 +305,7 @@
                         <td colspan="4">No tasks assigned</td>
                     </tr>
                     {% endfor %}
-                </table> 
+                </table>  -->
                     <!-- <ul>
                     {% for task in tasks %}
                         <li>{{ task.task }}</li>
@@ -318,7 +325,7 @@
         <a href="#" id="add-student-link">Add Student</a>
         <a href="{% url 'task-create' pk=subject.pk %}">Create Task</a>
         <a href="{% url 'class_delete' pk=subject.pk %}" id="delete-class-link">Delete Class</a>
-        <a href="{% url 'viewtasks' pk=subject.pk %}">Tasks View</a>
+        <a href="{% url 'Schedule_create' pk=subject.pk %}">Edit Schedule</a>
     </div>
 
     <div id="add-student-modal" class="modal">

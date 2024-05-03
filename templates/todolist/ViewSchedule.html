@@ -8,8 +8,8 @@
         body {
             font-family: Arial, sans-serif;
             background-color: #fcf0c1;
-            margin: 20px; 
-            padding: 20px; 
+            margin: 20px;
+            padding: 20px;
             position: relative;
         }
 
@@ -63,9 +63,7 @@
     </style>
 </head>
 <body>
-
     <a href="{% url 'dashboard' %}" class="go-back">Go back</a>
-
     <div class="card" style="margin: 10px;">
         <div class="card-body" style="margin: 30px;">
             <div style="display: flex; justify-content: space-between; align-items: center;">
@@ -77,15 +75,14 @@
                     <th>Subject Name</th>
                 </tr>
                 {% for subject in user_subjects %}
-                    <tr>
-                        <td>{{ subject.Subject_Code }}</td>
-                        <td>{{ subject.Subject_Name }}</td>
-                    </tr>
+                <tr>
+                    <td>{{ subject.Subject_Code }}</td>
+                    <td>{{ subject.Subject_Name }}</td>
+                </tr>
                 {% endfor %}
             </table>
         </div>
     </div>
-
     <h2 style="text-align: center; margin: 20px auto;">{{ user.first_name }}'s Schedule</h2>
     <div class="schedule-table">
         <table>
@@ -102,18 +99,17 @@
             <tr>
                 <td>{{ time }}</td>
                 {% for day, subjects in schedule.items %}
-                    <td>
-                        {% for subject in subjects %}
-                            {% if subject.start_time <= time and subject.end_time > time %}
-                                    <p>{{ subject.subject }}</p>
-                                <br>
-                            {% endif %}
-                        {% endfor %}
-                    </td>
+                <td>
+                    {% for subject in subjects %}
+                        {% if subject.start_time <= time and subject.end_time > time %}
+                            <p>{{ subject.subject }}</p>
+                            <br>
+                        {% endif %}
+                    {% endfor %}
+                </td>
                 {% endfor %}
             </tr>
-            {% endfor %} 
-            
+            {% endfor %}
         </table>
     </div>
 </body>
