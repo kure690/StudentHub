@@ -1,17 +1,17 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jua&display=swap"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <title>Class Details</title>
-    <a href="{% url 'viewgrades' pk=subject.pk %}">View Grades</a>
     <style>
         body {
-            background-color: #fcf0c1;
+            background-color: #fff9e2;
             margin: 0;
             font-family: 'Jua', sans-serif;
-            padding: 20px;
             text-align: center;
         }
 
@@ -22,16 +22,86 @@
         }
 
         .container, .student-container, .task-container .grades-container{
-            background-color: rgba(231, 209, 168, 0.8);
-            padding: 20px;
+            background-color: #fff9e2;
+            height: 593px;
+            width: 90%;
+            padding: 5px;
             border-radius: 8px;
             box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
-            margin-top: 20px;
+            margin: 20px auto 0;
             text-align: center;
+        }
+        .tab-container {
+            background-color: rgba(231, 209, 168, 0.8);
+            margin-top: 10px;
+            display: flex;
+            flex-direction: row;
+            margin-top: 10px;
+            margin-left: 10px;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            background-color: #f2f2f2;
+            cursor: pointer;
+            border-radius: 5px 5px 0 0;
+        }
+
+        .tab:hover {
+            background-color: #ddd;
+        }
+
+        .tab.active {
+            background-color: #d2b48c;
+            color: rgb(12, 1, 1);
+        }
+
+        .tab-content {
+            padding: 20px;
+            background-color: #d2b48c;
+            border-radius: 0 5px 5px 5px;
+            margin-left: 10px;
+            margin-right: 10px;
         }
 
         .container {
+            background-color: rgba(231, 209, 168, 1);
             text-align: center;
+        }
+        
+        .header_container {
+            background-color: rgba(231, 209, 168, 0.8);
+            width: 90%;
+            height: 190px;
+            padding: 5px;
+            margin: 20px auto 0;
+            border-radius: 6px 6px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .header1_content {
+            margin-left: 20px;
+        }
+
+        .header1_items img {
+            width: 350px;
+            height: 300px;
+            margin-right: 50px;
+            opacity: 0.8;
+        }
+
+        .header2_container {
+            display: flex;
+            align-items: center;
+            background-color: #fcf0c1;
+            width: 90%;
+            height: 40px;
+            padding: 5px;
+            margin: 0 auto;
+            border-radius: 0px 0px 6px 6px;
         }
 
         .button-container {
@@ -43,6 +113,7 @@
             display: inline-block;
             padding: 10px 20px;
             margin-right: 10px;
+            margin-bottom: 10px;
             background-color: #007bff;
             color: white;
             text-decoration: none;
@@ -55,14 +126,14 @@
             margin-right: 0;
         }
 
-        .go-back {
+        {% comment %} .go-back {
             position: absolute; 
             top: 20px; 
             left: 20px; 
             color: black; 
             text-decoration: none;
             font-size: 16px; 
-        }
+        } {% endcomment %}
         
         table {
             width: 100%;
@@ -76,19 +147,19 @@
             border-bottom: 1px solid #ddd;
             border-collapse: separate;
             border-spacing: 0 10px;
-            text-align: center; /* Center content */
+            text-align: left; /* Center content */
         }
 
         th {
             background-color: #f2f2f2;
-            border-radius: 8px;
             color: gray;
         }
 
         td {
             width: 33.33%;
             vertical-align: middle;
-            text-align: center;
+            text-align: left;
+            color: #ffffff;
         }
         
         tr {
@@ -134,56 +205,144 @@
             text-decoration: none;
             cursor: pointer;
         }
+        .container2{
+            display: flex;
+        }
+        .box{
+            flex: 1;
+            margin-right: 0;
+            background-color: rgba(220, 14, 11, 0.8);
+        }
+        
+        
     </style>
 </head>
 <body>
-    <a href="{% url 'dashboard' %}" class="go-back">Go back</a>
-    <h1>Class Details</h1>
+    {% comment %} <a href="{% url 'dashboard' %}" class="go-back">Go back</a> {% endcomment %}
+
+    <button class="home-button" onclick="window.location.href='{% url 'dashboard' %}';" style="
+        background-color: #fff9e2;
+        color: #aeb5b0;
+        border: none;
+        outline: none;
+        padding: 12px; 
+        border-radius: 10px;
+        position: absolute;
+        top: 0;
+        left: 0;
+        cursor: pointer;
+        font-size: 30px; 
+    "><i class="fa-solid fa-house"></i></button>
+
+    <div class="container1">
+        <div class="box">
+    </div>
+    <div class="box">
+    </div>
+    </div>
+    {% comment %} <a href="{% url 'viewgrades' pk=subject.pk %}">View Grades</a> {% endcomment %}
     
-    <div class="subject-info">
-        <p>Subject Code: {{ subject.Subject_Code }}</p>
-        <p>Subject Name: {{ subject.Subject_Name }}</p>
+    <div class="header_container">
+        <div class="header1_content">
+            <h1>{{ subject.Subject_Name }}</h1>
+            <p style="text-align: left;">Teacher: {{ subject.teacher.get_full_name }}</p>
+        </div>
+        <div class="header1_items">
+            <img src="{% static 'imgs/classroom.png' %}" alt="Profile Logo">
+        </div>
+    </div>
+
+    <div class="header2_container">
+        <div style="display: flex; align-items: center;">
+            <h2 style="text-align: left; margin-left: 20px; margin-right: 10px;">{{ subject.Subject_Code }} |</h2>
+            <div style="display: flex; align-items: center;">
+                <h3 style="margin: 0; margin-right: 10px;">Schedule:</h3>
+                {% if subject_schedules %}
+                <ul style="list-style-type: none; padding: 0; margin: 0; display: flex;">
+                    {% for schedule in subject_schedules %}
+                    <li style="margin-right: 20px; display: flex; align-items: center;">
+                        <span style="margin-right: 5px;">{{ schedule.get_day_of_week_display }}</span>
+                        <span>({{ schedule.start_time|time:"h:i A" }} - {{ schedule.end_time|time:"h:i A" }})</span>
+                    </li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+            </div>
+        </div>
     </div>
 
     <div class="container">
-        <table id="class-details">
-            <tr>
-                <th onclick="showColumn(0)">Students</th>
-                <th onclick="showColumn(1)">Tasks</th>
-                <th onclick="showColumn(2)">Grades</th>
-            </tr>
-            <tr>
-                <td>
-                    <ul>
-                        {% for student in subject.users.all %}
-                            <li>{{ student.first_name }} {{ student.last_name }}</li>
-                        {% empty %}
-                            <li>No students in this class</li>
-                        {% endfor %}
-                    </ul>
-                </td>
-                <td>
-                    <ul>
-                        {% for task in tasks %}
-                            <li>{{ task.task }}</li>
-                            <!-- Add more task details here as needed -->
-                        {% empty %}
-                            <li>No tasks associated with this subject</li>
-                        {% endfor %}
-                    </ul>
-                </td>
-                <td>
-                    <iframe src="{% url 'viewgrades' pk=subject.pk %}" style="width: 100%; height: 500px; border: none;"></iframe>
-                </td>
-            </tr>
-        </table>
+        <div class="tab-container">
+            <div class="tab active" onclick="showTab(0)">Students</div>
+            <div class="tab" onclick="showTab(1)">Tasks</div>
+            <div class="tab" onclick="showTab(2)">Grades</div>
+        </div>
+        <div class="tab-content">
+            <div id="students-content" style="text-align: left;">
+                <table>
+                    <tr>
+                        <th>First Name</th>
+                        <th>Last Name</th>
+                        <th>Department</th>
+                        <th></th>
+                    </tr>
+                    {% for student in subject.students.all %}
+                    <tr>
+                        <td>{{ student.first_name }}</td>
+                        <td>{{ student.last_name }}</td>
+                        <td>{{ student.get_department_display }}</td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="4">No students enrolled in this subject.</td>
+                    </tr>
+                    {% endfor %}
+                </table>
+            </div>
+            <div id="tasks-content" style="display: none; text-align: left;">
+                <iframe src="{% url 'viewtasks' pk=subject.pk %}" style="width: 100%; height: 500px; border: none;"></iframe>
+                <!-- <table>
+                    <tr>
+                        <th>Task Name</th>
+                        <th>Task Type</th>
+                        <th>Deadline</th>
+                        <th></th>
+                    </tr>
+                    {% for task in tasks %}
+                    <tr>
+                        <td>{{ task.task }}</td>
+                        <td>{{ task.task_type }}</td>
+                        <td>{{ task.deadline }}</td>
+                        <td></td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="4">No tasks assigned</td>
+                    </tr>
+                    {% endfor %}
+                </table>  -->
+                    <!-- <ul>
+                    {% for task in tasks %}
+                        <li>{{ task.task }}</li>
+                        Add more task details here as needed -->
+                    <!-- {% empty %}
+                        <li>No tasks associated with this subject</li>
+                    {% endfor %} -->
+                <!-- </ul> -->
+            </div>
+            <div id="grades-content" style="display: none;">
+                <iframe src="{% url 'viewgrades' pk=subject.pk %}" style="width: 100%; height: 500px; border: none;"></iframe>
+            </div>
+        </div>
     </div>
     
     <div class="button-container">
         <a href="#" id="add-student-link">Add Student</a>
         <a href="{% url 'task-create' pk=subject.pk %}">Create Task</a>
         <a href="{% url 'class_delete' pk=subject.pk %}" id="delete-class-link">Delete Class</a>
-        <a href="{% url 'viewtasks' pk=subject.pk %}">Tasks View</a>
+        <a href="{% url 'Schedule_create' pk=subject.pk %}">Edit Schedule</a>
     </div>
 
     <div id="add-student-modal" class="modal">
@@ -193,6 +352,7 @@
             <div class="container">
                 <form id="add-student-form" method="POST" action="">
                     {% csrf_token %}
+                    {{form.as_p}}
                 </form>
             </div>
         </div>
@@ -256,6 +416,26 @@
     });
 }
 
+addStudentForm.addEventListener('submit', function(event) {
+    event.preventDefault();
+
+    var formData = new FormData(addStudentForm);
+    var xhr = new XMLHttpRequest();
+    xhr.open('POST', '{% url "add_student" pk=subject.pk %}', true);
+    xhr.setRequestHeader('X-CSRFToken', '{{ csrf_token }}');
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState === XMLHttpRequest.DONE) {
+            if (xhr.status === 200) {
+                // Reload the page after successful form submission
+                location.reload();
+            } else {
+                console.error('Error occurred:', xhr.status);
+            }
+        }
+    };
+    xhr.send(formData);
+});
+
 
 
 window.addEventListener('click', function(event) {
@@ -313,6 +493,19 @@ if (closeModal) {
                 modal.style.display = 'none'; 
             }
         });
+
+        function showTab(tabIndex) {
+    var tabs = document.getElementsByClassName('tab');
+    var tabContents = document.getElementsByClassName('tab-content')[0].children;
+
+    for (var i = 0; i < tabs.length; i++) {
+        tabs[i].classList.remove('active');
+        tabContents[i].style.display = 'none';
+    }
+
+    tabs[tabIndex].classList.add('active');
+    tabContents[tabIndex].style.display = 'block';
+}
     </script>
     
 </body>

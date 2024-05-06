@@ -60,6 +60,14 @@
       .dropdown:hover .dropdown-content {
         display: block;
       }
+      @keyframes moveText {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(-100%);
+    }
+  }
     </style>
     <!-- Add your CSS styles or link to a separate stylesheet if needed -->
   </head>
@@ -78,7 +86,7 @@
       "
     >
       <!-- StudentHub logo and text -->
-      <div style="display: flex; align-items: center">
+      <div style="display: flex; align-items: center; margin-left: 10px;">
         <img
           src="{% static 'imgs/StudentHub_Logo.png' %}"
           alt="StudentHub Logo"
@@ -89,39 +97,17 @@
         </h3>
       </div>
 
-      <!-- Search Bar centered with Box Shadow (slightly shorter) -->
-      <div style="flex-grow: 1; text-align: center; position: relative">
-        <!-- Search logo inside the search bar -->
-
-        <!-- Input for search with some padding on the left to accommodate the search logo -->
-        <input
-          type="text"
-          id="search"
-          name="search"
-          placeholder="Search"
+      <div style="overflow: hidden; white-space: nowrap;">
+        <span
           style="
-            padding-left: 40px;
-            padding: 8px;
-            border: none;
-            border-radius: 5px;
-            box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.1);
-            width: 80%;
+            display: inline-block;
+            padding-left: 100%;
+            animation: moveText 10s linear infinite;
           "
-        />
-        <!-- Include the search.png image -->
-        <img
-          src="{% static 'imgs/search.png' %}"
-          alt="Search Icon"
-          style="
-            position: absolute;
-            left: 15px;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 20px;
-            height: 20px;
-          "
-        />
+          >Welcome to StudentHub, {{ user.first_name }} {{ user.last_name }}! Your one-stop platform for academic success.</span
+        >
       </div>
+
 
       <!-- User information and logo (moved more to the right) -->
       <div style="display: flex; align-items: center; margin-right: 20px">

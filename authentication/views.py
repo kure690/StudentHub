@@ -1,4 +1,4 @@
-from .models import CustomUser
+from .models import CustomUser, DEPARTMENT_CHOICES
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
 from django.shortcuts import redirect, render
@@ -17,6 +17,8 @@ from django.utils.safestring import mark_safe
 import calendar
 from calendar import HTMLCalendar
 from datetime import datetime, date
+from django.db.models import Sum
+
 
 
 # Create your views here.
@@ -24,7 +26,6 @@ def home(request):
     return render(request, "authentication/index.html")
 
 def signup(request):
-
     if request.method == "POST":
         username = request.POST['username']
         fname = request.POST['fname']
@@ -33,47 +34,44 @@ def signup(request):
         password1 = request.POST['password1']
         password2 = request.POST['password2']
         role = request.POST.get('role')
+        department = request.POST.get('department')
 
         if CustomUser.objects.filter(username=username).exists():
             messages.error(request, "Username already exists. Please choose a different username.")
             return redirect('signup')
-        
-        if CustomUser.objects.filter(email = email).exists():
+
+        if CustomUser.objects.filter(email=email).exists():
             messages.error(request, "This email address is already in use")
             return redirect('signup')
-        
 
         try:
             myuser = CustomUser.objects.create_user(username=username, email=email, password=password1)
             myuser.first_name = fname
-            myuser.last_name =lname
-
+            myuser.last_name = lname
             if role == 'student':
                 myuser.is_student = True
                 myuser.is_teacher = False
+                myuser.department = department  # Set the department for the student
             elif role == 'teacher':
                 myuser.is_student = False
                 myuser.is_teacher = True
-
             myuser.save()
-
             messages.success(request, "Your Account has been successfully created.")
 
-            #Welcome Email
-            subject ="Welcome to StudentHub!!"
-            message ="Hello " + myuser.first_name + myuser.last_name + " and Welcome to Student Hub!"
+            # Welcome Email
+            subject = "Welcome to StudentHub!!"
+            message = f"Hello {myuser.first_name} {myuser.last_name} and Welcome to Student Hub!"
             from_email = settings.EMAIL_HOST_USER
             to_list = [myuser.email]
             send_mail(subject, message, from_email, to_list, fail_silently=False)
-        
+
             return redirect('signin')
         except IntegrityError:
             messages.error(request, "An error occurred while creating your account. Please try again later.")
             return redirect('signup')
-    
 
-
-    return render(request, "authentication/signup.html")
+    departments = DEPARTMENT_CHOICES
+    return render(request, "authentication/signup.html", {'department_choices': departments})
 
 def signin(request):
 
@@ -125,31 +123,83 @@ class HighlightedHTMLCalendar(HTMLCalendar):
 def dashboard(request):
     role = 'teacher' if request.user.is_teacher else 'student'
     todo_view = ToDo()
-    tasks = todo_view.get_queryset().filter(user=request.user)
-    class_view = ClassView()
-    subject = class_view.get_queryset()
-    print(subject)
-    username = request.user.username
-    id = request.user.id
-    pk = request.user.pk
-
-
-    # Filter deadlines to include only those in the current month
-    now = datetime.now()
-    current_year = now.year
-    current_month = now.month
-    pending_task_deadlines = [task.deadline.day for task in tasks if not task.status 
-                              and task.deadline.month == current_month 
-                              and task.deadline.year == current_year]
+    tasks = todo_view.get_queryset().filter(assigned_user=request.user)
     
     if role == 'teacher':
-        return render(request, "teacherdashboard/dashboard.html", {'username': username, 'id': id, 'pk': pk, 'tasks': tasks, 'subjects': subject})
+        taught_subjects = request.user.taught_subjects.all()
+        return render(request, "teacherdashboard/dashboard.html", {'username': request.user.username, 'id': request.user.id, 'pk': request.user.pk, 'tasks': tasks, 'subjects': taught_subjects})
     
     elif role == 'student':
-        month_number = current_month
-        cal = HighlightedHTMLCalendar(current_year, current_month, pending_task_deadlines).formatmonth(current_year, current_month)
-        return render(request, "studentdashboard/dashboard.html", {'username': username, 'id': id, 'pk': pk, 'tasks': tasks, 'subjects': subject, 'calendar': mark_safe(cal)})
+        enrolled_subjects = request.user.enrolled_subjects.all()
         
+        now = datetime.now()
+        current_year = now.year
+        current_month = now.month
+        pending_task_deadlines = [task.deadline.day for task in tasks if not task.status 
+                                  and task.deadline.month == current_month 
+                                  and task.deadline.year == current_year]
+        
+        cal = HighlightedHTMLCalendar(current_year, current_month, pending_task_deadlines).formatmonth(current_year, current_month)
+        
+        completed_tasks = tasks.filter(status=True)
+        total_quiz_score = completed_tasks.filter(task_type='quiz').aggregate(Sum('score'))['score__sum'] or 0
+        total_quiz_perfect = completed_tasks.filter(task_type='quiz').aggregate(Sum('perfect'))['perfect__sum'] or 0
+        total_activity_score = completed_tasks.filter(task_type='activity').aggregate(Sum('score'))['score__sum'] or 0
+        total_activity_perfect = completed_tasks.filter(task_type='activity').aggregate(Sum('perfect'))['perfect__sum'] or 0
+        total_perfect_scores = 0
+        for task in tasks:
+            if task.task_type == 'quiz' and task.score == task.perfect:
+                total_perfect_scores += 1
+            elif task.task_type == 'activity' and task.score == task.perfect:
+                total_perfect_scores += 1
+
+        total_high_scores = 0
+        for task in tasks:
+            if task.task_type == 'quiz' and task.score >= task.perfect * 0.8:
+                total_high_scores += 1
+            elif task.task_type == 'activity' and task.score >= task.perfect * 0.8:
+                total_high_scores += 1
+
+        total_low_scores = 0
+        for task in completed_tasks:
+            if task.task_type == 'quiz' and task.score < task.perfect * 0.6:
+                total_low_scores += 1
+            elif task.task_type == 'activity' and task.score < task.perfect * 0.6:
+                total_low_scores += 1
+
+        quiz_percentage = (total_quiz_score / total_quiz_perfect) * 100 if total_quiz_perfect > 0 else 0
+        activity_percentage = (total_activity_score / total_activity_perfect) * 100 if total_activity_perfect > 0 else 0
+        
+        weighted_quiz_score = quiz_percentage * 0.6
+        weighted_activity_score = activity_percentage * 0.4
+        final_grade_percentage = round(weighted_quiz_score + weighted_activity_score, 2)
+        
+        if final_grade_percentage >= 90:
+            final_grade = 5
+        elif final_grade_percentage >= 80:
+            final_grade = 4
+        elif final_grade_percentage >= 70:
+            final_grade = 3
+        elif final_grade_percentage >= 60:
+            final_grade = 2
+        else:
+            final_grade = 1
+        
+        return render(request, "studentdashboard/dashboard.html", {
+            'username': request.user.username, 'id': request.user.id, 'pk': request.user.pk,
+            'tasks': tasks, 'subjects': enrolled_subjects, 'calendar': mark_safe(cal),
+            'quiz_count': tasks.filter(task_type='quiz').count(),
+            'activity_count': tasks.filter(task_type='activity').count(),
+            'final_grade_percentage': final_grade_percentage,
+            'final_grade': final_grade, 'total_perfect_scores': total_perfect_scores,
+            'total_high_scores': total_high_scores, 'total_low_scores': total_low_scores
+        })
+        
+        
+        
+        
+
+
     # def calendar(request):
     #     now = datetime.now
     #     current_year = now.year

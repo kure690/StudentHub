@@ -15,6 +15,8 @@ from collections import OrderedDict
 from django.views.generic import DetailView
 from .models import Subjects
 from .models import ToDoList
+from django.db.models import Q
+
 
 # Create your views here.
 
@@ -31,7 +33,10 @@ class ToDo(LoginRequiredMixin, ListView):
 
         search_input = self.request.GET.get('search area') or ''
         if search_input:
-            context['tasks'] = context['tasks'].filter(Subject_Code__Subject_Code__icontains=search_input)
+            context['tasks'] = context['tasks'].filter(
+                Q(Subject_Code__Subject_Name__icontains=search_input) |
+                Q(Subject_Code__Subject_Code__icontains=search_input)
+            )
 
         context['search_input']=search_input
         
@@ -68,58 +73,54 @@ class ToDoDetail(DetailView):
     context_object_name = 'data'
     template_name = 'todolist/todolist.html'
 
-class TaskCreate(LoginRequiredMixin,  UserPassesTestMixin, CreateView):
+class TaskCreate(LoginRequiredMixin, UserPassesTestMixin, CreateView):
     model = ToDoList
-    fields = ['task', 'description', 'perfect', 'deadline']
+    fields = ['task', 'description', 'perfect', 'task_type', 'deadline']
     template_name = 'todolist/task_form.html'
 
     def test_func(self):
         return self.request.user.is_teacher
 
     def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)        
         context['pk'] = self.kwargs.get('pk')
         return context
 
     def form_valid(self, form):
-    # Set the Subject_Code_id for the task
+        # Set the Subject_Code for the task
         form.instance.Subject_Code_id = self.kwargs.get('pk')
-        
-        # Get the users related to the subject code
-        subject = form.instance.Subject_Code
-        users = subject.users.all()
-        
-        print("Users found:", users)
-        
-        # Filter out users who are None
-        users = [user for user in users if user is not None]
 
-        # Check if there are any users related to the subject code
-        if users:
-            # Get the number of students assigned to the subject code
-            
-            # Create and save a task instance for each user
-            for user in users:
-                print("Creating task for user:", user)
+        # Get the students related to the subject
+        subject = form.instance.Subject_Code
+        students = subject.students.all()
+        print("Students found:", students)
+
+        # Filter out students who are None
+        students = [student for student in students if student is not None]
+
+        # Check if there are any students related to the subject
+        if students:
+            # Create and save a task instance for each student
+            for student in students:
+                print("Creating task for student:", student)
                 task = ToDoList.objects.create(
                     Subject_Code=form.instance.Subject_Code,
-                    user=user,
+                    user=student,
                     task=form.cleaned_data['task'],
                     description=form.cleaned_data['description'],
                     status=False,  # Default status to False
                     deadline=form.cleaned_data['deadline'],
                     perfect=form.cleaned_data['perfect'],
-                    assigned_user=user  # Assign the user to the task
+                    task_type=form.cleaned_data['task_type'],
+                    assigned_user=student  # Assign the student to the task
                 )
                 print("Task created:", task)
-                
             return super().form_valid(form)
         else:
-            # No users related to the subject code, return an error or handle it accordingly
-            print("No users found related to the subject code. Cannot create task.")
-            return HttpResponse("No users related to the subject code. Cannot create task.")
+            # No students related to the subject, return an error or handle it accordingly
+            print("No students found related to the subject. Cannot create task.")
+            return HttpResponse("No students related to the subject. Cannot create task.")
 
-    
     def get_success_url(self):
         # Get the primary key (pk) of the subject object
         subject_pk = self.kwargs['pk']
@@ -131,10 +132,9 @@ class TaskCreate(LoginRequiredMixin,  UserPassesTestMixin, CreateView):
 
 
 
-
 class TaskUpdate( UserPassesTestMixin, UpdateView):
     model = ToDoList
-    fields = ['Subject_Code', 'description', 'perfect', 'deadline']
+    fields = ['Subject_Code', 'description', 'perfect', 'task_type', 'deadline']
     template_name = 'todolist/taskupdate.html'
     success_url = reverse_lazy('teacher_tasks')
 
@@ -157,6 +157,7 @@ class TaskUpdate( UserPassesTestMixin, UpdateView):
             task_to_update.description = task.description
             task_to_update.deadline = task.deadline
             task_to_update.perfect = task.perfect
+            task_to_update.task_type = task.task_type
             task_to_update.save()
         return super().form_valid(form)
     
@@ -320,10 +321,10 @@ class DeleteTask(UserPassesTestMixin, DeleteView):
 
 
 
-class ClassCreate(LoginRequiredMixin,  UserPassesTestMixin, CreateView):
+class ClassCreate(LoginRequiredMixin, UserPassesTestMixin, CreateView):
     model = Subjects
     context_object_name = 'class'
-    fields = '__all__'
+    fields = ['Subject_Name', 'Subject_Code', 'students']  # Update fields to include 'students'
     template_name = 'todolist/CreateClass.html'
     success_url = reverse_lazy('dashboard')
 
@@ -332,32 +333,64 @@ class ClassCreate(LoginRequiredMixin,  UserPassesTestMixin, CreateView):
 
     def get_form(self, form_class=None):
         form = super().get_form(form_class)
-        users_queryset = CustomUser.objects.filter(is_student=True)
-        form.fields['users'] = forms.ModelMultipleChoiceField(
-            queryset=users_queryset,
+        students_queryset = CustomUser.objects.filter(is_student=True)
+        form.fields['students'] = forms.ModelMultipleChoiceField(
+            queryset=students_queryset,
             widget=forms.CheckboxSelectMultiple,
             required=False
         )
         return form
 
     def form_valid(self, form):
+        # Set the teacher for the subject
+        form.instance.teacher = self.request.user
+
         # Save the form instance
         response = super().form_valid(form)
-        # Add selected users to the task
-        self.object.users.set(form.cleaned_data['users'])
+
+        # Add selected students to the subject
+        self.object.students.set(form.cleaned_data['students'])
+
         return response
     
 class CreateSchedule(LoginRequiredMixin,  UserPassesTestMixin, CreateView):
     model = SubjectSchedule
-    fields = '__all__'
+    fields = ['day_of_week', 'start_time', 'end_time']
     template_name = 'todolist/CreateSchedule.html'
     success_url = reverse_lazy('dashboard')
 
     def test_func(self):
         return self.request.user.is_teacher
+    
+    def get(self, request, *args, **kwargs):
+        # Store subject PK in session
+        subject_pk = self.kwargs['pk']
+        request.session['subject_pk'] = subject_pk
+        print("Stored subject PK in session:", subject_pk)
+        return super().get(request, *args, **kwargs)
 
     def form_valid(self, form):
+        # Retrieve the subject from the session
+        subject_pk = self.request.session.get('subject_pk')
+        subject = Subjects.objects.get(pk=subject_pk)
+
+        # Associate the subject with the schedule
+        form.instance.subject = subject
+
         return super().form_valid(form)
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['subject_pk'] = self.kwargs['pk']
+        return context
+    
+    def get_success_url(self):
+        # Get the primary key (pk) of the subject object
+        subject_pk = self.kwargs['pk']
+        # Generate the success URL with the subject's pk
+        success_url = reverse_lazy('class_details', kwargs={'pk': subject_pk})
+        return success_url
+
     
 class ClassView( UserPassesTestMixin, ListView):
     model = Subjects
@@ -393,39 +426,45 @@ class ClassDetails(LoginRequiredMixin,  UserPassesTestMixin, DetailView):
         for task in tasks:
             unique_tasks[task.task] = task
 
-        context['tasks'] = unique_tasks.values()
+        subject_schedules = SubjectSchedule.objects.filter(subject=subject)
 
+        context['tasks'] = unique_tasks.values()
+        context['subject_schedules'] = subject_schedules
         return context
     
 class AddStudent(LoginRequiredMixin, UpdateView):
     model = Subjects
-    fields = ['users']
+    fields = []  # Remove 'users' from the fields list
     template_name = 'todolist/ClassAdd.html'
 
     def test_func(self):
         return self.request.user.is_teacher
-    
+
     def get_form(self, form_class=None):
         form = super().get_form(form_class)
-        users_queryset = CustomUser.objects.filter(is_student=True)
-        form.fields['users'] = forms.ModelMultipleChoiceField(
-            queryset=users_queryset,
+        students_queryset = CustomUser.objects.filter(is_student=True)
+        form.fields['students'] = forms.ModelMultipleChoiceField(
+            queryset=students_queryset,
             widget=forms.CheckboxSelectMultiple,
             required=False
         )
         return form
 
     def get_success_url(self):
-        # Get the primary key (pk) of the subject object
         subject_pk = self.kwargs['pk']
-        # Generate the success URL with the subject's pk
         success_url = reverse_lazy('class_details', kwargs={'pk': subject_pk})
         return success_url
-    
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['pk'] = self.kwargs.get('pk')
         return context
+
+    def form_valid(self, form):
+        subject = self.get_object()
+        students = form.cleaned_data.get('students')
+        subject.students.set(students)
+        return super().form_valid(form)
     
 
 class DeleteClass(LoginRequiredMixin,  UserPassesTestMixin, DeleteView):
@@ -453,8 +492,6 @@ class DeleteClass(LoginRequiredMixin,  UserPassesTestMixin, DeleteView):
     
 
 
-
-    
 class ViewTasks( UserPassesTestMixin, DetailView):
     model = Subjects
     context_object_name = 'subject'
@@ -485,14 +522,13 @@ class ViewTasks( UserPassesTestMixin, DetailView):
         context['tasks'] = unique_tasks
         return context
     
-class ViewGrades( UserPassesTestMixin, DetailView):
+class ViewGrades(UserPassesTestMixin, DetailView):
     model = Subjects
     context_object_name = 'subject'
     template_name = 'Grades/viewgradestrial.html'
 
     def test_func(self):
         return self.request.user.is_teacher  # Ensures only teachers can access this view
-    
 
     def get(self, request, *args, **kwargs):
         # Store subject PK in session
@@ -500,12 +536,11 @@ class ViewGrades( UserPassesTestMixin, DetailView):
         request.session['subject_pk'] = subject_pk
         print("Stored subject PK in session:", subject_pk)
         return super().get(request, *args, **kwargs)
-    
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         subject = self.get_object()
-        students = subject.users.all()  # Get all students associated with the subject
+        students = subject.students.all()  # Get all students enrolled in the subject
 
         # Fetch all tasks related to the subject code
         all_tasks = ToDoList.objects.filter(Subject_Code=subject)
@@ -518,23 +553,54 @@ class ViewGrades( UserPassesTestMixin, DetailView):
                 unique_tasks.append(task)
                 seen_tasks.add(task.task)
 
+        num_students = len(students)
         student_scores = []
+
         for student in students:
             student_data = {'student': student, 'scores': []}
+            total_score = 0
+            total_possible_score = 0
+
             for task in unique_tasks:
                 # Retrieve task assigned to the student
-                assigned_task = all_tasks.filter(task=task.task, user=student).first()
-                # If task is assigned to the student, retrieve score
-                score = assigned_task.score if assigned_task else None
+                assigned_task = all_tasks.filter(task=task.task, assigned_user=student).first()
+
+                # If task is assigned to the student and completed, retrieve score
+                if assigned_task and assigned_task.status:
+                    score = assigned_task.score
+                    total_score += score
+                    total_possible_score += task.perfect
+                else:
+                    score = 0
+
                 student_data['scores'].append({'task': task, 'score': score})
+
+            # Calculate the average grade for the student
+            average_grade = (total_score / total_possible_score) * 100 if total_possible_score > 0 else 0
+            student_data['average_grade'] = round(average_grade, 2)
             student_scores.append(student_data)
+
+        def calculate_class_average():
+            total_student_average = 0
+            for student_data in student_scores:
+                total_student_average += student_data['average_grade']
+            class_average = total_student_average / len(student_scores) if len(student_scores) > 0 else 0
+            return round(class_average, 2)
+
+        class_average_grade = calculate_class_average()
 
         context['students'] = students
         context['tasks'] = unique_tasks
         context['student_scores'] = student_scores
+        context['num_students'] = num_students
+        context['class_average_grade'] = class_average_grade
 
         return context
-    
+
+class UpdateScoreForm(forms.Form):
+    task_id = forms.IntegerField(widget=forms.HiddenInput())
+    score = forms.IntegerField()
+    status = forms.BooleanField(required=False)
 
 class UpdateScore(UserPassesTestMixin, ListView):
     model = ToDoList
@@ -543,44 +609,45 @@ class UpdateScore(UserPassesTestMixin, ListView):
 
     def test_func(self):
         return self.request.user.is_teacher
-    
 
     def get_queryset(self):
-        # Retrieve the task name from URL parameters
         task_name = self.kwargs.get('task_name')
         if task_name:
-            # Filter tasks based on the task name
             return ToDoList.objects.filter(task=task_name)
         else:
-            # If task name is not available, return an empty queryset
             return ToDoList.objects.none()
-        
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        # Pass the task name to the template
         context['task_name'] = self.kwargs.get('task_name')
-        
-        # Filter students associated with the task and remove None values
-        task_name = self.kwargs.get('task_name')
-        if task_name:
-            # Assuming ToDoList has a ForeignKey field 'user' to the user model
-            students = ToDoList.objects.filter(task=task_name).values_list('user', flat=True).distinct().exclude(user=None)
-            print(students)
-            context['students'] = students
-        
+        subject_pk = self.request.session.get('subject_pk')  # Retrieve subject_pk from session
+        print("Stored subject PK in session:", subject_pk)
+        context['subject_pk'] = subject_pk
         return context
+
+    def post(self, request, *args, **kwargs):
+        form = UpdateScoreForm(request.POST)
+        if form.is_valid():
+            task_id = form.cleaned_data['task_id']
+            score = form.cleaned_data['score']
+            status = form.cleaned_data['status']
+            task = ToDoList.objects.get(id=task_id)
+            task.score = score
+            task.status = status
+            task.save()
+        return redirect('scoreupdate', task_name=self.kwargs.get('task_name'))
+    
+
         
 class Scoring(LoginRequiredMixin, UpdateView):
     model = ToDoList
     fields = ['score', 'status']
     template_name = 'Grades/Scoring.html'
-    
-    def get_success_url(self):
-    # Assuming you have access to the task name through the ToDoList model
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
         task_name = self.object.task
-        return reverse_lazy('scoreupdate', kwargs={'task_name': task_name})
-    
+        return redirect('scoreupdate', task_name=task_name)
     
 class UserScheduleView(View):
     template_name = 'todolist/ViewSchedule.html'
@@ -588,12 +655,12 @@ class UserScheduleView(View):
 
     def get(self, request, *args, **kwargs):
         if request.user.is_authenticated:
-            user_subjects = Subjects.objects.filter(users=request.user)
+            user_subjects = request.user.enrolled_subjects.all()
             schedule = {}
             times = ['07:00 AM', '07:30 AM', '08:00 AM', '08:30 AM', '09:00 AM', '09:30 AM', '10:00 AM', '10:30 AM',
-                    '11:00 AM', '11:30 AM', '12:00 PM', '12:30 PM', '01:00 PM', '01:30 PM', '02:00 PM', '02:30 PM',
-                    '03:00 PM', '03:30 PM', '04:00 PM', '04:30 PM', '05:00 PM', '05:30 PM', '06:00 PM', '06:30 PM',
-                    '07:00 PM', '07:30 PM', '08:00 PM', '08:30 PM', '09:00 PM', '09:30 PM', '10:00 PM']
+                     '11:00 AM', '11:30 AM', '12:00 PM', '12:30 PM', '01:00 PM', '01:30 PM', '02:00 PM', '02:30 PM',
+                     '03:00 PM', '03:30 PM', '04:00 PM', '04:30 PM', '05:00 PM', '05:30 PM', '06:00 PM', '06:30 PM',
+                     '07:00 PM', '07:30 PM', '08:00 PM', '08:30 PM', '09:00 PM', '09:30 PM', '10:00 PM']
 
             # Convert time strings to datetime objects
             time_objects = [datetime.strptime(time_str, '%I:%M %p') for time_str in times]
@@ -601,39 +668,63 @@ class UserScheduleView(View):
             # Convert datetime objects to military time format
             military_times = [time_obj.strftime('%H:%M') for time_obj in time_objects]
 
-            print(military_times)
-
-            print("Data type of times:", type(military_times))
-            for day in range(1, 7):
+            days = range(1, 7)
+            for day in days:
                 schedule[day] = []
 
             for subject in user_subjects:
-                subject_schedules = SubjectSchedule.objects.filter(subject=subject)
+                subject_schedules = subject.subjectschedule_set.all()
                 for subject_schedule in subject_schedules:
                     formatted_start_time = subject_schedule.start_time.strftime('%I:%M %p')
                     formatted_end_time = subject_schedule.end_time.strftime('%I:%M %p')
-                    
+
                     # Convert start and end times to datetime objects
                     start_time_obj = datetime.combine(datetime.today(), subject_schedule.start_time)
                     end_time_obj = datetime.combine(datetime.today(), subject_schedule.end_time)
-                    
+
                     # Convert start and end times to military time format
                     military_start_time = start_time_obj.strftime('%H:%M')
                     military_end_time = end_time_obj.strftime('%H:%M')
-                    
+
                     duration = end_time_obj - start_time_obj
                     duration_in_minutes = duration.total_seconds() / 60
                     duration_in_intervals = duration_in_minutes // 30
+
                     schedule[subject_schedule.day_of_week].append({
                         'subject': subject.Subject_Name,
                         'start_time': military_start_time,
                         'end_time': military_end_time,
-                        'duration': duration_in_intervals  # Pass duration in intervals to template
+                        'duration': duration_in_intervals
                     })
 
-            return render(request, self.template_name, {'schedule': schedule, 'times': military_times, 'user': request.user})
+            return render(request, self.template_name, {
+                'schedule': schedule,
+                'times': military_times,
+                'user_subjects': user_subjects,
+                'user': request.user,
+                'days': days,
+            })
         else:
             return redirect('login')
+        
+
+class StudentGrades(ListView):
+    model = ToDoList
+    context_object_name = 'tasks'
+    template_name = 'Grades/StudentGrades.html'
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['tasks'] = context['tasks'].filter(user=self.request.user)
+
+        search_input = self.request.GET.get('search area') or ''
+        if search_input:
+            context['tasks'] = context['tasks'].filter(Subject_Code__Subject_Code__icontains=search_input)
+
+        context['search_input']=search_input
+        
+        return context
+    
 
 
 

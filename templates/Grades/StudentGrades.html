@@ -1,0 +1,148 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>To Do List</title>
+  <meta name="description" content="" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jua&display=swap"/>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #fcf0c1;
+      margin: 0;
+      position: relative;
+      overflow: hidden;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 20px auto;
+      background-color: rgba(231, 209, 168, 0.8);
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 50px rgba(0, 0, 0, 0.1), 0 0 100px rgba(0, 0, 0, 0.2);
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: calc(100% - 40px);
+      max-height: calc(100vh - 40px); 
+      overflow-y: auto; 
+}
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 60px;
+      background-color: rgba(231, 209, 168, 0.8);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      display: flex;
+      border-right: 1px solid #ddd;
+      justify-content: space-between;
+      align-items: start;
+    }
+    .title {
+      margin-bottom: 20px;
+      color: #333;
+    }
+    .link {
+      display: block;
+      margin-bottom: 20px;
+      text-decoration: none;
+      color: #0066cc;
+    }
+    .form-container {
+      margin-bottom: 20px;
+    }
+    .search-input {
+      width: 30%;
+      padding: 10px;
+      border: 1px solid #0d0000;
+      border-radius: 5px;
+      margin-right: 10px;
+    }
+    .search-btn {
+      padding: 10px;
+      border: none;
+      border-radius: 5px;
+      background-color: #0066cc;
+      color: #fff;
+      cursor: pointer;
+    }
+    table {
+      width: 100%;
+      border: 1px solid #0c0000;
+      border-collapse: collapse;
+    }
+    th, td {
+      padding: 10px;
+      border-bottom: 1px solid #0c0000;
+    }
+    th {
+      background-color: #0066cc;
+      color: #fff;
+      text-align: left;
+    }
+    tr:nth-child(odd) {
+      background-color: #fff9e1;
+    }
+    tr:nth-child(even) {
+      background-color: #f2f2f2;
+    }
+    .action-link {
+      text-decoration: none;
+      color: #0066cc;
+    }
+   
+    .modal {
+      display: none; 
+      position: fixed; 
+      z-index: 1;
+      left: 0;
+      top: 0;
+      width: 100%; 
+      height: 100%; 
+      overflow: auto; 
+      background-color: rgba(0,0,0,0.4); 
+    }
+
+  .modal-content {
+    font-family: 'Jua', sans-serif;
+    background-color: #fff9e2;
+    text-align: center;
+    margin: 15% auto; 
+    padding: 10px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); 
+    width: 50%; 
+    height: 50%;
+    position: fixed;
+    top: 10%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  .close {
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+  }
+  .asc:after,
+  .desc:after {
+        content: ""; /* Remove arrow icon */
+    }
+</style>
+  
+</head>
+<body>
+    <h2 style="margin-left: 20px;">{{ user.first_name }}'s Progress Tracker</h2>
+    <h3 style="margin-left: 20px;">@{{ user.username }}</h3>
+
+<script>
+</script>
+</body>
+</html>

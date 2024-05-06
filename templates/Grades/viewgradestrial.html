@@ -1,8 +1,10 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <title>Grades</title>
     <style>
         body {
@@ -13,92 +15,179 @@
         }
 
         h1 {
-            margin-top: 20px;
-            text-align: center;
-            color: #333;
-        }
+        margin-top: 20px;
+        text-align: center;
+        color: #333;
+    }
 
-        .go-back {
-            display: block;
-            margin-top: 20px;
-            margin-bottom: 20px;
-            text-align: center;
-            color: #000000;
-            text-decoration: none;
-            font-weight: bold;
-        }
+    .go-back {
+        display: block;
+        margin-top: 20px;
+        margin-bottom: 20px;
+        text-align: center;
+        color: #000000;
+        text-decoration: none;
+        font-weight: bold;
+    }
 
-        table {
-            width: 100%;
-            margin-bottom: 20px;
-            border-collapse: collapse;
-            background-color: #fff;
-            border-radius: 5px;
-            overflow: hidden;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
-        }
+    .container {
+        background-color: #fff;
+        border-radius: 0px;
+        overflow: hidden;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        padding: 20px;
+    }
 
-        th, td {
-            padding: 12px 15px;
-            text-align: left;
-            border-bottom: 1px solid #ddd;
-            position: relative;
-        }
+    .overallprogress_container {
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    background-color: #f0f0f0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    margin-left: 30px;
+}
+@media screen and (max-width: 768px) {
+    .progress-content {
+        flex-direction: column;
+    }
 
-        th {
-            background-color: rgba(231, 209, 168, 0.8);
-            color: #000000;
-        }
+    .graph-container {
+        margin-right: 0;
+        margin-bottom: 20px;
+    }
 
-        th span {
-            position: absolute;
-            right: 5px;
-        }
+    .overallprogress_container {
+        margin-top: 20px;
+    }
+}
+.class_average_text {
+    font-size: 30px;
+    font-weight: bold;
+    text-align: center;
+}
 
-        th.sorted-asc span::after {
-            content: "↑";
-        }
+.class_average_label {
+    position: absolute;
+    top: calc(50% + 30px);
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 15px;
+    text-align: center;
+}
 
-        th.sorted-desc span::after {
-            content: "↓";
-        }
+    table {
+        width: 100%;
+        margin-bottom: 20px;
+        border-collapse: collapse;
+    }
 
-        tr:nth-child(even) {
-            background-color: #f2f2f2;
-        }
+    th, td {
+        padding: 12px 15px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+        position: relative;
+    }
 
-        tr:hover {
-            background-color: #ddd;
-        }
+    th {
+        background-color: rgba(231, 209, 168, 0.8);
+        color: #000000;
+    }
 
-        .action-link {
-            color: #007bff;
-            text-decoration: none;
-        }
+    th span {
+        position: absolute;
+        right: 5px;
+    }
 
-        .action-link:hover {
-            text-decoration: underline;
-        }
+    th.sorted-asc span::after {
+        content: "↑";
+    }
 
-        h2 {
-            color: #000000;
-        }
+    th.sorted-desc span::after {
+        content: "↓";
+    }
 
-        .no-tasks-message {
-            text-align: center;
-            color: #777;
-            font-style: italic;
-        }
-        .fa-ellipsis-h {
-            font-size: 0.7em; /* Adjust size as needed */
-        }
-    </style>
+    tr:nth-child(even) {
+        background-color: #f2f2f2;
+    }
+
+    tr:hover {
+        background-color: #ddd;
+    }
+
+    .action-link {
+        color: #007bff;
+        text-decoration: none;
+    }
+
+    .action-link:hover {
+        text-decoration: underline;
+    }
+
+    h2 {
+        color: #000000;
+    }
+
+    .no-tasks-message {
+        text-align: center;
+        color: #777;
+        font-style: italic;
+    }
+
+    .fa-ellipsis-h {
+        font-size: 0.7em; /* Adjust size as needed */
+    }
+
+    
+.graph-container {
+    flex: 1;
+    margin-left: 30px;
+    margin-right: 30px;
+    height: 400px;
+}
+    .progress-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+    
+</style>
 </head>
 <body>
-    <h1>Grades</h1>
-    <a href="{% url 'class_details' pk=subject.pk %}" class="go-back">Go back</a>
+    <div style="display: flex; align-items: center;">
+        <h1 style="text-align: left; margin-top: 0;">{{ subject.Subject_Name }}</h1>
+    </div>
+    
 
-    <h2>Tasks</h2>
+    <div class="container">
+        <div style="display: flex; align-items: center;">
+            <h2 style="text-align: left; margin-right: 20px;">Class Progress Report</h2>
+            <div style="display: flex; align-items: center; justify-content: center;">
+                <img src="{% static 'imgs/number of students.png' %}" alt="Profile Logo" style="width: 30px; height: 30px; margin-right: 10px;">
+                <h3 style="display: flex; align-items: center;">Number of Students: {{ num_students }}</h3>
+            </div>
+        </div>
+        <hr style="border: none; border-top: 2px solid #ccc; margin: 10px 0;">
+
+
+        <div class="progress-container">
+            <h2 style="margin-left: 30px;">Overall Progress</h2>
+            <div class="progress-content">
+                <div class="overallprogress_container">
+                    <div class="class_average_text">{{ class_average_grade|floatformat:2 }}%</div>
+                    <div class="class_average_label">Class Average</div>
+                </div>
+                <div class="graph-container">
+                    <canvas id="myBarChart"></canvas>
+                </div>
+            </div>
+        </div>
+        <hr style="border: none; border-top: 2px solid #ccc; margin: 10px 0;">
+
+
+        <h2>Tasks</h2>
     <table id="pending-table">
         <thead>
             <tr>
@@ -127,39 +216,124 @@
         </tbody>
         
     </table>
-
-    <!-- <h2>Completed Tasks</h2>
-    <table id="completed-table">
-        <thead>
-            <tr>
-                <th></th> 
-                {% for task in tasks %}
-                <th>
-                    {{ task.task }}<br>
-                    <sup style="font-size: smaller">Out of {{ task.perfect }}</sup>
-                </th>
-                {% empty %}
-                    <tr>
-                        <td colspan="6" style="text-align: center;"><h3>No pending tasks</h3></td>
-                    </tr>
-                {% endfor %}
-            </tr>
-        </thead>
-        <tbody>
-            {% for student_data in student_scores %}
+        <!-- <h2>Activities</h2>
+        <table id="activity-table">
+            <thead>
                 <tr>
-                    <td>{{ student_data.student }}</td>
-                    {% for score_info in student_data.scores %}
-                        <td>{{ score_info.score }}</td>
+                    <th></th>
+                    {% for task in tasks %}
+                        {% if task.task_type == 'activity' %}
+                        <th>
+                            <a href="{% url 'scoreupdate' task.task %}" style="color: black;">{{ task.task }}</a><br>
+                            <sup style="font-size: smaller">Out of {{ task.perfect }}</sup>
+                        </th>
+                        {% endif %}
+                    {% empty %}
+                        <tr>
+                            <td colspan="6" style="text-align: center;"><h3>No pending activities</h3></td>
+                        </tr>
                     {% endfor %}
                 </tr>
-            {% endfor %}
-        </tbody>
-        
-    </table> -->
+            </thead>
+            <tbody>
+                {% for student_data in student_scores %}
+                <tr>
+                    <td>{{ student_data.student.first_name }} {{ student_data.student.last_name }}</td>
+                    {% for score_info in student_data.scores %}
+                        {% if score_info.task.task_type == 'activity' %}
+                            <td>{{ score_info.score }}</td>
+                        {% endif %}
+                    {% endfor %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     
-
-
+        <h2>Quizzes</h2>
+        <table id="quiz-table">
+            <thead>
+                <tr>
+                    <th></th>
+                    {% for task in tasks %}
+                        {% if task.task_type == 'quiz' %}
+                        <th>
+                            <a href="{% url 'scoreupdate' task.task %}" style="color: black;">{{ task.task }}</a><br>
+                            <sup style="font-size: smaller">Out of {{ task.perfect }}</sup>
+                        </th>
+                        {% endif %}
+                    {% empty %}
+                        <tr>
+                            <td colspan="6" style="text-align: center;"><h3>No pending quizzes</h3></td>
+                        </tr>
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for student_data in student_scores %}
+                <tr>
+                    <td>{{ student_data.student.first_name }} {{ student_data.student.last_name }}</td>
+                    {% for score_info in student_data.scores %}
+                        {% if score_info.task.task_type == 'quiz' %}
+                            <td>{{ score_info.score }}</td>
+                        {% endif %}
+                    {% endfor %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table> -->
+    </div>
+    <script>
+        // Extracting student names and grades from Django template
+        const studentNames = [];
+        const studentGrades = [];
+        {% for student_data in student_scores %}
+            studentNames.push('{{ student_data.student.first_name }} {{ student_data.student.last_name }}');
+            studentGrades.push({{ student_data.average_grade }});
+        {% endfor %}
     
+        // Chart data
+        const data = {
+            labels: studentNames,
+            datasets: [{
+                label: 'Student Average',
+                data: studentGrades,
+                backgroundColor: 'rgba(75, 192, 192, 0.6)',
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 1
+            }]
+        };
+    
+        // Chart options
+        const options = {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    min: 0,
+                    max: 100,
+                    ticks: {
+                        stepSize: 10
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    display: false
+                },
+                title: {
+                    display: true,
+                    text: 'Student Average Scores'
+                }
+            }
+        };
+    
+        // Create the bar chart
+        const ctx = document.getElementById('myBarChart').getContext('2d');
+        const myBarChart = new Chart(ctx, {
+            type: 'bar',
+            data: data,
+            options: options
+        });
+    </script>
 </body>
 </html>

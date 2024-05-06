@@ -7,6 +7,7 @@
     <title>Sign-up</title>
     <meta name="description" content="" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <img src="/static/imgs/bg1.jpg" alt="">
     <link rel="stylesheet" href="{% static 'authentication/style.css' %}" />
     <link
       rel="stylesheet"
@@ -25,6 +26,9 @@
       justify-content: center;
       height: 100vh;
       font-family: 'Jua', sans-serif;
+      background-image: url('/static/imgs/bg1.png');
+      background-size: cover; 
+      background-position: center;
     "
   >
     <button
@@ -56,15 +60,26 @@
         text-align: center;
       "
     >
-    {% for message in messages %}
-    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert" style="background-color: rgba(252, 240, 193, 0.8); color: #333; padding: 8px; margin-bottom: 8px; border: 1px solid #ddd; border-radius: 5px;">
+      {% for message in messages %}
+      <div
+        class="alert alert-{{ message.tags }} alert-dismissible fade show"
+        role="alert"
+        style="
+          background-color: rgba(252, 240, 193, 0.8);
+          color: #333;
+          padding: 8px;
+          margin-bottom: 8px;
+          border: 1px solid #ddd;
+          border-radius: 5px;
+        "
+      >
         <strong>Message:</strong> {{ message }}
         <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
+          <span aria-hidden="true">&times;</span>
         </button>
-    </div>
-    {% endfor %}
-    
+      </div>
+      {% endfor %}
+
       <h3 style="color: #333">Sign Up</h3>
 
       <form action="/signup" method="post" style="margin-top: 15px">
@@ -160,6 +175,25 @@
             box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.5);
           "
         /><br />
+        <select
+          id="department"
+          name="department"
+          style="
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-bottom: 8px;
+            font-family: 'Jua', sans-serif;
+            box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.5);
+          "
+        >
+          <option value="" disabled selected>Select Department</option>
+          <!-- Add department options here -->
+          {% for department_abbr, department_name in department_choices %}
+          <option value="{{ department_abbr }}">{{ department_name }}</option>
+          {% endfor %}
+        </select>
+        <br />
         <input
           type="radio"
           id="student"

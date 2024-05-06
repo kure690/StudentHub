@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grades</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 0;
+            background-color: #fcf0c1;
+        }
+
+        h1 {
+            margin-top: 20px;
+            text-align: center;
+            color: #333;
+        }
+
+        .go-back {
+            display: block;
+            margin-top: 20px;
+            margin-bottom: 20px;
+            text-align: center;
+            color: #000000;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        table {
+            width: 100%;
+            margin-bottom: 20px;
+            border-collapse: collapse;
+            background-color: #fff;
+            border-radius: 5px;
+            overflow: hidden;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        }
+
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+            position: relative;
+        }
+
+        th {
+            background-color: rgba(231, 209, 168, 0.8);
+            color: #000000;
+        }
+
+        th span {
+            position: absolute;
+            right: 5px;
+        }
+
+        th.sorted-asc span::after {
+            content: "↑";
+        }
+
+        th.sorted-desc span::after {
+            content: "↓";
+        }
+
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        tr:hover {
+            background-color: #ddd;
+        }
+
+        .action-link {
+            color: #007bff;
+            text-decoration: none;
+        }
+
+        .action-link:hover {
+            text-decoration: underline;
+        }
+
+        h2 {
+            color: #000000;
+        }
+
+        .no-tasks-message {
+            text-align: center;
+            color: #777;
+            font-style: italic;
+        }
+        .fa-ellipsis-h {
+            font-size: 0.7em; /* Adjust size as needed */
+        }
+    </style>
+</head>
+<body>
+    <h1>Grades</h1>
+    <a href="{% url 'class_details' pk=subject.pk %}" class="go-back">Go back</a>
+
+    <h2>Activities</h2>
+        <table id="activity-table">
+        <thead>
+            <tr>
+            <th></th>
+            {% for task in tasks %}
+                {% if task.task_type == 'activity' %}
+                <th>
+                    <a href="{% url 'scoreupdate' task.task %}" style="color: black;">{{ task.task }}</a><br>
+                    <sup style="font-size: smaller">Out of {{ task.perfect }}</sup>
+                </th>
+                {% endif %}
+            {% empty %}
+                <tr>
+                <td colspan="6" style="text-align: center;"><h3>No pending activities</h3></td>
+                </tr>
+            {% endfor %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for student_data in student_scores %}
+            <tr>
+                <td>{{ student_data.student.first_name }} {{ student_data.student.last_name }}</td>
+                {% for score_info in student_data.scores %}
+                {% if score_info.task.task_type == 'activity' %}
+                    <td>{{ score_info.score }}</td>
+                {% endif %}
+                {% endfor %}
+            </tr>
+            {% endfor %}
+        </tbody>
+        </table>
+
+<h2>Quizzes</h2>
+        <table id="quiz-table">
+        <thead>
+            <tr>
+            <th></th>
+            {% for task in tasks %}
+                {% if task.task_type == 'quiz' %}
+                <th>
+                    <a href="{% url 'scoreupdate' task.task %}" style="color: black;">{{ task.task }}</a><br>
+                    <sup style="font-size: smaller">Out of {{ task.perfect }}</sup>
+                </th>
+                {% endif %}
+            {% empty %}
+                <tr>
+                <td colspan="6" style="text-align: center;"><h3>No pending quizzes</h3></td>
+                </tr>
+            {% endfor %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for student_data in student_scores %}
+            <tr>
+                <td>{{ student_data.student.first_name }} {{ student_data.student.last_name }}</td>
+                {% for score_info in student_data.scores %}
+                {% if score_info.task.task_type == 'quiz' %}
+                    <td>{{ score_info.score }}</td>
+                {% endif %}
+                {% endfor %}
+            </tr>
+            {% endfor %}
+        </tbody>
+        </table>
+
+    <!-- <h2>Completed Tasks</h2>
+    <table id="completed-table">
+        <thead>
+            <tr>
+                <th></th> 
+                {% for task in tasks %}
+                <th>
+                    {{ task.task }}<br>
+                    <sup style="font-size: smaller">Out of {{ task.perfect }}</sup>
+                </th>
+                {% empty %}
+                    <tr>
+                        <td colspan="6" style="text-align: center;"><h3>No pending tasks</h3></td>
+                    </tr>
+                {% endfor %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for student_data in student_scores %}
+                <tr>
+                    <td>{{ student_data.student }}</td>
+                    {% for score_info in student_data.scores %}
+                        <td>{{ score_info.score }}</td>
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+        </tbody>
+        
+    </table> -->
+    
+
+
+    
+</body>
+</html>

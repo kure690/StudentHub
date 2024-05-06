@@ -1,8 +1,12 @@
-
 <!-- templates/dashboard/dashboard.html -->
 {% extends 'base.html' %} 
 {% load static %}
 {% block content %}
+<style>
+  body {
+    background-color: #fcf0c1;
+  }
+</style>
 
 
 <button
@@ -45,10 +49,10 @@
   <!-- Sample Card -->
   {% for subject in subjects %}
   <div class="card" style="
-    width: 22rem;
+    width: 20rem;
     height: 25rem;
     margin-top: 20px;
-    margin-right: 20px; /* Added margin-right to create space between cards */
+    margin-left: 20px;
     float: left;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     background-color: #fff9e1;
