@@ -150,7 +150,7 @@ def dashboard(request):
         for task in tasks:
             if task.task_type == 'quiz' and task.score == task.perfect:
                 total_perfect_scores += 1
-            elif task.task_type == 'activity' and task.score == task.perfect:
+            elif task.task_type == 'activi  ty' and task.score == task.perfect:
                 total_perfect_scores += 1
 
         total_high_scores = 0
@@ -192,7 +192,8 @@ def dashboard(request):
             'activity_count': tasks.filter(task_type='activity').count(),
             'final_grade_percentage': final_grade_percentage,
             'final_grade': final_grade, 'total_perfect_scores': total_perfect_scores,
-            'total_high_scores': total_high_scores, 'total_low_scores': total_low_scores
+            'total_high_scores': total_high_scores, 'total_low_scores': total_low_scores,
+            'completed_task': tasks.filter(status=True).count(),
         })
         
         

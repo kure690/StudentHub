@@ -448,6 +448,7 @@ class AddStudent(LoginRequiredMixin, UpdateView):
             widget=forms.CheckboxSelectMultiple,
             required=False
         )
+        form.fields['students'].label_from_instance = lambda obj: f"{obj.first_name} {obj.last_name}"
         return form
 
     def get_success_url(self):
@@ -715,16 +716,19 @@ class StudentGrades(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['tasks'] = context['tasks'].filter(user=self.request.user)
+        context['tasks'] = context['tasks'].filter(assigned_user=self.request.user)
         search_input = self.request.GET.get('search area') or ''
         if search_input:
             context['tasks'] = context['tasks'].filter(Subject_Code__Subject_Code__icontains=search_input)
         context['search_input'] = search_input
 
-        # Calculate average grade for each subject
+        completed_tasks_count = context['tasks'].filter(status=True).count()
+        context['completed_tasks_count'] = completed_tasks_count
+
+        # Calculate average grade and completed tasks count for each subject
         subject_grades = []
         for subject in self.request.user.enrolled_subjects.all():
-            completed_tasks = ToDoList.objects.filter(user=self.request.user, Subject_Code=subject, status=True)
+            completed_tasks = ToDoList.objects.filter(assigned_user=self.request.user, Subject_Code=subject, status=True)
             
             total_score = completed_tasks.aggregate(total_score=Sum('score'))['total_score'] or 0
             total_possible_score = completed_tasks.aggregate(total_possible_score=Sum('perfect'))['total_possible_score'] or 0
@@ -733,7 +737,8 @@ class StudentGrades(ListView):
             subject_data = {
                 'subject_code': subject.Subject_Code,
                 'subject_name': subject.Subject_Name,
-                'average_grade': round(average_grade, 2)
+                'average_grade': round(average_grade, 2),
+                'completed_tasks_count': completed_tasks.count(),
             }
             subject_grades.append(subject_data)
 
@@ -741,10 +746,18 @@ class StudentGrades(ListView):
 
         # Calculate overall average grade for the student
         total_student_average = 0
+        subject_count = 0
+
         for subject_data in subject_grades:
-            total_student_average += subject_data['average_grade']
-        student_average = total_student_average / len(subject_grades) if len(subject_grades) > 0 else 0
-        context['student_average'] = round(student_average, 2)
+            if subject_data['average_grade'] > 0:
+                total_student_average += subject_data['average_grade']
+                subject_count += 1
+
+        if subject_count > 0:
+            student_average = total_student_average / subject_count
+            context['student_average'] = round(student_average, 2)
+        else:
+            context['student_average'] = 0
 
         return context
 
