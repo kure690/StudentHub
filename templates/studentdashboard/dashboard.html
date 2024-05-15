@@ -237,7 +237,7 @@
         </h4>
       </div>
       <div style="display: flex;">
-        <div style="background-color: #fff01b; padding: 10px; box-shadow: 0 50px 50px rgba(0, 0, 0, 0.1), 0 0 100px rgba(0, 0, 0, 0.2); width: 150px; height: 80px; margin-right: 30px; margin-top: 10px;">
+        <div style="background-color: #fff01b; padding: 10px; box-shadow: 0 50px 50px 0 rgba(0, 0, 0, 0.1), 0 0 100px rgba(0, 0, 0, 0.2); width: 150px; height: 80px; margin-right: 30px; margin-top: 10px;">
           <img src="{% static 'imgs/pin.png' %}" alt="Notebook Spring" style="width: 35px; height: 35px; margin: 0px; position: absolute;">
           <div style="text-align: center; color: #080101; font-size: 24px; font-weight: bold; margin-top: 10px;">
             {{ tasks.count }}
@@ -261,15 +261,15 @@
         <div style="background-color: #fff01b; padding: 10px; box-shadow: 0 50px 50px rgba(0, 0, 0, 0.1), 0 0 100px rgba(0, 0, 0, 0.2); width: 150px; height: 80px; margin-right: 30px;  margin-top: 10px;">
           <img src="{% static 'imgs/pin.png' %}" alt="Notebook Spring" style="width: 35px; height: 35px; margin: 0px; position: absolute;">
           <div style="text-align: center; color: #080101; font-size: 24px; font-weight: bold; margin-top: 10px;">
-            {{ final_grade_percentage }}
+            {{ completed_task }}
           </div>
-          <div style="color: #040101; text-align: center;">Percentage</div>
+          <div style="color: #040101; text-align: center;">Completed Tasks</div>
         </div>
       </div>
 
 
       <div style="display: flex; align-items: center;">
-      <div style="background-color: #e80303; padding: 10px; width: 236.67px; height: 50px; margin-top: 30px; margin-right: 30px; display: flex; align-items: center;">
+      <div style="background-color: #f13838; padding: 10px; width: 236.67px; height: 50px; margin-top: 30px; margin-right: 30px; display: flex; align-items: center;">
         <img src="{% static 'imgs/consistentlyhigh.png' %}" alt="Perfect Score" style="width: 30px; height: 30px; margin: 10px;">
         <div style="display: flex; flex-direction: column;">
           <div style="text-align: left; margin-left: 10px; color: #080101; font-size: 24px; font-weight: bold;">{{ total_perfect_scores }}</div>
@@ -277,7 +277,7 @@
         </div>
       </div>
 
-      <div style="background-color: #e80303; padding: 10px; width: 236.67px; height: 50px; margin-top: 30px; margin-right: 30px; display: flex; align-items: center;">
+      <div style="background-color: #f13838; padding: 10px; width: 236.67px; height: 50px; margin-top: 30px; margin-right: 30px; display: flex; align-items: center;">
         <img src="{% static 'imgs/goodperformance.png' %}" alt="High Performance" style="width: 30px; height: 30px; margin: 10px;">
         <div style="display: flex; flex-direction: column;">
           <div style="text-align: left; margin-left: 10px; color: #080101; font-size: 24px; font-weight: bold;">{{ total_high_scores }}</div>
@@ -285,7 +285,7 @@
         </div>
       </div>
 
-      <div style="background-color: #e80303; padding: 10px; width: 236.67px; height: 50px; margin-top: 30px; margin-right: 30px; display: flex; align-items: center;">
+      <div style="background-color: #f13838; padding: 10px; width: 236.67px; height: 50px; margin-top: 30px; margin-right: 30px; display: flex; align-items: center;">
         <img src="{% static 'imgs/atrisk.png' %}" alt="At Risk" style="width: 30px; height: 30px; margin: 10px;">
         <div style="display: flex; flex-direction: column;">
           <div style="text-align: left; margin-left: 10px; color: #080101; font-size: 24px; font-weight: bold;">{{ total_low_scores }}</div>

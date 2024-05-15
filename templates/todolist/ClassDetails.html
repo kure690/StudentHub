@@ -225,7 +225,7 @@
         color: #aeb5b0;
         border: none;
         outline: none;
-        padding: 12px; 
+        padding: 8px; 
         border-radius: 10px;
         position: absolute;
         top: 0;
@@ -394,9 +394,22 @@
 
         if (addStudentLink) {
             addStudentLink.addEventListener('click', function(event) {
-            event.preventDefault();
+                event.preventDefault();
 
-        
+        var enrolledStudents = [];
+        {% for student in subject.students.all %}
+            enrolledStudents.push("{{ student.pk }}");
+        {% endfor %}
+
+        function checkEnrolledStudents() {
+            var checkboxes = document.querySelectorAll('#add-student-form input[type="checkbox"]');
+            checkboxes.forEach(function(checkbox) {
+                if (enrolledStudents.includes(checkbox.value)) {
+                    checkbox.checked = true;
+                }
+            });
+        }
+
         var xhr = new XMLHttpRequest();
         xhr.open('GET', '{% url "add_student" pk=subject.pk %}', true);
         xhr.onreadystatechange = function() {
@@ -407,6 +420,7 @@
                     var formElement = responseDoc.querySelector('form');
                     addStudentForm.innerHTML = formElement.outerHTML;
                     addStudentModal.style.display = 'block';
+                    checkEnrolledStudents();
                 } else {
                     console.error('Error occurred:', xhr.status);
                 }
@@ -416,8 +430,8 @@
     });
 }
 
-addStudentForm.addEventListener('submit', function(event) {
-    event.preventDefault();
+    addStudentForm.addEventListener('submit', function(event) {
+        event.preventDefault();
 
     var formData = new FormData(addStudentForm);
     var xhr = new XMLHttpRequest();
@@ -436,23 +450,12 @@ addStudentForm.addEventListener('submit', function(event) {
     xhr.send(formData);
 });
 
-
-
-window.addEventListener('click', function(event) {
-    if (event.target == addStudentModal) {
-        addStudentModal.style.display = 'none';
+    var closeModalButton = document.querySelector('.modal-content .close');
+    if (closeModalButton) {
+        closeModalButton.addEventListener('click', function() {
+            addStudentModal.style.display = 'none';
+        });
     }
-});
-
-var closeModal = addStudentModal.querySelector('.close');
-if (closeModal) {
-    closeModal.addEventListener('click', function() {
-        addStudentModal.style.display = 'none';
-    });
-}
-
-
-
 
 
         var deleteLink = document.getElementById('delete-class-link');
