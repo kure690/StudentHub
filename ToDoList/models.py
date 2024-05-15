@@ -53,6 +53,7 @@ class ToDoList(models.Model):
     perfect = models.IntegerField(default=0)
     assigned_user = models.ForeignKey('authentication.CustomUser', on_delete=models.CASCADE, related_name='assigned_tasks', null=True, blank=True)
     task_type = models.CharField(max_length=10, choices=TASK_TYPE_CHOICES, default='activity')
+    reminder_sent = models.BooleanField(default=False)
 
 
     def __str__(self):

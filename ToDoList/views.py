@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import get_object_or_404, render, redirect
 from django.views import View
@@ -16,7 +16,9 @@ from django.views.generic import DetailView
 from .models import Subjects
 from .models import ToDoList
 from django.db.models import Q, F, Sum, Count
-
+from django.dispatch import receiver
+from django.utils import timezone
+from django.db.models.signals import post_save
 
 # Create your views here.
 
@@ -114,6 +116,8 @@ class TaskCreate(LoginRequiredMixin, UserPassesTestMixin, CreateView):
                     task_type=form.cleaned_data['task_type'],
                     assigned_user=student  # Assign the student to the task
                 )
+                message = f"A new task has been assigned for {subject.Subject_Name}"
+                NotificationManager.send_notification(recipients=[student], message=message)
                 print("Task created:", task)
             return super().form_valid(form)
         else:
@@ -349,7 +353,13 @@ class ClassCreate(LoginRequiredMixin, UserPassesTestMixin, CreateView):
         response = super().form_valid(form)
 
         # Add selected students to the subject
-        self.object.students.set(form.cleaned_data['students'])
+        students = form.cleaned_data['students']
+        self.object.students.set(students)
+
+        for student in students:
+            message = f"You have been added to the class '{self.object.Subject_Name}' with subject code '{self.object.Subject_Code}'."
+            NotificationManager.send_notification(recipients=[student], message=message)
+        
 
         return response
     
@@ -468,7 +478,7 @@ class AddStudent(LoginRequiredMixin, UpdateView):
 
         # Send notification to each added student
         for student in students:
-            message = f"You have been added to the subject: {subject.Subject_Name}"
+            message = f"You have been added to the class '{subject.Subject_Name}'' with subject code '{subject.Subject_Code}'"
             NotificationManager.send_notification(recipients=[student], message=message)
 
         return super().form_valid(form)
@@ -642,6 +652,10 @@ class UpdateScore(UserPassesTestMixin, ListView):
             task.score = score
             task.status = status
             task.save()
+
+            student = task.assigned_user
+            message = f"Your score for the task '{task.task}' has been updated. You received a score of {task.score} out of {task.perfect}."
+            NotificationManager.send_notification(recipients=[student], message=message)
         return redirect('scoreupdate', task_name=self.kwargs.get('task_name'))
     
 
@@ -653,7 +667,14 @@ class Scoring(LoginRequiredMixin, UpdateView):
 
     def form_valid(self, form):
         response = super().form_valid(form)
-        task_name = self.object.task
+        task = self.object
+        task_name = task.task
+        student = task.assigned_user
+
+        # Send notification to the student assigned to the task
+        message = f"Your task '{task_name}' has been graded. You received a score of {task.score} out of {task.perfect}."
+        NotificationManager.send_notification(recipients=[student], message=message)
+
         return redirect('scoreupdate', task_name=task_name)
     
 class UserScheduleView(View):
@@ -784,26 +805,41 @@ class NotificationManager:
         """
         return Notification.objects.filter(recipients=user).order_by('-timestamp')
 
-    @staticmethod
-    def mark_as_read(notification):
-        """
-        Mark a notification as read.
-        Args:
-            notification (Notification): The Notification object to mark as read.
-        """
-        notification.is_read = True
-        notification.save()
+    # @staticmethod
+    # def mark_as_read(notification):
+    #     """
+    #     Mark a notification as read.
+    #     Args:
+    #         notification (Notification): The Notification object to mark as read.
+    #     """
+    #     notification.is_read = True
+    #     notification.save()
 
-    @staticmethod
-    def mark_all_as_read(user):
-        """
-        Mark all notifications for a user as read.
-        Args:
-            user (User): The User object representing the user.
-        """
-        Notification.objects.filter(recipients=user).update(is_read=True)
+    # @staticmethod
+    # def mark_all_as_read(user):
+    #     """
+    #     Mark all notifications for a user as read.
+    #     Args:
+    #         user (User): The User object representing the user.
+    #     """
+    #     Notification.objects.filter(recipients=user).update(is_read=True)
 
 
+@receiver(post_save, sender=ToDoList)
+def send_task_reminder(sender, instance, created, **kwargs):
+    if created:
+        # Get the current date and time
+        current_date = timezone.now().date()
+
+        # Calculate the date one day before the task's deadline
+        reminder_date = instance.deadline - timedelta(days=1)
+
+        # Check if the reminder date is equal to or greater than the current date
+        if reminder_date >= current_date:
+            # Send a reminder notification to the student one day before the deadline
+            student = instance.assigned_user
+            message = f"Reminder: The deadline for the task '{instance.task}' is tomorrow ({instance.deadline})."
+            NotificationManager.send_notification(recipients=[student], message=message)
     
 
 
