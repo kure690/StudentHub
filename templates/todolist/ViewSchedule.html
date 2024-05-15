@@ -29,25 +29,28 @@
             border-collapse: collapse;
             background-color: #fff9e2;
             margin: 20px auto; 
-            min-width: 400px;
+            min-width: 300px;
             font-size: 0.9em;
+            font-weight: bold;
         }
         
         th, td {
-            border: 1px solid #dddddd;
+            border: none; /* Remove the borders */
             text-align: center;
             padding: 8px;
-            width: 10%;
+            width: 5%;
         }
+        
         th {
-            box-shadow:0 5px 5px #808080;
+            box-shadow: 0 5px 5px #808080;
             background-color: #ffdc2e;
-            padding: 10px;
+            padding: 5px;
             text-transform: uppercase;
         }
 
-        tr:nth-child(odd){
-            background-color: #ffe761;
+        .subject-cell {
+            background-color: rgba(255, 231, 97, 0.5);
+            padding: 5px; /* Optional: Add some padding */
         }
 
         .go-back {
@@ -99,10 +102,10 @@
             <tr>
                 <td>{{ time }}</td>
                 {% for day, subjects in schedule.items %}
-                <td>
+                <td {% for subject in subjects %}{% if subject.start_time <= time and subject.end_time > time %}class="subject-cell"{% endif %}{% endfor %}>
                     {% for subject in subjects %}
                         {% if subject.start_time <= time and subject.end_time > time %}
-                            <p>{{ subject.subject }}</p>
+                            {{ subject.subject }}
                             <br>
                         {% endif %}
                     {% endfor %}
@@ -110,6 +113,7 @@
                 {% endfor %}
             </tr>
             {% endfor %}
+
         </table>
     </div>
 </body>

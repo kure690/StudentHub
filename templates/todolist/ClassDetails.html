@@ -5,13 +5,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jua&display=swap"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <title>Class Details</title>
     <style>
         body {
-            background-color: #ddd;
+            background-color: #fff9e2;
             margin: 0;
             font-family: 'Jua', sans-serif;
-            
             text-align: center;
         }
 
@@ -22,7 +22,7 @@
         }
 
         .container, .student-container, .task-container .grades-container{
-            background-color: rgba(231, 209, 168, 0.8);
+            background-color: #fff9e2;
             height: 593px;
             width: 90%;
             padding: 5px;
@@ -32,6 +32,7 @@
             text-align: center;
         }
         .tab-container {
+            background-color: rgba(231, 209, 168, 0.8);
             margin-top: 10px;
             display: flex;
             flex-direction: row;
@@ -51,19 +52,20 @@
         }
 
         .tab.active {
-            background-color: #48dcfa;
+            background-color: #d2b48c;
             color: rgb(12, 1, 1);
         }
 
         .tab-content {
             padding: 20px;
-            background-color: #48dcfa;
+            background-color: #d2b48c;
             border-radius: 0 5px 5px 5px;
             margin-left: 10px;
             margin-right: 10px;
         }
 
         .container {
+            background-color: rgba(231, 209, 168, 1);
             text-align: center;
         }
         
@@ -124,14 +126,14 @@
             margin-right: 0;
         }
 
-        .go-back {
+        /* .go-back {
             position: absolute; 
             top: 20px; 
             left: 20px; 
             color: black; 
             text-decoration: none;
             font-size: 16px; 
-        }
+        } */
         
         table {
             width: 100%;
@@ -216,14 +218,29 @@
     </style>
 </head>
 <body>
-    <a href="{% url 'dashboard' %}" class="go-back">Go back</a>
+    <!-- <a href="{% url 'dashboard' %}" class="go-back">Go back</a> -->
+
+    <button class="home-button" onclick="window.location.href='{% url 'dashboard' %}';" style="
+        background-color: #fff9e2;
+        color: #aeb5b0;
+        border: none;
+        outline: none;
+        padding: 8px; 
+        border-radius: 10px;
+        position: absolute;
+        top: 0;
+        left: 0;
+        cursor: pointer;
+        font-size: 30px; 
+    "><i class="fa-solid fa-house"></i></button>
+
     <div class="container1">
         <div class="box">
     </div>
     <div class="box">
     </div>
     </div>
-    <a href="{% url 'viewgrades' pk=subject.pk %}">View Grades</a>
+    {% comment %} <a href="{% url 'viewgrades' pk=subject.pk %}">View Grades</a> {% endcomment %}
     
     <div class="header_container">
         <div class="header1_content">
@@ -377,9 +394,22 @@
 
         if (addStudentLink) {
             addStudentLink.addEventListener('click', function(event) {
-            event.preventDefault();
+                event.preventDefault();
 
-        
+        var enrolledStudents = [];
+        {% for student in subject.students.all %}
+            enrolledStudents.push("{{ student.pk }}");
+        {% endfor %}
+
+        function checkEnrolledStudents() {
+            var checkboxes = document.querySelectorAll('#add-student-form input[type="checkbox"]');
+            checkboxes.forEach(function(checkbox) {
+                if (enrolledStudents.includes(checkbox.value)) {
+                    checkbox.checked = true;
+                }
+            });
+        }
+
         var xhr = new XMLHttpRequest();
         xhr.open('GET', '{% url "add_student" pk=subject.pk %}', true);
         xhr.onreadystatechange = function() {
@@ -390,6 +420,7 @@
                     var formElement = responseDoc.querySelector('form');
                     addStudentForm.innerHTML = formElement.outerHTML;
                     addStudentModal.style.display = 'block';
+                    checkEnrolledStudents();
                 } else {
                     console.error('Error occurred:', xhr.status);
                 }
@@ -399,8 +430,8 @@
     });
 }
 
-addStudentForm.addEventListener('submit', function(event) {
-    event.preventDefault();
+    addStudentForm.addEventListener('submit', function(event) {
+        event.preventDefault();
 
     var formData = new FormData(addStudentForm);
     var xhr = new XMLHttpRequest();
@@ -419,23 +450,12 @@ addStudentForm.addEventListener('submit', function(event) {
     xhr.send(formData);
 });
 
-
-
-window.addEventListener('click', function(event) {
-    if (event.target == addStudentModal) {
-        addStudentModal.style.display = 'none';
+    var closeModalButton = document.querySelector('.modal-content .close');
+    if (closeModalButton) {
+        closeModalButton.addEventListener('click', function() {
+            addStudentModal.style.display = 'none';
+        });
     }
-});
-
-var closeModal = addStudentModal.querySelector('.close');
-if (closeModal) {
-    closeModal.addEventListener('click', function() {
-        addStudentModal.style.display = 'none';
-    });
-}
-
-
-
 
 
         var deleteLink = document.getElementById('delete-class-link');
