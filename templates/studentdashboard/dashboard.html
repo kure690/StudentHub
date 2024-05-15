@@ -320,19 +320,28 @@
         height: 100vh;
     ">
     <div class="additional-container" style="
-      position: fixed;
-      top: 5%;
-      right: 20px;
-      background-color: rgba(231, 209, 168, 1);
-      padding: 15px;
-      border-radius: 8px;
-      box-shadow: 0 0 50px rgba(0, 0, 0, 0.1), 0 0 100px rgba(0, 0, 0, 0.2);
-      text-align: center;
-      width: 300px;
-      height: 350px;
-      ">
-      <h2> NOTIFICATIONS </h1>
-    </div>
+    position: fixed;
+    top: 5%;
+    right: 20px;
+    background-color: rgba(231, 209, 168, 1);
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 0 50px rgba(0, 0, 0, 0.1), 0 0 100px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    width: 300px;
+    height: 350px;
+    overflow-y: auto;
+  ">
+    <h2>NOTIFICATIONS</h2>
+    {% for notification in notifications %}
+      <div style="background-color: #fff; padding: 10px; margin-bottom: 10px; border-radius: 5px;">
+        <p>{{ notification.message }}</p>
+        <small>{{ notification.timestamp|date:"F j, Y, g:i a" }}</small>
+      </div>
+    {% empty %}
+      <p>No notifications.</p>
+    {% endfor %}
+  </div>
 
       <div class="calendar-container" style="
           position: fixed;

@@ -4,7 +4,7 @@ from django.shortcuts import get_object_or_404, render, redirect
 from django.views import View
 from django.views.generic.list import ListView
 from django.views.generic.detail import DetailView
-from .models import SubjectSchedule, ToDoList, Subjects
+from .models import SubjectSchedule, ToDoList, Subjects, Notification
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.urls import reverse, reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -465,6 +465,12 @@ class AddStudent(LoginRequiredMixin, UpdateView):
         subject = self.get_object()
         students = form.cleaned_data.get('students')
         subject.students.set(students)
+
+        # Send notification to each added student
+        for student in students:
+            message = f"You have been added to the subject: {subject.Subject_Name}"
+            NotificationManager.send_notification(recipients=[student], message=message)
+
         return super().form_valid(form)
     
 
@@ -760,6 +766,43 @@ class StudentGrades(ListView):
             context['student_average'] = 0
 
         return context
+    
+class NotificationManager:
+    @staticmethod
+    def send_notification(recipients, message):
+        notification = Notification.objects.create(message=message)
+        notification.recipients.set(recipients)
+
+    @staticmethod
+    def get_notifications_for_user(user):
+        """
+        Get all notifications for a specific user.
+        Args:
+            user (User): The User object representing the user.
+        Returns:
+            QuerySet: A queryset of Notification objects for the user.
+        """
+        return Notification.objects.filter(recipients=user).order_by('-timestamp')
+
+    @staticmethod
+    def mark_as_read(notification):
+        """
+        Mark a notification as read.
+        Args:
+            notification (Notification): The Notification object to mark as read.
+        """
+        notification.is_read = True
+        notification.save()
+
+    @staticmethod
+    def mark_all_as_read(user):
+        """
+        Mark all notifications for a user as read.
+        Args:
+            user (User): The User object representing the user.
+        """
+        Notification.objects.filter(recipients=user).update(is_read=True)
+
 
     
 

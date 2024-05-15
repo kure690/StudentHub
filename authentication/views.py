@@ -18,6 +18,7 @@ import calendar
 from calendar import HTMLCalendar
 from datetime import datetime, date
 from django.db.models import Sum
+from ToDoList.models import Notification
 
 
 
@@ -184,6 +185,8 @@ def dashboard(request):
             final_grade = 2
         else:
             final_grade = 1
+
+        notifications = Notification.objects.filter(recipients=request.user).order_by('-timestamp')
         
         return render(request, "studentdashboard/dashboard.html", {
             'username': request.user.username, 'id': request.user.id, 'pk': request.user.pk,
@@ -194,6 +197,7 @@ def dashboard(request):
             'final_grade': final_grade, 'total_perfect_scores': total_perfect_scores,
             'total_high_scores': total_high_scores, 'total_low_scores': total_low_scores,
             'completed_task': tasks.filter(status=True).count(),
+            'notifications': notifications,
         })
         
         

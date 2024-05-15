@@ -61,5 +61,8 @@ class ToDoList(models.Model):
     class Meta:
         ordering =['status']
 
-
+class Notification(models.Model):
+    recipients = models.ManyToManyField(User)
+    message = models.CharField(max_length=255)
+    timestamp = models.DateTimeField(auto_now_add=True)
 
