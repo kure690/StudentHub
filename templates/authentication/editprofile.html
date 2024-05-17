@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -84,6 +85,27 @@
             text-decoration: none;
             font-size: 16px; 
         }
+        input[type="file"] {
+            padding: 10px;
+            border: 2px;
+            border-radius: 5px;
+            font-size: 12px;
+            cursor: pointer;
+            width: 200px;
+            display: block;
+            margin: 0 auto;
+        }
+        .profile-picture {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .profile-picture img {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
     </style>
 
 <body>
@@ -92,6 +114,13 @@
 
 
     <h2>EDIT PROFILE</h2>
+    <div class="profile-picture">
+        {% if form.instance.profile_picture %}
+            <img src="{{ form.instance.profile_picture.url }}" alt="Profile Picture">
+        {% else %}
+            <img src="{% static 'imgs/profilepicdefault.jpg' %}" alt="Default Profile Picture">
+        {% endif %}
+    </div>
 
     <button
 type="changepass"
@@ -108,7 +137,7 @@ box-shadow: 0 0 30px rgba(255, 255, 255, 0.8);">
 
 </button>
 
-    <form method="POST" action="">
+<form method="POST" action="" enctype="multipart/form-data">
     {% csrf_token %}
     <div class="input-group-inline">
         <div class="input-group">
@@ -118,6 +147,10 @@ box-shadow: 0 0 30px rgba(255, 255, 255, 0.8);">
         <div class="input-group">
             <label for="{{ form.lname.id_for_label }}">Last Name: </label>
             {{ form.last_name }}
+        </div>
+        <div class="input-group">
+            <label for="{{ form.profile_picture.id_for_label }}">Profile Picture: </label>
+            {{ form.profile_picture }}
         </div>
     </div>
     <div class="input-group">
@@ -131,7 +164,5 @@ box-shadow: 0 0 30px rgba(255, 255, 255, 0.8);">
     
 
 </div>
-
-
 
 </body>

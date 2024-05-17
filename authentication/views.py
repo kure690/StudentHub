@@ -19,6 +19,7 @@ from calendar import HTMLCalendar
 from datetime import datetime, date
 from django.db.models import Sum
 from ToDoList.models import Notification
+from django import forms
 
 
 
@@ -215,33 +216,71 @@ def dashboard(request):
 
 class InfoUpdate(LoginRequiredMixin, UpdateView):
     model = CustomUser
-    fields = ['first_name', 'last_name', 'email']
+    fields = ['first_name', 'last_name', 'email', 'profile_picture']
     template_name = 'authentication/editprofile.html'
-    success_url = reverse_lazy('dashboard')
+
+    def get_success_url(self):
+        return reverse_lazy('editprofile', kwargs={'pk': self.object.pk})
 
     def get_object(self, queryset=None):
         # Get the object being edited
         obj = super().get_object(queryset)
-
         # Check if the current user is the owner of the profile being edited
         if obj != self.request.user:
             raise Http404("You are not allowed to access this page.")
-        
         return obj
+
+    def form_valid(self, form):
+        # Save the form and handle the profile picture upload
+        response = super().form_valid(form)
+        if 'profile_picture' in self.request.FILES:
+            form.instance.profile_picture = self.request.FILES['profile_picture']
+            form.instance.save()
+        return response
 
 @login_required
 def Change_Password(request):
-    if request.method=='POST':
-        form = PasswordChangeForm(user=request.user,data=request.POST)
+    if request.method == 'POST':
+        form = PasswordChangeForm(user=request.user, data=request.POST)
         if form.is_valid():
-            form.save()
-            update_session_auth_hash(request,form.user)
+            user = form.save()
+            update_session_auth_hash(request, user)
             messages.success(request, 'Your password has been successfully changed.')
-            return redirect('dashboard')
+            return redirect(get_success_url(request))
+        else:
+            form = PasswordChangeForm(user=request.user)
+            pk = request.user.pk
+            return render(request, 'authentication/changepass.html', {'form': form, 'pk': pk})
     else:
         form = PasswordChangeForm(user=request.user)
-    pk=request.user.pk
-    return render(request, 'authentication/changepass.html', {'form': form, 'pk': pk})
+        pk = request.user.pk
+        return render(request, 'authentication/changepass.html', {'form': form, 'pk': pk})
+
+def get_success_url(request):
+    return reverse_lazy('editprofile', kwargs={'pk': request.user.pk})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 # def passreset_view(request):

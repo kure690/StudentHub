@@ -478,7 +478,7 @@ class AddStudent(LoginRequiredMixin, UpdateView):
 
         # Send notification to each added student
         for student in students:
-            message = f"You have been added to the class '{subject.Subject_Name}'' with subject code '{subject.Subject_Code}'"
+            message = f"You have been added to the class '{subject.Subject_Name}' with subject code '{subject.Subject_Code}'"
             NotificationManager.send_notification(recipients=[student], message=message)
 
         return super().form_valid(form)
