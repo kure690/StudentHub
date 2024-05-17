@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -51,6 +52,9 @@
             margin: 0 auto;
         }
 
+        .input-group {
+            margin-bottom: 16px;
+        }
 
         .input-group label {
             display: block;
@@ -84,55 +88,74 @@
             text-decoration: none;
             font-size: 16px; 
         }
+
+        .profile-picture {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .profile-picture img {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
     </style>
 
 <body>
 <a href="{% url 'dashboard' %}" class="go-back">Go back</a>
 <div class="container">
 
-
     <h2>EDIT PROFILE</h2>
-
-    <button
-type="changepass"
-name="changepass_button"
-style="
-background-color: #fff394;
-border: 1px solid #fdffc9;
-color: #000000; 
-padding: 5px;
-cursor: pointer;
-border-radius: 5px;
-box-shadow: 0 0 30px rgba(255, 255, 255, 0.8);">
-<a href="{% url 'ChangePassword' %}" style="text-decoration: none; color: #000000;">Change Password</a> 
-
-</button>
-
-    <form method="POST" action="">
-    {% csrf_token %}
-    <div class="input-group-inline">
-        <div class="input-group">
-            <label for="{{ form.fname.id_for_label }}">First Name: </label>
-            {{ form.first_name }}
-        </div>
-        <div class="input-group">
-            <label for="{{ form.lname.id_for_label }}">Last Name: </label>
-            {{ form.last_name }}
-        </div>
-    </div>
-    <div class="input-group">
-        <label for="{{ form.email.id_for_label }}">Email Address: </label>
-        {{ form.email }}
+    <div class="profile-picture">
+        {% if form.instance.profile_picture %}
+            <img src="{{ form.instance.profile_picture.url }}" alt="Profile Picture">
+        {% else %}
+            <img src="{% static 'imgs/profilepicdefault.jpg' %}" alt="Default Profile Picture">
+        {% endif %}
     </div>
 
-    <input type="submit" name="edit_button" value="Save Changes" style="background-color: #007bff; color: #fff; padding: 5px; cursor: pointer; border-radius: 5px; box-shadow: 0 0 30px rgba(255, 255, 255, 0.8); border: none; text-decoration: none; width: 120px;">
+    <form method="POST" action="" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="input-group">
+            <label for="id_profile_picture">Profile Picture: </label>
+            <input type="file" name="profile_picture" id="id_profile_picture">
+        </div>
+        <div class="input-group-inline">
+            <div class="input-group">
+                <label for="{{ form.fname.id_for_label }}">First Name: </label>
+                {{ form.first_name }}
+            </div>
+            <div class="input-group">
+                <label for="{{ form.lname.id_for_label }}">Last Name: </label>
+                {{ form.last_name }}
+            </div>
+        </div>
+        <div class="input-group">
+            <label for="{{ form.email.id_for_label }}">Email Address: </label>
+            {{ form.email }}
+        </div>
 
-</form>  
-    
+        <button type="changepass" name="changepass_button" style="
+        background-color: #fff394;
+        border: 1px solid #fdffc9;
+        color: #000000; 
+        padding: 5px;
+        cursor: pointer;
+        border-radius: 5px;
+        box-shadow: 0 0 30px rgba(255, 255, 255, 0.8);">
+        <a href="{% url 'ChangePassword' %}" style="text-decoration: none; color: #000000;">Change Password</a> 
+        </button>
 
+        <input type="submit" name="edit_button" value="Save Changes" style="
+        background-color: #007bff; 
+        color: #fff; padding: 5px; 
+        cursor: pointer; 
+        border-radius: 5px; 
+        box-shadow: 0 0 30px rgba(255, 255, 255, 0.8); 
+        width: 120px;">
+    </form>  
 </div>
 
-
-
 </body>
-
+</html>

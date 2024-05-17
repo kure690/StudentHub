@@ -3,6 +3,8 @@ from django.urls import path, include
 from django.contrib.auth import views as auth_views
 from . import views
 from .views import InfoUpdate, ClassView
+from django.conf import settings
+from django.conf.urls.static import static
 
 
 urlpatterns = [
@@ -14,6 +16,7 @@ urlpatterns = [
     path('dashboard2/', ClassView.as_view(), name='dashboard2'),
     path('editprofile/<int:pk>/', InfoUpdate.as_view(), name='editprofile'),
     path('changepass', views.Change_Password, name= "ChangePassword"),
+    
 
 
     path('reset_password/', auth_views.PasswordResetView.as_view(template_name='authentication/reset_pass.html'), name = "reset_password"),
@@ -22,6 +25,7 @@ urlpatterns = [
     #path('reset/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(), name = "password_reset_confirm"),
     #path('reset/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(template_name='authentication/changepass.html'), name = "password_reset_confirm"),
     path('reset_password_complete/', auth_views.PasswordResetCompleteView.as_view(template_name='authentication/reset_pass_confirm.html'), name = "password_reset_complete"),
+    ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 
 
@@ -44,5 +48,5 @@ urlpatterns = [
     #path('passresetcomplete', auth_views.PasswordResetCompleteView.as_view(),name='passresetcomplete'),
     
 
-]
+
  

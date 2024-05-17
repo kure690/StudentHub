@@ -2,18 +2,21 @@
     <!DOCTYPE html>
     <html>
     <head>
+        <title> Progress Tracker </title>
     <style>
     body {
         font-family: Arial, sans-serif;
         background-color: #fcf0c1;
         margin: 0;
         position: relative;
-        overflow: hidden;
+        overflow-x: hidden
     }
+    
     .bigger-container {
         border-top: 2px solid rgb(77, 77, 77);
         display: flex;
         align-items: flex-start;
+        margin-top: 5px;
     }
     .container {
         /* border: 2px solid rgb(68, 0, 255); */
@@ -123,11 +126,44 @@
         margin-top: 20px;
         border: 1px solid #ccc;
     }
+    .profile-picture {
+            margin-top: 20px;
+            margin-left: 20px;
+        }
+
+    .profile-picture img {
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+
+    .go-back {
+        position: relative;
+        top: 10px;
+        left: 5px;
+        color: black;
+        padding: 10px;
+        text-decoration: none;
+        font-size: 16px;
+        font-weight: bold;
+    }
     </style>
     </head>
     <body>
+        <a href="{% url 'dashboard' %}" class="go-back">Go back</a>
+
+        <div style="display: flex; align-items: center;">
+            <div class="profile-picture">
+            {% if user.profile_picture %}
+                <img src="{{ user.profile_picture.url }}" alt="Profile Picture" style="max-width: 200px;">
+            {% else %}
+                <img src="{% static 'imgs/profilepicdefault.jpg' %}" alt="Default Profile Picture" style="max-width: 200px;">
+            {% endif %}
+        </div>
         <h2 style="margin-left: 20px;">{{ user.first_name }}'s Progress Tracker</h2>
-        <h3 style="margin-left: 20px;">@{{ user.username }}</h3>
+        
+        </div>
         <div class="bigger-container">
             <div>
                 <h4 style="margin-left: 30px;">Academic Statistics</h4>
@@ -155,9 +191,7 @@
                             <h3 style="margin-top: 5px;">{{ student_average }}</h3>
                         </div>
                     </div>
-                    <div class="rectangle"></div>
-                    <div class="rectangle"></div>
-                    <div class="rectangle"></div>
+        
                 </div>
             </div>
             <div>

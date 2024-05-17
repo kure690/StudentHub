@@ -60,6 +60,7 @@ class CustomUser(AbstractUser):
     is_student = models.BooleanField(default=False)
     is_teacher = models.BooleanField(default=False)
     department = models.CharField(max_length=4, choices=DEPARTMENT_CHOICES, blank=True, null=True)
+    profile_picture = models.ImageField(upload_to='profile_pictures/', blank=True, null=True)
 
     def __str__(self):
         return self.username

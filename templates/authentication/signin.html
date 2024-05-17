@@ -5,7 +5,6 @@
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <title>Sign-in</title>
-    <img src="/static/imgs/bg1.jpg" alt="">
     <meta name="description" content="" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="stylesheet" href="{% static 'authentication/style.css' %}" />
@@ -13,18 +12,21 @@
       src="https://kit.fontawesome.com/89a57602a6.js"
       crossorigin="anonymous"
     ></script>
-  </head>
-  <body
-    style="
+  
+  <style>
+    body {
+      background-image: url('/static/imgs/bg1.png');
       background-color: #fcf0c1;
       margin: 0;
       font-family: 'Jua', sans-serif;
       position: relative;
-      background-image: url('/static/imgs/bg1.png');
       background-size: cover; 
       background-position: center;
-    "
-  >
+      overflow: hidden;
+    }
+  </style>
+  </head>
+  <body>
     <button
       class="home-button"
       onclick="window.location.href='{% url 'home' %}';"

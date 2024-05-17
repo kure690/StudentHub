@@ -93,7 +93,7 @@
             opacity: 0.8;
         }
 
-        .header2_container {
+        /* .header2_container {
             display: flex;
             align-items: center;
             background-color: #fcf0c1;
@@ -102,7 +102,48 @@
             padding: 5px;
             margin: 0 auto;
             border-radius: 0px 0px 6px 6px;
-        }
+        } */
+        .header2_container {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    background-color: #fcf0c1;
+    width: 90%;
+    padding: 5px;
+    margin: 0 auto;
+    border-radius: 0px 0px 6px 6px;
+}
+
+.subject-info {
+    display: flex;
+    align-items: center;
+    
+}
+
+.subject-info h2 {
+    margin: 0;
+    margin-right: 10px;
+    margin-left: 10px;
+    
+}
+
+.subject-info h3 {
+    margin: 0;
+    
+}
+
+.schedule-list {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    margin-left: 10px;
+}
+
+.schedule-list li span {
+    margin-right: 5px;
+}
 
         .button-container {
             text-align: center;
@@ -126,14 +167,14 @@
             margin-right: 0;
         }
 
-        {% comment %} .go-back {
+        /* .go-back {
             position: absolute; 
             top: 20px; 
             left: 20px; 
             color: black; 
             text-decoration: none;
             font-size: 16px; 
-        } {% endcomment %}
+        } */
         
         table {
             width: 100%;
@@ -218,7 +259,7 @@
     </style>
 </head>
 <body>
-    {% comment %} <a href="{% url 'dashboard' %}" class="go-back">Go back</a> {% endcomment %}
+    <!-- <a href="{% url 'dashboard' %}" class="go-back">Go back</a> -->
 
     <button class="home-button" onclick="window.location.href='{% url 'dashboard' %}';" style="
         background-color: #fff9e2;
@@ -240,7 +281,6 @@
     <div class="box">
     </div>
     </div>
-    {% comment %} <a href="{% url 'viewgrades' pk=subject.pk %}">View Grades</a> {% endcomment %}
     
     <div class="header_container">
         <div class="header1_content">
@@ -253,22 +293,20 @@
     </div>
 
     <div class="header2_container">
-        <div style="display: flex; align-items: center;">
-            <h2 style="text-align: left; margin-left: 20px; margin-right: 10px;">{{ subject.Subject_Code }} |</h2>
-            <div style="display: flex; align-items: center;">
-                <h3 style="margin: 0; margin-right: 10px;">Schedule:</h3>
-                {% if subject_schedules %}
-                <ul style="list-style-type: none; padding: 0; margin: 0; display: flex;">
-                    {% for schedule in subject_schedules %}
-                    <li style="margin-right: 20px; display: flex; align-items: center;">
-                        <span style="margin-right: 5px;">{{ schedule.get_day_of_week_display }}</span>
-                        <span>({{ schedule.start_time|time:"h:i A" }} - {{ schedule.end_time|time:"h:i A" }})</span>
-                    </li>
-                    {% endfor %}
-                </ul>
-                {% endif %}
-            </div>
+        <div class="subject-info">
+            <h2>{{ subject.Subject_Code }} |</h2>
+            <h3>Schedule:</h3>
         </div>
+        {% if subject_schedules %}
+        <ul class="schedule-list">
+            {% for schedule in subject_schedules %}
+            <li>
+                <span>{{ schedule.get_day_of_week_display }}</span>
+                <span>({{ schedule.start_time|time:"h:i A" }} - {{ schedule.end_time|time:"h:i A" }})</span>
+            </li>
+            {% endfor %}
+        </ul>
+        {% endif %}
     </div>
 
     <div class="container">
