@@ -1,9 +1,11 @@
+{% load custom_filters %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>User Schedule</title>
+    <img src="/static/imgs/bg2.jpg" alt="">
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -11,46 +13,60 @@
             margin: 20px;
             padding: 20px;
             position: relative;
+            background-image: url('/static/imgs/bg2.png');
+            background-size: cover; 
+            background-repeat: no-repeat;
+            background-position: center top;
         }
 
-        /* Position the card */
-        .card {
+        .subject-card {
             min-width: 300px;
-            height: 15rem;
             margin: 70px auto; 
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            background-color: #fff9e1;
+            background-color: rgba(255, 249, 225, 0.3); 
             border-radius: 10px;
-            overflow: auto;
-        }
+            height: 15rem;
+            overflow: auto;        }
 
-        /* Position the schedule table */
-        table {
+        .subjects-table, .schedule-table {
             border-collapse: collapse;
-            background-color: #fff9e2;
             margin: 20px auto; 
             min-width: 300px;
             font-size: 0.9em;
             font-weight: bold;
+            background-color: rgba(255, 249, 225, 0.3); 
         }
         
-        th, td {
-            border: none; /* Remove the borders */
+        .subjects-table th, .subjects-table td {
+            border: 1px solid black;
             text-align: center;
             padding: 8px;
-            width: 5%;
+            width: 50%; 
+            border: none;
         }
-        
-        th {
+
+        .subjects-table th {
             box-shadow: 0 5px 5px #808080;
             background-color: #ffdc2e;
             padding: 5px;
             text-transform: uppercase;
+            border: none;
         }
 
-        .subject-cell {
-            background-color: rgba(255, 231, 97, 0.5);
-            padding: 5px; /* Optional: Add some padding */
+        .schedule-table th, .schedule-table td {
+            border: 1px solid black;
+            {% comment %} border: none; {% endcomment %}
+            text-align: center;
+            padding: 8px;
+            width: 5%;
+        }
+
+        .schedule-table th {
+            box-shadow: 0 5px 5px #808080;
+            background-color: #ffdc2e;
+            padding: 5px;
+            text-transform: uppercase;
+            border: none;
         }
 
         .go-back {
@@ -63,16 +79,20 @@
             font-weight: bold;
         }
 
+        .merged-cell {
+            background-color: #ffcccb; /* Light red background color */
+        }
+        
     </style>
 </head>
 <body>
     <a href="{% url 'dashboard' %}" class="go-back">Go back</a>
-    <div class="card" style="margin: 10px;">
+    <div class="subject-card" style="margin: 10px;">
         <div class="card-body" style="margin: 30px;">
             <div style="display: flex; justify-content: space-between; align-items: center;">
                 <h3 style="text-align: left; margin: 0;">{{ user.first_name }}'s Subjects</h3>
             </div>
-            <table style="width:100%;">
+            <table class="subjects-table" style="width:100%;">
                 <tr>
                     <th>Subject Code</th>
                     <th>Subject Name</th>
@@ -86,35 +106,42 @@
             </table>
         </div>
     </div>
-    <h2 style="text-align: center; margin: 20px auto;">{{ user.first_name }}'s Schedule</h2>
-    <div class="schedule-table">
-        <table>
-            <tr>
-                <th>Time</th>
-                <th>Monday</th>
-                <th>Tuesday</th>
-                <th>Wednesday</th>
-                <th>Thursday</th>
-                <th>Friday</th>
-                <th>Saturday</th>
-            </tr>
-            {% for time in times %}
-            <tr>
-                <td>{{ time }}</td>
-                {% for day, subjects in schedule.items %}
-                <td {% for subject in subjects %}{% if subject.start_time <= time and subject.end_time > time %}class="subject-cell"{% endif %}{% endfor %}>
-                    {% for subject in subjects %}
-                        {% if subject.start_time <= time and subject.end_time > time %}
-                            {{ subject.subject }}
-                            <br>
-                        {% endif %}
-                    {% endfor %}
-                </td>
-                {% endfor %}
-            </tr>
-            {% endfor %}
+<br>
 
-        </table>
+        <h2 style="text-align: center; margin: 20px auto;">{{ user.first_name }}'s Schedule</h2>
+        <div class="schedule-table">
+            <table class="schedule-table">
+                <tr>
+                    <th>Time</th>
+                    <th>Monday</th>
+                    <th>Tuesday</th>
+                    <th>Wednesday</th>
+                    <th>Thursday</th>
+                    <th>Friday</th>
+                    <th>Saturday</th>
+                </tr>
+                {% for time in times %}
+                <tr>
+                    <td>{{ time }}</td>
+                    {% for day in days %}
+                        {% with day_schedule=schedule|get_item:'day_to_time_subject'|get_item:day %}
+                            {% if time in day_schedule %}
+                                {% with subject=day_schedule|get_item:time %}
+                                    {% if not subject.merged %}
+                                        <td class="subject-cell" rowspan="{{ subject.duration }}">
+                                            {{ subject.name }}
+                                        </td>
+                                    {% endif %}
+                                {% endwith %}
+                            {% else %}
+                                <td></td>
+                            {% endif %}
+                        {% endwith %}
+                    {% endfor %}
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
     </div>
 </body>
 </html>
