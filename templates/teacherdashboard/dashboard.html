@@ -85,12 +85,12 @@
   <div class="header1_content">
     <h3 class="card-title"><a href="{% url 'class_details' pk=subject.pk %}" class="to-do-link" style="text-decoration: none; color: #00060c;">{{ subject.Subject_Name }}</a></h3>
     <h4>{{ subject.Subject_Code }}</h4>
-    <h5>Number of students: {{ subject.students.count }}</h5>
+    <p>Number of students: {{ subject.students.count }}</p>
     <!-- <p style="text-align: left;">Teacher: {{ subject.teacher.get_full_name }}</p> -->
   </div>
 </div>
 <div class="schedule">
-<p>Schedule:</p>
+<p style="font-weight: bold;">Schedule:</p>
 {% for schedule in subject.subjectschedule_set.all %}
 <p>
   {% if schedule.day_of_week == 1 %}M
@@ -104,7 +104,7 @@
 </p>
       {% endfor %}
 </div>
-Class Average: 
+<p style="margin-left: 10px; font-weight: bold;">CLASS AVERAGE: {{ subject.class_average }}%</p>
     <!-- <div class="card-body" style="margin: 20px;">
         <h3 class="card-title"><a href="{% url 'class_details' pk=subject.pk %}" class="to-do-link" style="text-decoration: none; color: #00060c;">{{ subject.Subject_Name }}</a></h3>
         <h4>{{ subject.Subject_Code }}</h4>
