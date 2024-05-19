@@ -99,39 +99,73 @@
     }
    
     .modal {
-  display: none;
-  position: fixed;
-  z-index: 1;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  overflow: auto;
-  background-color: rgba(0, 0, 0, 0.4);
-}
+      display: none;
+      position: fixed;
+      z-index: 1;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0, 0, 0, 0.4);
+    }
 
-.modal-content {
-  font-family: 'Jua', sans-serif;
-  background-color: #fff9e2;
-  text-align: center;
-  margin: 15% auto;
-  padding: 10px;
-  border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  width: 50%;
-  height: 400px; /* Set a fixed height */
-  overflow-y: auto; /* Add vertical scroll bar if content exceeds height */
-}
+    .modal-content {
+      font-family: 'Jua', sans-serif;
+      background-color: #fff9e2;
+      text-align: center;
+      margin: 15% auto;
+      padding: 10px;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      width: 50%;
+      height: 400px; /* Set a fixed height */
+      overflow-y: auto; /* Add vertical scroll bar if content exceeds height */
+    }
 
-  .close {
-    float: right;
-    font-size: 28px;
-    font-weight: bold;
-  }
+    .close {
+      float: right;
+      font-size: 28px;
+      font-weight: bold;
+    }
   .asc:after,
   .desc:after {
-        content: ""; /* Remove arrow icon */
+        content: ""; 
     }
+
+    .go-back {
+      margin-top: 10px;
+      position: relative;
+      top: 10px;
+      left: 5px;
+      padding: 10px;
+      font-size: 16px;
+      font-weight: bold;
+      text-decoration: none;
+      color: transparent;
+      transition: color 0.3s ease-in-out;
+  }
+  
+  .go-back:before {
+      content: "";
+      display: inline-block;
+      width: 24px; /* Adjust the width as per your image size */
+      height: 24px; /* Adjust the height as per your image size */
+      background-image: url('/static/imgs/goback.png'); /* Replace with the actual path to your image */
+      background-size: contain;
+      background-repeat: no-repeat;
+      vertical-align: middle;
+      transition: transform 0.3s ease-in-out;
+      transform: scale(1);
+  }
+  
+  .go-back:hover {
+      color: black;
+  }
+  
+  .go-back:hover:before {
+      transform: scale(1.2);
+  }
 </style>
   
 </head>
@@ -158,11 +192,10 @@
           style="position: fixed; width: 50px; height: 50px; top: 70px"
         />
 </div> -->
+<a href="{% url 'dashboard' %}" class="go-back">Go back</a>
 
 <div class="container">
   <h1 class="title">My To Do List</h1>
-  <a href="{% url 'dashboard' %}" class="link">Go back</a>
-  
 
   <form method="GET" class="form-container">
     <input type="text" name="search area" class="search-input" placeholder="Search" value="{{ search_input }}">

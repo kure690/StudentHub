@@ -81,12 +81,37 @@
         }
 
         .go-back {
-            position: absolute; 
-            top: 20px; 
-            left: 20px; 
-            color: black; 
+            margin-top: 10px;
+            position: absolute;
+            top: 10px;
+            left: 5px;
+            padding: 10px;
+            font-size: 16px;
+            font-weight: bold;
             text-decoration: none;
-            font-size: 16px; 
+            color: transparent;
+            transition: color 0.3s ease-in-out;
+        }
+        
+        .go-back:before {
+            content: "";
+            display: inline-block;
+            width: 24px; 
+            height: 24px; 
+            background-image: url('/static/imgs/goback.png'); 
+            background-size: contain;
+            background-repeat: no-repeat;
+            vertical-align: middle;
+            transition: transform 0.3s ease-in-out;
+            transform: scale(1);
+        }
+        
+        .go-back:hover {
+            color: black;
+        }
+        
+        .go-back:hover:before {
+            transform: scale(1.2);
         }
 
         .profile-picture {
@@ -103,9 +128,9 @@
     </style>
 
 <body>
-<a href="{% url 'dashboard' %}" class="go-back">Go back</a>
-<div class="container">
+    <a href="{% url 'dashboard' %}" class="go-back">Go back</a>
 
+<div class="container">
     <h2>EDIT PROFILE</h2>
     <div class="profile-picture">
         {% if form.instance.profile_picture %}

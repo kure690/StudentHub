@@ -11,7 +11,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
 from django.views.generic.edit import UpdateView
 from django.urls import reverse_lazy
-from django.http import Http404
+from django.http import Http404, JsonResponse
 from ToDoList.views import ToDo, ClassView
 from django.utils.safestring import mark_safe
 import calendar
@@ -105,20 +105,19 @@ class HighlightedHTMLCalendar(HTMLCalendar):
         super().__init__(*args, **kwargs)
         self.year = year
         self.month = month
-        self.today = date.today().day
+        self.today = date.today()
         self.pending_task_deadlines = pending_task_deadlines or []
 
     def formatday(self, day, weekday):
         if day == 0:
             return '<td class="noday">&nbsp;</td>'  # Day outside month
         else:
-            if day == self.today:
-                return f'<td class="today">{day}</td>'  # Highlight current day
-            elif day in self.pending_task_deadlines:
+            if day in self.pending_task_deadlines:
                 return f'<td class="pending-deadline">{day}</td>'  # Highlight pending task deadline
+            elif day == self.today.day and self.month == self.today.month and self.year == self.today.year:
+                return f'<td class="today">{day}</td>'  # Highlight current day
             else:
                 return f'<td>{day}</td>'
-
             
 
 @login_required
@@ -138,8 +137,8 @@ def dashboard(request):
         current_year = now.year
         current_month = now.month
         pending_task_deadlines = [task.deadline.day for task in tasks if not task.status 
-                                  and task.deadline.month == current_month 
-                                  and task.deadline.year == current_year]
+                                and task.deadline.month == current_month 
+                                and task.deadline.year == current_year]
         
         cal = HighlightedHTMLCalendar(current_year, current_month, pending_task_deadlines).formatmonth(current_year, current_month)
         
@@ -199,7 +198,18 @@ def dashboard(request):
             'total_high_scores': total_high_scores, 'total_low_scores': total_low_scores,
             'completed_task': tasks.filter(status=True).count(),
             'notifications': notifications,
+            'calendar': cal,
         })
+    
+@login_required
+def delete_notification(request, notification_id):
+    if request.method == 'POST':
+        try:
+            notification = Notification.objects.get(id=notification_id, recipients=request.user)
+            notification.delete()
+        except Notification.DoesNotExist:
+            pass
+    return redirect('dashboard')
         
         
         

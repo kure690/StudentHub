@@ -69,20 +69,45 @@
             border: none;
         }
 
-        .go-back {
-            position: static;
-            top: 20px;
-            left: 20px;
-            color: black;
-            text-decoration: none;
-            font-size: 16px;
-            font-weight: bold;
-        }
 
         .merged-cell {
             background-color: #ffcccb; /* Light red background color */
         }
         
+        .go-back {
+            margin-top: 10px;
+            position: absolute;
+            top: 3px;
+            left: 5px;
+            padding: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            text-decoration: none;
+            color: transparent;
+            transition: color 0.3s ease-in-out;
+        }
+        
+        .go-back:before {
+            content: "";
+            display: inline-block;
+            width: 24px; /* Adjust the width as per your image size */
+            height: 24px; /* Adjust the height as per your image size */
+            background-image: url('/static/imgs/goback.png'); /* Replace with the actual path to your image */
+            background-size: contain;
+            background-repeat: no-repeat;
+            vertical-align: middle;
+            transition: transform 0.3s ease-in-out;
+            transform: scale(1);
+        }
+        
+        .go-back:hover {
+            color: black;
+        }
+        
+        .go-back:hover:before {
+            transform: scale(1.2);
+        }
+
     </style>
 </head>
 <body>
@@ -108,7 +133,7 @@
     </div>
 <br>
 
-        <h2 style="text-align: center; margin: 20px auto;">{{ user.first_name }}'s Schedule</h2>
+        <h2 style="text-align: center; margin: 10px auto;">{{ user.first_name }}'s Schedule</h2>
         <div class="schedule-table">
             <table class="schedule-table">
                 <tr>

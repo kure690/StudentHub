@@ -677,65 +677,6 @@ class Scoring(LoginRequiredMixin, UpdateView):
 
         return redirect('scoreupdate', task_name=task_name)
     
-# class UserScheduleView(View):
-#     template_name = 'todolist/ViewSchedule.html'
-#     context_object_name = 'subject'
-
-#     def get(self, request, *args, **kwargs):
-#         if request.user.is_authenticated:
-#             user_subjects = request.user.enrolled_subjects.all()
-#             schedule = {}
-#             times = ['07:00 AM', '07:30 AM', '08:00 AM', '08:30 AM', '09:00 AM', '09:30 AM', '10:00 AM', '10:30 AM',
-#                      '11:00 AM', '11:30 AM', '12:00 PM', '12:30 PM', '01:00 PM', '01:30 PM', '02:00 PM', '02:30 PM',
-#                      '03:00 PM', '03:30 PM', '04:00 PM', '04:30 PM', '05:00 PM', '05:30 PM', '06:00 PM', '06:30 PM',
-#                      '07:00 PM', '07:30 PM', '08:00 PM', '08:30 PM', '09:00 PM', '09:30 PM', '10:00 PM']
-
-#             # Convert time strings to datetime objects
-#             time_objects = [datetime.strptime(time_str, '%I:%M %p') for time_str in times]
-
-#             # Convert datetime objects to military time format
-#             military_times = [time_obj.strftime('%H:%M') for time_obj in time_objects]
-
-#             days = range(1, 7)
-#             for day in days:
-#                 schedule[day] = []
-
-#             for subject in user_subjects:
-#                 subject_schedules = subject.subjectschedule_set.all()
-#                 for subject_schedule in subject_schedules:
-#                     formatted_start_time = subject_schedule.start_time.strftime('%I:%M %p')
-#                     formatted_end_time = subject_schedule.end_time.strftime('%I:%M %p')
-
-#                     # Convert start and end times to datetime objects
-#                     start_time_obj = datetime.combine(datetime.today(), subject_schedule.start_time)
-#                     end_time_obj = datetime.combine(datetime.today(), subject_schedule.end_time)
-
-#                     # Convert start and end times to military time format
-#                     military_start_time = start_time_obj.strftime('%H:%M')
-#                     military_end_time = end_time_obj.strftime('%H:%M')
-
-#                     duration = end_time_obj - start_time_obj
-#                     duration_in_minutes = duration.total_seconds() / 60
-#                     duration_in_intervals = duration_in_minutes // 30
-
-#                     schedule[subject_schedule.day_of_week].append({
-#                         'subject': subject.Subject_Name,
-#                         'start_time': military_start_time,
-#                         'end_time': military_end_time,
-#                         'duration': duration_in_intervals
-#                     })
-
-#             return render(request, self.template_name, {
-#                 'schedule': schedule,
-#                 'times': military_times,
-#                 'user_subjects': user_subjects,
-#                 'user': request.user,
-#                 'days': days,
-#             })
-#         else:
-#             return redirect('login')
-
-
 class UserScheduleView(View):
     template_name = 'todolist/ViewSchedule.html'
     context_object_name = 'subject'
@@ -790,7 +731,6 @@ class UserScheduleView(View):
             })
         else:
             return redirect('login')
-
         
 
 class StudentGrades(ListView):
