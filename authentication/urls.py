@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.urls import path, include
 from django.contrib.auth import views as auth_views
 from . import views
-from .views import InfoUpdate, ClassView
+from .views import InfoUpdate, ClassView, delete_notification
 from django.conf import settings
 from django.conf.urls.static import static
 
@@ -25,6 +25,7 @@ urlpatterns = [
     #path('reset/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(), name = "password_reset_confirm"),
     #path('reset/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(template_name='authentication/changepass.html'), name = "password_reset_confirm"),
     path('reset_password_complete/', auth_views.PasswordResetCompleteView.as_view(template_name='authentication/reset_pass_confirm.html'), name = "password_reset_complete"),
+    path('delete-notification/<int:notification_id>/', delete_notification, name='delete_notification'),
     ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 

@@ -2,6 +2,7 @@
     <!DOCTYPE html>
     <html>
     <head>
+        <title> Progress Tracker </title>
     <style>
     body {
         font-family: Arial, sans-serif;
@@ -9,8 +10,8 @@
         margin: 0;
         position: relative;
         overflow-x: hidden
-        
     }
+    
     .bigger-container {
         border-top: 2px solid rgb(77, 77, 77);
         display: flex;
@@ -28,10 +29,7 @@
         height: 500px;
         box-sizing: border-box;
     }
-    .container2 {
-        border: 2px solid red;
-        padding: 10px;
-    }
+    
     .container3 {
         width: 1020px;
         height: 550px;
@@ -49,6 +47,14 @@
         /* justify-content: space-between; */
         margin-bottom: 0;
     }
+    .graph-container {
+    width: 100%;
+    /* border: 1px solid #ff6347; */
+    border-radius: 5px;
+    margin-top: 20px;
+    padding: 20px;
+    box-sizing: border-box;
+}
     .box {
         width: 120px;
         height: 120px;
@@ -58,26 +64,6 @@
         background-color: #f1f1f1;
         margin-bottom: 0px;
         border-radius: 15px;
-    }
-    .rectangle {
-        height: 110px;
-        width: 400px;
-        /* border: 1px solid #ccc; */
-        padding: 0;
-        box-sizing: border-box;
-        /* background-color: #f1f1f1; */
-        margin: 0;
-        margin-bottom: 20px;
-        margin-left: 10px;
-        border-radius: 15px;
-    }
-    .large-box {
-        width: 100%;
-        height: 100%;
-        border: 1px solid black;
-        padding: 10px;
-        box-sizing: border-box;
-        background-color: #e0e0e0;
     }
     .container:nth-child(1) {
         background-color: #ffcccc;
@@ -136,9 +122,45 @@
         border-radius: 50%;
         object-fit: cover;
     }
+
+    .go-back {
+    margin-top: 10px;
+    position: relative;
+    top: 10px;
+    left: 5px;
+    padding: 10px;
+    font-size: 16px;
+    font-weight: bold;
+    text-decoration: none;
+    color: transparent;
+    transition: color 0.3s ease-in-out;
+}
+
+.go-back:before {
+    content: "";
+    display: inline-block;
+    width: 24px; /* Adjust the width as per your image size */
+    height: 24px; /* Adjust the height as per your image size */
+    background-image: url('/static/imgs/goback.png'); /* Replace with the actual path to your image */
+    background-size: contain;
+    background-repeat: no-repeat;
+    vertical-align: middle;
+    transition: transform 0.3s ease-in-out;
+    transform: scale(1);
+}
+
+.go-back:hover {
+    color: black;
+}
+
+.go-back:hover:before {
+    transform: scale(1.2);
+}
     </style>
     </head>
     <body>
+        <a href="{% url 'dashboard' %}" class="go-back"> Go back</a>
+
         <div style="display: flex; align-items: center;">
             <div class="profile-picture">
             {% if user.profile_picture %}
@@ -177,9 +199,9 @@
                             <h3 style="margin-top: 5px;">{{ student_average }}</h3>
                         </div>
                     </div>
-                    <div class="rectangle"></div>
-                    <div class="rectangle"></div>
-                    <div class="rectangle"></div>
+                <div class="graph-container">
+                    <canvas id="doughnutChart"></canvas>
+                </div>
                 </div>
             </div>
             <div>
@@ -204,4 +226,61 @@
             </div>
         </div>
     </body>
-    </html>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+<script>
+    const totalTasks = {{ tasks.count }};
+    const completedTasks = {{ completed_tasks_count }};
+    // const totalTasks = 1;
+    // const completedTasks = 1;
+    const data = [completedTasks, totalTasks - completedTasks];
+    const labels = ['Completed Tasks', 'Remaining Tasks'];
+
+    // Create a custom plugin to display the message in the center
+    const centerMessage = {
+        id: 'centerMessage',
+        afterDraw: function(chart, args, options) {
+            if (completedTasks === totalTasks) {
+                const centerX = chart.getDatasetMeta(0).data[0].x;
+                const centerY = chart.getDatasetMeta(0).data[0].y;
+                const ctx = chart.ctx;
+
+                ctx.save();
+                ctx.font = 'bold 15px Arial';
+                ctx.fillStyle = 'black';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText('All Tasks Completed!', centerX, centerY);
+                ctx.restore();
+            }
+        }
+    };
+
+    // Create the doughnut chart
+    const ctx = document.getElementById('doughnutChart').getContext('2d');
+    const doughnutChart = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: labels,
+            datasets: [{
+                data: data,
+                backgroundColor: [
+                    'rgba(54, 162, 235, 0.5)',
+                    'rgba(255, 99, 132, 0.5)'
+                ],
+                borderColor: [
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 99, 132, 1)'
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            cutout: '60%'
+        },
+        plugins: [centerMessage]
+    });
+</script>
+</html>

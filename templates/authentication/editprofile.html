@@ -52,6 +52,9 @@
             margin: 0 auto;
         }
 
+        .input-group {
+            margin-bottom: 16px;
+        }
 
         .input-group label {
             display: block;
@@ -85,16 +88,7 @@
             text-decoration: none;
             font-size: 16px; 
         }
-        input[type="file"] {
-            padding: 10px;
-            border: 2px;
-            border-radius: 5px;
-            font-size: 12px;
-            cursor: pointer;
-            width: 200px;
-            display: block;
-            margin: 0 auto;
-        }
+
         .profile-picture {
             text-align: center;
             margin-bottom: 20px;
@@ -112,7 +106,6 @@
 <a href="{% url 'dashboard' %}" class="go-back">Go back</a>
 <div class="container">
 
-
     <h2>EDIT PROFILE</h2>
     <div class="profile-picture">
         {% if form.instance.profile_picture %}
@@ -122,47 +115,47 @@
         {% endif %}
     </div>
 
-    <button
-type="changepass"
-name="changepass_button"
-style="
-background-color: #fff394;
-border: 1px solid #fdffc9;
-color: #000000; 
-padding: 5px;
-cursor: pointer;
-border-radius: 5px;
-box-shadow: 0 0 30px rgba(255, 255, 255, 0.8);">
-<a href="{% url 'ChangePassword' %}" style="text-decoration: none; color: #000000;">Change Password</a> 
-
-</button>
-
-<form method="POST" action="" enctype="multipart/form-data">
-    {% csrf_token %}
-    <div class="input-group-inline">
+    <form method="POST" action="" enctype="multipart/form-data">
+        {% csrf_token %}
         <div class="input-group">
-            <label for="{{ form.fname.id_for_label }}">First Name: </label>
-            {{ form.first_name }}
+            <label for="id_profile_picture">Profile Picture: </label>
+            <input type="file" name="profile_picture" id="id_profile_picture">
+        </div>
+        <div class="input-group-inline">
+            <div class="input-group">
+                <label for="{{ form.fname.id_for_label }}">First Name: </label>
+                {{ form.first_name }}
+            </div>
+            <div class="input-group">
+                <label for="{{ form.lname.id_for_label }}">Last Name: </label>
+                {{ form.last_name }}
+            </div>
         </div>
         <div class="input-group">
-            <label for="{{ form.lname.id_for_label }}">Last Name: </label>
-            {{ form.last_name }}
+            <label for="{{ form.email.id_for_label }}">Email Address: </label>
+            {{ form.email }}
         </div>
-        <div class="input-group">
-            <label for="{{ form.profile_picture.id_for_label }}">Profile Picture: </label>
-            {{ form.profile_picture }}
-        </div>
-    </div>
-    <div class="input-group">
-        <label for="{{ form.email.id_for_label }}">Email Address: </label>
-        {{ form.email }}
-    </div>
 
-    <input type="submit" name="edit_button" value="Save Changes" style="background-color: #007bff; color: #fff; padding: 5px; cursor: pointer; border-radius: 5px; box-shadow: 0 0 30px rgba(255, 255, 255, 0.8); border: none; text-decoration: none; width: 120px;">
+        <button type="changepass" name="changepass_button" style="
+        background-color: #fff394;
+        border: 1px solid #fdffc9;
+        color: #000000; 
+        padding: 5px;
+        cursor: pointer;
+        border-radius: 5px;
+        box-shadow: 0 0 30px rgba(255, 255, 255, 0.8);">
+        <a href="{% url 'ChangePassword' %}" style="text-decoration: none; color: #000000;">Change Password</a> 
+        </button>
 
-</form>  
-    
-
+        <input type="submit" name="edit_button" value="Save Changes" style="
+        background-color: #007bff; 
+        color: #fff; padding: 5px; 
+        cursor: pointer; 
+        border-radius: 5px; 
+        box-shadow: 0 0 30px rgba(255, 255, 255, 0.8); 
+        width: 120px;">
+    </form>  
 </div>
 
 </body>
+</html>

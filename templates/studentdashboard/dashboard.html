@@ -5,6 +5,18 @@
   body {
     position: relative;
     background-color: #fcf0c1;
+    background-image: url('/static/imgs/bg2.png');
+    background-size: cover; 
+    background-position: center;
+  }
+  .navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: #fff; 
+    z-index: 1001; 
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); 
   }
 
   /*body::before {
@@ -34,6 +46,56 @@
     text-align: center;
     z-index: -1;
   }
+  .sidebar {
+    position: fixed;
+    top: 52px; 
+    right: 0;
+    width: 300px;
+    height: calc(100vh - 50px); 
+    background-color: rgba(231, 209, 168, 0.9);
+    padding: 15px;
+    box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
+    overflow-y: auto;
+    z-index: -1;
+    display: flex;
+    flex-direction: column;
+  }
+  .notification {
+    flex: 1; 
+    overflow-y: auto; 
+    background-color: rgba(252, 240, 193, 0.8);
+    padding: 10px; 
+    margin-bottom: 15px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+
+  /* .notification, .calendar {
+    background-color: rgba(252, 240, 193, 0.8);
+    padding: 15px;
+    margin-bottom: 15px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  } */
+  .calendar {
+    height: 250px; /* Set a fixed height for the calendar */
+    background-color: rgba(252, 240, 193, 0.8);
+    padding: 15px;
+    margin-bottom: 30px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+  }
+  .calendar table {
+  width: 100%;
+  table-layout: fixed;
+}
+
+.calendar td {
+  padding: 3px;
+  text-align: center;
+}
 
   .today {
     background-color: #ffcc00;
@@ -111,8 +173,7 @@
 
 
 </style>
-</style>
-
+<body>
   {% for message in messages %}
   <div class="alert alert-{{ message.tags }} alert-dismissable fade show" role="alert" style="
       background-color: rgba(252, 240, 193, 0.8);
@@ -307,12 +368,49 @@
     </div>
   </div>
 
+  <div class="sidebar">
+    <div class="notification">
+      <h2 style="margin-top: 10px; margin-bottom: 10px;">NOTIFICATIONS</h2>
+      {% for notification in notifications %}
+        <div style="background-color: #fff; padding: 10px; margin-bottom: 10px; border-radius: 5px; position: relative;">
+          <p>{{ notification.message }}</p>
+          <small>{{ notification.timestamp|date:"F j, Y, g:i a" }}</small>
+          <form method="POST" action="{% url 'delete_notification' notification.id %}">
+            {% csrf_token %}
+            <button type="submit" style="position: absolute; top: 5px; right: 5px; background: none; border: none; cursor: pointer;">
+              <span style="color: rgb(8, 0, 0); font-weight: bold;">&times;</span>
+            </button>
+          </form>
+        </div>
+      {% empty %}
+        <p>No notifications.</p>
+      {% endfor %}
+    </div>
+  
+    <div class="calendar">
+      <h2 style="margin-top: 5px; margin-bottom: 5px;">CALENDAR</h2>
+      <div style="margin-top: 0px;">
+        {{ calendar|safe }}
+      </div>
+      <div class="legend">
+        <div class="legend-item">
+          <div class="legend-color today-color"></div>
+          <div class="legend-text">Current Day</div>
+        </div>
+        <div class="legend-item">
+          <div class="legend-color deadline-color"></div>
+          <div class="legend-text">Deadline</div>
+        </div>
+      </div>
+    </div>
+  </div>
 
 
 
 
 
-  <div class = "fixed-container">
+
+  <!-- <div class = "fixed-container">
     <div style="
         display: flex;
         align-items: center;
@@ -382,7 +480,39 @@
       </div>
     </div>
 
-  </div>
+  </div> -->
   
 </div>
 {% endblock %}
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const deleteButtons = document.querySelectorAll('.delete-notification');
+    deleteButtons.forEach(function(button) {
+      button.addEventListener('click', function() {
+        const notificationId = this.dataset.notificationId;
+        deleteNotification(notificationId);
+      });
+    });
+  });
+
+  function deleteNotification(notificationId) {
+    fetch(`/delete-notification/${notificationId}/`, {
+      method: 'POST',
+      headers: {
+        'X-CSRFToken': '{{ csrf_token }}'
+      }
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        const notification = document.querySelector(`[data-notification-id="${notificationId}"]`).closest('div');
+        notification.remove();
+      }
+    })
+    .catch(error => {
+      console.error('Error deleting notification:', error);
+    });
+  }
+</script>
+</body>
