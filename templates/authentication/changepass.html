@@ -62,6 +62,11 @@
         .go-back:hover:before {
             transform: scale(1.2);
         }
+        .password-requirements {
+            text-align: left;
+            font-size: 13px;
+            margin-bottom: 10px;
+        }
     </style>
 </head>
 <body>
@@ -71,24 +76,14 @@
         <p>Please enter your new password below:</p>
         <form method="POST">
             {% csrf_token %}
-            <div>
+            <div class="form-group">
                 <label for="id_old_password">Old Password:</label>
-                <input type="password" id="id_old_password" name="old_password">
-                <br>
-                <!-- Render error messages for this field -->
-                {% for error in form.old_password.errors %}
-                    <span style="color: red;">{{ error }}</span><br>
-                {% endfor %}
+                <input type="password" id="id_old_password" name="old_password" required>
             </div>
             <br>
-            <div>
+            <div class="form-group">
                 <label for="id_new_password1">New Password:</label>
-                {{ form.new_password1 }}
-                <!-- Render error messages for this field -->
-                <br>
-                {% for error in form.new_password1.errors %}
-                    <span style="color: red;">{{ error }}</span><br>
-                {% endfor %}
+                <input type="password" id="id_new_password1" name="new_password1" required>
             </div>
             <div class="password-requirements">
                 <label><input type="checkbox" id="requirement1" disabled> Your password must contain at least 8 characters.</label>
@@ -97,25 +92,19 @@
                 <br>
                 <label><input type="checkbox" id="requirement3" disabled> Your password can't be entirely numeric.</label>
             </div>
-            <div>
+            <div class="form-group">
                 <label for="id_new_password2">Confirm New Password:</label>
-                {{ form.new_password2 }}
-                <!-- Render error messages for this field -->
-                <br>
-                {% for error in form.new_password2.errors %}
-                    <span style="color: red;">{{ error }}</span><br>
-                {% endfor %}
+                <input type="password" id="id_new_password2" name="new_password2" required>
             </div>
             <br>
-            <button type="submit"style="
-            background-color: #007bff;
-            color: #fff;
-            padding: 5px;
-            cursor: pointer;
-            border-radius: 5px;
-            box-shadow: 0 0 30px rgba(255, 255, 255, 0.8);">Change Password</button>
-            
-            
+            <button type="submit" style="
+                background-color: #007bff;
+                color: #fff;
+                padding: 5px;
+                cursor: pointer;
+                border-radius: 5px;
+                box-shadow: 0 0 30px rgba(255, 255, 255, 0.8);">Change Password</button>
+            <div id="error-message" style="color: red;"></div>
         </form>
     </div>
     <script>
@@ -125,21 +114,21 @@
             document.getElementById('requirement2'),
             document.getElementById('requirement3')
         ];
-
+    
         idNewPassword1Input.addEventListener('input', function() {
             const password = idNewPassword1Input.value;
-
+    
             const meetsRequirements = [
                 password.length >= 8,
                 !commonPasswords.includes(password.toLowerCase()),
                 !(/^\d+$/.test(password))
             ];
-
+    
             requirements.forEach((requirement, index) => {
                 requirement.checked = meetsRequirements[index];
             });
         });
-
+    
         idNewPassword1Input.addEventListener('input', function() {
             if (idNewPassword1Input.value === '') {
                 requirements.forEach(requirement => {
@@ -147,12 +136,50 @@
                 });
             }
         });
-
+    
         const commonPasswords = [
             'password',
             '123456',
             'qwerty',
             'abc123',
         ];
+
+        const form = document.querySelector('form');
+    const errorMessage = document.getElementById('error-message');
+
+    form.addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        const oldPassword = document.getElementById('id_old_password').value;
+        const newPassword1 = document.getElementById('id_new_password1').value;
+        const newPassword2 = document.getElementById('id_new_password2').value;
+
+        const errors = [];
+
+        if (!oldPassword) {
+            errors.push('Please enter your old password.');
+        }
+
+        if (!newPassword1) {
+            errors.push('Please enter a new password.');
+        } else if (newPassword1.length < 8) {
+            errors.push('Your password must contain at least 8 characters.');
+        } else if (commonPasswords.includes(newPassword1.toLowerCase())) {
+            errors.push('Your password can\'t be a commonly used password.');
+        } else if (/^\d+$/.test(newPassword1)) {
+            errors.push('Your password can\'t be entirely numeric.');
+        }
+
+        if (newPassword1 !== newPassword2) {
+            errors.push('The new passwords do not match.');
+        }
+
+        if (errors.length > 0) {
+            errorMessage.innerHTML = errors.join('<br>');
+        } else {
+            form.submit();
+        }
+    });
     </script>
 </body>
+</html>
