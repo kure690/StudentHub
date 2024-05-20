@@ -192,7 +192,7 @@
           style="position: fixed; width: 50px; height: 50px; top: 70px"
         />
 </div> -->
-<a href="{% url 'dashboard' %}" class="go-back">Go back</a>
+<a href="{% url 'dashboard' %}" class="go-back"> Go back</a>
 
 <div class="container">
   <h1 class="title">My To Do List</h1>
@@ -257,14 +257,14 @@
   var modal = document.getElementById("myModal");
   var modalContent = document.getElementById("modalContent");
 
-  console.log('Subject Code:', subjectCode);
+  console.log('Subject Name:', subjectCode);
   console.log('Task Name:', taskName);
   console.log('Deadline:', deadline);
   console.log('Description:', description);
   console.log('Task Type:', task_type);
 
   // Check if subject code is null or empty
-  var subjectCodeText = subjectCode ? `<p><strong>Subject Code:</strong> ${subjectCode}</p>` : '';
+  var subjectCodeText = subjectCode ? `<p><strong>Subject Name:</strong> ${subjectCode}</p>` : '';
 
   // Check if task name is null or empty
   var taskNameText = taskName ? `<p><strong>Task Name:</strong> ${taskName}</p>` : '';
