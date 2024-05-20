@@ -9,6 +9,7 @@
     background-size: cover; 
     background-position: center;
   }
+
   .navbar {
     position: fixed;
     top: 0;
@@ -19,33 +20,31 @@
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); 
   }
 
-  /*body::before {
-    content: "";
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 50%;
-    height: 50%;
-    background-image: url('{% static 'imgs/StudentHub_Logo.png' %}');
-    background-size: cover;
-    background-repeat: no-repeat;
-    background-position: center;
-    opacity: 0.7;
-    z-index: -1;
-  } */
-
-  .fixed-container {
-    position: fixed;
-    width: 350px;
-    top: 1%; 
-    right: 0px;
-    background-color: rgba(231, 209, 168, 0.9);
-    padding: 15px;
-    border-radius: 8px;
-    box-shadow: 0 0 50px rgba(0, 0, 0, 0.1), 0 0 100px rgba(0, 0, 0, 0.2);
-    text-align: center;
-    z-index: -1;
+  .card {
+    width: 23rem;
+    height: 20.5rem;
+    margin-top: 20px;
+    margin-left: 20px;
+    float: left;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background-color: #fff9e1;
+    border-radius: 10px;
+    overflow: hidden;
   }
+
+  .task-card {
+    width: 27rem;
+      height: 20.5rem;
+      margin-top: 20px;
+      margin-left: 20px;
+      margin-right: 20px; /* Added margin */
+      float: left;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      background-color: #fff9e1;
+      border-radius: 10px;
+      overflow: hidden;
+  }
+
   .sidebar {
     position: fixed;
     top: 52px; 
@@ -70,13 +69,6 @@
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   }
 
-  /* .notification, .calendar {
-    background-color: rgba(252, 240, 193, 0.8);
-    padding: 15px;
-    margin-bottom: 15px;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  } */
   .calendar {
     height: 250px; /* Set a fixed height for the calendar */
     background-color: rgba(252, 240, 193, 0.8);
@@ -103,11 +95,11 @@
     font-weight: bold;
 }
   .pending-deadline {
-        background-color: #f80000; /* Red background for pending task deadlines */
+        background-color: #f80000; 
         color: #333;
         font-weight: bold;
 }
-/* CSS for Legend */
+
 .legend {
     margin-top: 20px;
     display: flex;
@@ -127,11 +119,11 @@
 }
 
 .today-color {
-    background-color: #ffcc00; /* Yellow */
+    background-color: #ffcc00; 
 }
 
 .deadline-color {
-    background-color: #ff0000; /* Red */
+    background-color: #ff0000; 
 }
 
 .legend-text {
@@ -145,14 +137,14 @@
   margin-right: 20px;
   float: left;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  background-color: transparent; /* Set the background color to transparent */
+  background-color: transparent; 
   background-image: url('{% static 'imgs/corkboard.jpg' %}');
   background-size: 100% 100%;
   background-repeat: no-repeat;
   background-position: center;
   border-radius: 5px;
   overflow: hidden;
-  position: relative; /* Add position relative */
+  position: relative; 
 }
 
 .card2::before {
@@ -162,13 +154,13 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(255, 255, 255, 0.2); /* Set the opacity to 20% (0.2) */
-  z-index: 1; /* Make sure the overlay is above the background image */
+  background-color: rgba(255, 255, 255, 0.2); 
+  z-index: 1; 
 }
 
 .card2 .card-body {
-  position: relative; /* Add position relative */
-  z-index: 2; /* Make the card-body content appear above the overlay */
+  position: relative; 
+  z-index: 2; 
 }
 
 
@@ -190,17 +182,8 @@
   </div>
   {% endfor %}
 
-  <div class="card" style="
-    width: 23rem;
-    height: 20.5rem;
-    margin-top: 20px;
-    margin-left: 20px;
-    float: left;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    background-color: #fff9e1;
-    border-radius: 10px;
-    overflow: hidden;
-  ">
+  //subjects card
+  <div class="card">
   <img src="{% static 'imgs/spring.png' %}" alt="Notebook Spring" style="width: 341px; height: 50px; margin: 10px;">
     <div class="card-body" style="margin: 0 30px 30px 30px;">
       <div style="display: flex; justify-content: space-between; align-items: center;">
@@ -231,18 +214,8 @@
         </div>
       </div>
 
-  <div class="card" style="
-      width: 27rem;
-      height: 20.5rem;
-      margin-top: 20px;
-      margin-left: 20px;
-      margin-right: 20px; /* Added margin */
-      float: left;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-      background-color: #fff9e1;
-      border-radius: 10px;
-      overflow: hidden;
-  ">
+  //task card
+  <div class="task-card">
   <img src="{% static 'imgs/spring.png' %}" alt="Notebook Spring" style="width: 400px; height: 50px; margin: 10px;">
     <div class="card-body" style="margin: 0 30px 30px 30px;">
       <div style="
@@ -278,7 +251,6 @@
               Pending
             {% endif %}
           </td>
-
         </tr>
         {% empty %}
         <tr>
@@ -289,6 +261,7 @@
     </div>
   </div>
   
+  //progress tracker card
   <div class="card card2">
     <div class="card-body" style="margin: 30px;">
       <div style="display: flex; justify-content: space-between; align-items: center;">
@@ -353,21 +326,13 @@
           <div style="color: #040101; text-align: left; margin-left: 10px;">At Risk</div>
         </div>
       </div>
-      
       </div>
-      
-
-      
-      
-
-
-
-
       </div>
     </div>
     </div>
   </div>
 
+  //sidebar
   <div class="sidebar">
     <div class="notification">
       <h2 style="margin-top: 10px; margin-bottom: 10px;">NOTIFICATIONS</h2>
@@ -404,88 +369,11 @@
       </div>
     </div>
   </div>
-
-
-
-
-
-
-  <!-- <div class = "fixed-container">
-    <div style="
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        height: 100vh;
-    ">
-    <div class="additional-container" style="
-    position: fixed;
-    top: 5%;
-    right: 20px;
-    background-color: rgba(231, 209, 168, 1);
-    padding: 15px;
-    border-radius: 8px;
-    box-shadow: 0 0 50px rgba(0, 0, 0, 0.1), 0 0 100px rgba(0, 0, 0, 0.2);
-    text-align: center;
-    width: 300px;
-    height: 350px;
-    overflow-y: auto;
-  ">
-    <h2>NOTIFICATIONS</h2>
-    {% for notification in notifications %}
-      <div style="background-color: #fff; padding: 10px; margin-bottom: 10px; border-radius: 5px;">
-        <p>{{ notification.message }}</p>
-        <small>{{ notification.timestamp|date:"F j, Y, g:i a" }}</small>
-      </div>
-    {% empty %}
-      <p>No notifications.</p>
-    {% endfor %}
-  </div>
-
-      <div class="calendar-container" style="
-          position: fixed;
-          bottom: 20px;
-          right: 0px; 
-          background-color: rgba(231, 209, 168, 0.8);
-          padding: 15px;
-          border-radius: 8px;
-          text-align: center;
-      ">
-
-      <div style="
-          background-color: rgba(231, 209, 168, 0.8);
-          padding: 15px;
-          border-radius: 8px;
-          box-shadow: 0 0 50px rgba(0, 0, 0, 0.1), 0 0 100px rgba(0, 0, 0, 0.2);
-          text-align: center;
-          display: flex;
-          justify-content: flex-end; 
-          align-items: center; 
-          flex-direction: column; 
-      ">
-
-        <div style="margin-top: 30px; width: 300px; font-size: x-large;">
-            {{ calendar | safe }}
-            <div class="legend">
-              <div class="legend-item">
-                  <div class="legend-color today-color"></div>
-                  <div class="legend-text">Current Day</div>
-              </div>
-              <div class="legend-item">
-                  <div class="legend-color deadline-color"></div>
-                  <div class="legend-text">Deadline</div>
-              </div>
-          </div>
-        </div>
-        
-      </div>
-    </div>
-
-  </div> -->
-  
 </div>
 {% endblock %}
 
 <script>
+  
   document.addEventListener('DOMContentLoaded', function() {
     const deleteButtons = document.querySelectorAll('.delete-notification');
     deleteButtons.forEach(function(button) {

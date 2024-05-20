@@ -5,7 +5,55 @@
 <style>
   body {
     background-color: #fcf0c1;
+    background-image: url('/static/imgs/bg2.png');
+    background-size: cover; 
+    background-position: center;
   }
+  .header_container {
+      background-color: rgba(231, 209, 168, 0.8);
+      width: 100%;
+      height: 105px;
+      border-radius: 6px 6px 0 0;
+      justify-content: space-between;
+      align-items: center;
+      overflow: hidden;
+  }
+  .header1_content {
+    margin-left: 10px;
+    
+  }
+
+  .header1_content h4 {
+    margin-top: 0;
+  }
+  .card-title {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-top: 10px;
+  margin-bottom: 5px;
+}
+.card {
+    background-color: rgba(255, 249, 225, 0.8);
+    backdrop-filter: blur(2px);
+    width: 25rem;
+    height: 20rem;
+    margin-top: 20px;
+    margin-left: 20px;
+    float: left;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 20px;
+  }
+.schedule {
+  margin-top: 10px;
+  margin-left: 10px;
+}
+.schedule p {
+    display: inline;
+    margin-right: 0px;
+    font-size: 14px;
+  }
+
 </style>
 
 
@@ -28,57 +76,36 @@
     >
     <i class="fa-solid fa-plus"></i>
     </button>
-    
 
-  {% for message in messages %}
-  <div class="alert alert-{{ message.tags }} alert-dismissable fade show" role="alert" style="
-      background-color: rgba(252, 240, 193, 0.8);
-      color: #333;
-      padding: 8px;
-      margin-bottom: 8px;
-      border: 1px solid #ddd;
-      border-radius: 5px;
-  ">
-    <strong>Message:</strong> {{ message }}
-    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-      <span aria-hidden="true">&times;</span>
-    </button>
-  </div>
-  {% endfor %}
 
-  <!-- Sample Card -->
   {% for subject in subjects %}
-  <div class="card" style="
-    width: 20rem;
-    height: 25rem;
-    margin-top: 20px;
-    margin-left: 20px;
-    float: left;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    background-color: #fff9e1;
-    border-radius: 20px;
-">
-    <div class="card-body" style="margin: 20px;">
-        <h3 class="card-title"><a href="{% url 'class_details' pk=subject.pk %}" class="to-do-link" style="text-decoration: none; color: #00060c;">{{ subject.Subject_Name }}</a></h3>
-        <h4>{{ subject.Subject_Code }}</h4>
-
-        <table style="width:100%;">
-            <tr>
-                <td style="text-align: left; word-wrap: break-word;">{{ subject.Subject_Code }}</td>
-            </tr>
-        </table>
-    </div>
+  <div class="card">
+<div class="header_container">
+  <div class="header1_content">
+    <h3 class="card-title"><a href="{% url 'class_details' pk=subject.pk %}" class="to-do-link" style="text-decoration: none; color: #00060c;">{{ subject.Subject_Name }}</a></h3>
+    <h4>{{ subject.Subject_Code }}</h4>
+    <p>Number of students: {{ subject.students.count }}</p>
+  </div>
+</div>
+<div class="schedule">
+<p style="font-weight: bold;">Schedule:</p>
+{% for schedule in subject.subjectschedule_set.all %}
+<p>
+  {% if schedule.day_of_week == 1 %}M
+  {% elif schedule.day_of_week == 2 %}T
+  {% elif schedule.day_of_week == 3 %}W
+  {% elif schedule.day_of_week == 4 %}Th
+  {% elif schedule.day_of_week == 5 %}F
+  {% elif schedule.day_of_week == 6 %}S
+  {% endif %}
+  {{ schedule.start_time|date:'h:i A' }} - {{ schedule.end_time|date:'h:i A' }}
+</p>
+      {% endfor %}
+</div>
+<p style="margin-left: 10px; font-weight: bold;">CLASS AVERAGE: {{ subject.class_average }}%</p>
 </div>
 {% endfor %}
-
-
-    
-
-    
-  
   </div>
-  
-
     </div>
   </div>
 </div>

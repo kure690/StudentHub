@@ -18,7 +18,7 @@ import calendar
 from calendar import HTMLCalendar
 from datetime import datetime, date
 from django.db.models import Sum
-from ToDoList.models import Notification
+from ToDoList.models import Notification, ToDoList
 from django import forms
 
 
@@ -125,10 +125,37 @@ def dashboard(request):
     role = 'teacher' if request.user.is_teacher else 'student'
     todo_view = ToDo()
     tasks = todo_view.get_queryset().filter(assigned_user=request.user)
-    
+
     if role == 'teacher':
         taught_subjects = request.user.taught_subjects.all()
-        return render(request, "teacherdashboard/dashboard.html", {'username': request.user.username, 'id': request.user.id, 'pk': request.user.pk, 'tasks': tasks, 'subjects': taught_subjects})
+
+        for subject in taught_subjects:
+            students = subject.students.all()
+            all_tasks = ToDoList.objects.filter(Subject_Code=subject)
+
+            total_student_average = 0
+            for student in students:
+                total_score = 0
+                total_possible_score = 0
+                for task in all_tasks:
+                    assigned_task = ToDoList.objects.filter(task=task.task, assigned_user=student).first()
+                    if assigned_task and assigned_task.status:
+                        total_score += assigned_task.score
+                        total_possible_score += task.perfect
+                
+                average_grade = (total_score / total_possible_score) * 100 if total_possible_score > 0 else 0
+                total_student_average += average_grade
+
+            class_average = total_student_average / len(students) if len(students) > 0 else 0
+            subject.class_average = round(class_average, 2)
+
+        return render(request, "teacherdashboard/dashboard.html", {
+            'username': request.user.username,
+            'id': request.user.id,
+            'pk': request.user.pk,
+            'tasks': tasks,
+            'subjects': taught_subjects
+        })
     
     elif role == 'student':
         enrolled_subjects = request.user.enrolled_subjects.all()
